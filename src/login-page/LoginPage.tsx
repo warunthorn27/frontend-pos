@@ -78,7 +78,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
@@ -94,7 +94,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-xs font-medium text-gray-500 hover:text-gray-700"
+              className="text-xs font-medium text-gray-500 hover:text-blue-600"
               onClick={() => setShowForgot(true)}
             >
               Forgot password?
@@ -106,7 +106,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-12  w-28 rounded-md bg-blue-500 py-2 text-sm font-medium text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+              className="mt-8 w-28 bg-blue-500 hover:bg-blue-400 text-white py-2 rounded-md mb-2 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
             >
               {isSubmitting ? "Signing in..." : "Login"}
             </button>
