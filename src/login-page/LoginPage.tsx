@@ -41,7 +41,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           Enter your email and password to login
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2" > 
           {/* Email / Username */}
           <div className="space-y-2">
             <label
@@ -52,7 +52,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               id="identifier"
               type="text"
               placeholder="Email or Username"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
+              className="w-full rounded-lg border border-gray-300/70 bg-gray-50/60 px-4 py-3 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
@@ -71,7 +71,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 pr-12 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
+                className="w-full rounded-lg border border-gray-300/70 bg-gray-50/60 px-4 py-3 pr-12 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
