@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ForgotPassword from "./ForgotPassword";
+import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
@@ -32,25 +33,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="w-full max-w-md bg-white/80 backdrop-blur rounded-3xl shadow-lg px-8 py-10">
-        <h1 className="text-3xl text-center font-semibold text-gray-900 mb-10">
+      <div className="w-full max-w-md bg-white/80 backdrop-blur rounded-xl shadow-lg px-8 py-10">
+        <h1 className="text-4xl text-center font-semibold text-gray-800 mb-10">
           Login
         </h1>
+        <p className="text-sm text-center text-gray-500 mb-6">
+          Enter your email and password to login
+        </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
           {/* Email / Username */}
           <div className="space-y-2">
             <label
               htmlFor="identifier"
               className="block text-sm font-medium text-gray-700"
-            >
-              Email or Username
-            </label>
+            ></label>
             <input
               id="identifier"
               type="text"
-              placeholder="Enter your email or username"
-              className="w-full rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-3 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-200 transition"
+              placeholder="Email or Username"
+              className="w-full rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
@@ -59,32 +61,32 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
           {/* Password */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <button
-                type="button"
-                className="text-xs text-gray-500 hover:text-gray-700"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-            </div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            ></label>
 
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                className="w-full rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-3 pr-10 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-200 transition"
+                placeholder="Password"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 pr-12 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <IoIosEye className="h-5 w-5" />
+                ) : (
+                  <IoIosEyeOff className="h-5 w-5" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -100,13 +102,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
 
           {/* Sign in button */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 w-full bg-black py-3 text-sm font-medium text-white transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isSubmitting ? "Signing in..." : "Confirm"}
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-12  w-28 rounded-md bg-blue-500 py-2 text-sm font-medium text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+            >
+              {isSubmitting ? "Signing in..." : "Login"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
