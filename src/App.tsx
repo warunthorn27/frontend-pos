@@ -1,12 +1,14 @@
-import './App.css'
+import React, { useState } from "react";
+import LoginPage from "./login-page/LoginPage";
+import UserLayout from "./user-page/company-profile/CompanyLayout";
 
-function App() {
+const App: React.FC = () => {
+  const [isLogin, setIsLogin] = useState(false);
 
-  return (
-    <>
-      <div>Hello kitty!</div>
-    </>
-  )
-}
+  if (!isLogin) {
+    return <LoginPage onLoginSuccess={() => setIsLogin(true)} />;
+  }
+  return <UserLayout onLogout={() => setIsLogin(false)} />;
+};
 
-export default App
+export default App;
