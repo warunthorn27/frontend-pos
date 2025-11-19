@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import LoginPage from "./login-page/LoginPage";
-import UserLayout from "./user-page/company-profile/CompanyLayout";
+import UserLayout from "./layouts/UserLayout";
 
 const App: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -8,6 +8,7 @@ const App: React.FC = () => {
   if (!isLogin) {
     return <LoginPage onLoginSuccess={() => setIsLogin(true)} />;
   }
+
   return <UserLayout onLogout={() => setIsLogin(false)} />;
 };
 
