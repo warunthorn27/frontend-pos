@@ -4,7 +4,6 @@ import type { UserRow } from "../../types/user";
 interface UserListProps {
   users: UserRow[];
   onCreateUser: () => void;
-  // เผื่อทีหลังอยากกด Edit / Reset
   onEditUser?: (user: UserRow) => void;
   onResetPassword?: (user: UserRow) => void;
 }
@@ -20,7 +19,6 @@ const UserList: React.FC<UserListProps> = ({
 
   return (
     <div className="w-full bg-gray">
-      {/* หัวข้อ + badge 1/3 + ปุ่ม Create User */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-semibold text-[#0053A4]">
@@ -42,7 +40,6 @@ const UserList: React.FC<UserListProps> = ({
 
       {/* ตาราง */}
       <div className="border shadow-sm rounded-md overflow-hidden text-xs">
-        {/* header bar สีเทา */}
         <div className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-xs font-medium  border-b-2 bg-[#F1F1F1] text-black items-center px-6">
           <div className="px-4 py-4">Name</div>
           <div className="px-4 py-4">Email</div>
@@ -60,7 +57,6 @@ const UserList: React.FC<UserListProps> = ({
             <div>{u.email}</div>
             <div>{u.phone}</div>
 
-            {/* status pill */}
             <div>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full border text-[11px] ${

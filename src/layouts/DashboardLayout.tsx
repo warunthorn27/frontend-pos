@@ -3,7 +3,6 @@ import AppLayout from "./AppLayout";
 import CompanyProfilePage from "../features/company/CompanyProfilePage";
 import UserManagementPage from "../features/users/UserManagement";
 import FinishedGoodsPage from "../features/products/ProductMaster";
-// TODO: สร้างหน้าพวกนี้เป็น placeholder ไว้ก่อนก็ได้
 import StoneDiamondPage from "../features/products/StoneDiamondPage";
 import SemiMountPage from "../features/products/SemiMountPage";
 import OthersPage from "../features/products/OthersPage";
@@ -38,7 +37,6 @@ const tabs: TabItem[] = [
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onLogout, currentUser }) => {
-  // ค่าเริ่มต้นเข้า Product List
   const [activeTab, setActiveTab] = useState<string>("company");
 
   const title =

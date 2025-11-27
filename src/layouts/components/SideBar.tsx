@@ -6,7 +6,7 @@ interface SideBarProps {
   tabs: TabItem[];
   activeTab: string;
   onTabChange: (id: string) => void;
-  currentUserRole: "Admin" | "User"; // 👈 เพิ่มตัวนี้
+  currentUserRole: "Admin" | "User";
 }
 
 const SideBar: React.FC<SideBarProps> = ({
@@ -19,7 +19,6 @@ const SideBar: React.FC<SideBarProps> = ({
 
   const isAdmin = currentUserRole === "Admin";
 
-  // filter tab ตามสิทธิ์
   const visibleTabs = tabs.filter((tab) => {
     if (!isAdmin && tab.id === "user") return false; // user ปกติไม่เห็นเมนูจัดการ user
     if (!isAdmin && tab.id === "company") return false; // company ให้เฉพาะ admin
@@ -39,7 +38,6 @@ const SideBar: React.FC<SideBarProps> = ({
       "
     >
       <div className="flex justify-center py-12">
-        {/* โลโก้เดิมของคุณ */}
         <svg
           width="127"
           height="73"
@@ -140,7 +138,7 @@ const SideBar: React.FC<SideBarProps> = ({
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    {/* เปลี่ยน stroke เป็น currentColor เพื่อให้สีตาม text */}
+                    
                     <path
                       d="M20.75 5.75L10.75 0.75L0.75 5.75V15.75L10.75 20.75L20.75 15.75V5.75Z"
                       stroke="currentColor"
