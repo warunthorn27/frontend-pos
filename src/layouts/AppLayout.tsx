@@ -1,13 +1,15 @@
 import React from "react";
-import TopBar from "../components/layout/TopBar";
-import SideNav from "../components/layout/SideNav";
+import TopBar from "./components/TopBar";
+import type { TabItem } from "./DashboardLayout";
+import SideBar from "./components/SideBar";
 
 interface AppLayoutProps {
   title: string;
-  tabs: { id: string; label: string; }[];
+  tabs: TabItem[];
   activeTab: string;
   onTabChange: (id: string) => void;
   onLogout: () => void;
+  currentUserRole: "Admin" | "User";
   children: React.ReactNode;
 }
 
@@ -16,18 +18,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   activeTab,
   onTabChange,
   onLogout,
+  currentUserRole,
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-[#d0d0d0]">
+    <div className="min-h-screen bg-white relative">
       <TopBar onLogout={onLogout} />
       <div className="flex">
-        <SideNav tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} />
-        <main className="flex-1 p-12">
-          <div className="rounded-3xl bg-white shadow-md px-12 py-10">
-            {children}
-          </div>
-        </main>
+        <div className="absolute left-0 top-0 z-10">
+          <SideBar
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            currentUserRole={currentUserRole}
+          />
+        </div>
+        <div className="w-56 flex-shrink-0"></div>{" "}
+        {/* Spacer for sidebar width */}
+        <main className="flex-1 p-10">{children}</main>
       </div>
     </div>
   );
