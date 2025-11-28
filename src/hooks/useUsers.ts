@@ -21,7 +21,7 @@ export default function useUsers() {
 
     try {
       console.log('Loading users for comp_id:', comp_id);
-      const res = await fetch(`${API_BASE}/user?comp_id=${comp_id}`, {
+      const res = await fetch(`${API_BASE}/user?comp_id=${comp_id}&user_role=User`, {
         headers: { authtoken: token! },
       });
 
