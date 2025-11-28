@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { TabItem } from "../DashboardLayout";
 import { FaChevronRight } from "react-icons/fa";
+import logoUrl from "../../images/logo.svg";
 
 interface SideBarProps {
   tabs: TabItem[];
@@ -37,37 +38,8 @@ const SideBar: React.FC<SideBarProps> = ({
         px-4
       "
     >
-      <div className="flex justify-center py-12">
-        <svg
-          width="127"
-          height="73"
-          viewBox="0 0 107 61"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-        >
-          <rect width="107" height="61" fill="url(#pattern0_2993_6515)" />
-          <defs>
-            <pattern
-              id="pattern0_2993_6515"
-              patternContentUnits="objectBoundingBox"
-              width="1"
-              height="1"
-            >
-              <use
-                xlinkHref="#image0_2993_6515"
-                transform="matrix(0.002 0 0 0.00348432 0 -0.324042)"
-              />
-            </pattern>
-            <image
-              id="image0_2993_6515"
-              width="500"
-              height="500"
-              preserveAspectRatio="none"
-              xlinkHref="data:image/png;base64,...."
-            />
-          </defs>
-        </svg>
+      <div className="flex justify-center py-5">
+        <img src={logoUrl} alt="Logo" width="127" height="73" />
       </div>
 
       <nav className="space-y-2 text-sm">
@@ -138,7 +110,6 @@ const SideBar: React.FC<SideBarProps> = ({
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    
                     <path
                       d="M20.75 5.75L10.75 0.75L0.75 5.75V15.75L10.75 20.75L20.75 15.75V5.75Z"
                       stroke="currentColor"
