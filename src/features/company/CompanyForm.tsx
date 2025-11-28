@@ -60,16 +60,14 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
     onSubmit(values);
   };
 
-  const title = mode === "edit" ? "Edit Company" : "Create Company";
 
   return (
     <div className="w-full">
-      <div className="max-w-7xl mx-auto rounded-lg bg-[#F7F7F7] shadow-md px-16 py-12">
+      <h2 className="text-2xl font-semibold text-[#0053A4] mb-6">
+        Edit Company
+      </h2>
+      <div className="max-w-7xl mx-auto rounded-lg bg-[#FAFAFA] shadow-md px-16 py-12">
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-          </div>
-          <hr className="border-gray-300 mb-8" />
 
           <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-10 gap-x-10 text-sm text-gray-800">
             {/* General */}

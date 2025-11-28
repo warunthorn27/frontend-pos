@@ -42,32 +42,32 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
         </div>
 
         {/* กรอบขาวหลัก แบบรูปที่ 3 */}
-        <div className="rounded-lg bg-[#F7F7F7] shadow-md px-16 py-12">
+        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-16 py-12">
           <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-8 gap-x-10 text-sm text-gray-800">
             {/* General */}
             <div className="font-semibold flex items-start pt-1">General :</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="text-xs mb-1">Company Name<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.companyName}
                 </div>
               </div>
               <div>
                 <div className="text-xs mb-1">Tax ID<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.taxId}
                 </div>
               </div>
               <div>
                 <div className="text-xs mb-1">Email<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.email}
                 </div>
               </div>
               <div>
                 <div className="text-xs mb-1">Phone<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.phone}
                 </div>
               </div>
@@ -78,7 +78,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
             <div className="space-y-4">
               <div>
                 <div className="text-xs mb-1">Company Address<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.companyAddress}
                 </div>
               </div>
@@ -86,19 +86,19 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <div className="text-xs mb-1">Country<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.country}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs mb-1">Province<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.province}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs mb-1">District<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.district}
                   </div>
                 </div>
@@ -107,13 +107,13 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <div className="text-xs mb-1">Sub-district<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.subDistrict}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs mb-1">Zipcode<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.zipcode}
                   </div>
                 </div>
@@ -128,20 +128,20 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="text-xs mb-1">Name<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.contactName}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs mb-1">Phone<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                     {data.contactPhone}
                   </div>
                 </div>
               </div>
               <div>
                 <div className="text-xs mb-1">Email<span className="text-red-500"> *</span></div>
-                <div className="h-9 rounded-md bg-white px-3 text-xs flex items-center">
+                <div className="h-9 rounded-md border border-gray-200 bg-[#F1F1F1] px-3 text-xs flex items-center">
                   {data.contactEmail}
                 </div>
               </div>
