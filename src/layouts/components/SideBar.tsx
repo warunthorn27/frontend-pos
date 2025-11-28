@@ -16,7 +16,11 @@ const SideBar: React.FC<SideBarProps> = ({
   onTabChange,
   currentUserRole,
 }) => {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const initialDropdown = activeTab.startsWith("product:") ? "product" : null;
+
+  const [openDropdown, setOpenDropdown] = useState<string | null>(
+    initialDropdown
+  );
 
   const isAdmin = currentUserRole === "Admin";
 
@@ -33,7 +37,7 @@ const SideBar: React.FC<SideBarProps> = ({
   return (
     <aside
       className="
-        w-56 min-w-[14rem] h-screen flex-shrink-0
+        w-56 min-w-[14rem] h-[850px] flex-shrink-0
         bg-[#EFF7FF] border-r border-slate-200
         px-4
       "
