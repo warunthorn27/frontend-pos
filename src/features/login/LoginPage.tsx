@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import ForgotPassword from "./ForgotPassword";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { loginApi } from "../../services/auth";
+import type { LoginResponse } from "../../types/auth";
 
 interface LoginPageProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (data: LoginResponse) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
@@ -19,16 +21,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     return <ForgotPassword onBack={() => setShowForgot(false)} />;
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // ไว้เปลี่ยนเป็นเรียก API จริงทีหลัง
-    setTimeout(() => {
-      // alert(`Login with\nIdentifier: ${identifier}\nPassword: ${password}`);
+    try {
+      const data = await loginApi(identifier, password); // data: LoginResponse
+      onLoginSuccess(data);
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed. Please check your credentials and try again.");
+    } finally {
       setIsSubmitting(false);
-      onLoginSuccess(); // แจ้ง App ว่าล็อกอินสำเร็จ
-    }, 400);
+    }
   };
 
   return (
@@ -41,7 +46,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           Enter your email and password to login
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2" > 
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
           {/* Email / Username */}
           <div className="space-y-2">
             <label
@@ -94,7 +99,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-xs font-medium text-gray-500 hover:text-blue-600"
+              className="text-xs font-medium text-gray-500 hover:text-blue-600 hover:underline"
               onClick={() => setShowForgot(true)}
             >
               Forgot password?
@@ -106,7 +111,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-8 w-28 bg-blue-500 hover:bg-blue-400 text-white py-2 rounded-md mb-2 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+              className="mt-8 w-28 bg-[#0088FF] hover:bg-[#037be4] text-white py-2 rounded-md mb-2 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
             >
               {isSubmitting ? "Signing in..." : "Login"}
             </button>

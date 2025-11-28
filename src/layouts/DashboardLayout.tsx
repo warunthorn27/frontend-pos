@@ -37,7 +37,8 @@ const tabs: TabItem[] = [
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onLogout, currentUser }) => {
-  const [activeTab, setActiveTab] = useState<string>("company");
+  const defaultTab = currentUser.role === "Admin" ? "company" : "product:finished";
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
   const title =
     activeTab === "company"

@@ -33,8 +33,8 @@ const App: React.FC = () => {
     return (
       <FirstChangePasswordPage
         token={token}
+        userId={user.id}
         onSuccess={() => {
-          // เปลี่ยนรหัสสำเร็จ ให้ logout แล้วกลับไปหน้า Login ใหม่
           handleLogout();
         }}
       />
