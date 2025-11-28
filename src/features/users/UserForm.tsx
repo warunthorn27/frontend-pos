@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import type { UserFormValues } from "../../types/user";
+import React, { useState, useMemo } from "react";
+import type { UserFormInput, UserListItem } from "../../types/user";
 
 interface UserFormProps {
   onCancel: () => void;
-  onConfirm: (values: UserFormValues) => void;
+  onConfirm: (values: UserFormInput) => void;
+  initialValues?: UserListItem;
 }
 
-const emptyValues: UserFormValues = {
+const emptyValues: UserFormInput = {
   username: "",
   password: "",
   email: "",
@@ -24,12 +25,38 @@ const emptyValues: UserFormValues = {
 
 type Tab = "user" | "permission";
 
-const UserForm: React.FC<UserFormProps> = ({ onCancel, onConfirm }) => {
-  const [values, setValues] = useState<UserFormValues>(emptyValues);
+const UserForm: React.FC<UserFormProps> = ({
+  onCancel,
+  onConfirm,
+  initialValues,
+}) => {
+  const initialFormValues = useMemo(() => {
+    if (initialValues) {
+      // Convert UserListItem to UserFormInput for editing
+      return {
+        username: initialValues.name,
+        password: "",
+        email: initialValues.email,
+        phone: initialValues.phone,
+        status: initialValues.status,
+        sendPasswordEmail: false,
+        permissionInventory: {
+          all: false,
+          view: false,
+          add: false,
+          edit: false,
+          delete: false,
+        },
+      };
+    }
+    return emptyValues;
+  }, [initialValues]);
+
+  const [values, setValues] = useState<UserFormInput>(initialFormValues);
   const [activeTab, setActiveTab] = useState<Tab>("user");
 
   const handleChange =
-    (field: keyof UserFormValues) =>
+    (field: keyof UserFormInput) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const target = e.target as HTMLInputElement;
       const value = target.type === "checkbox" ? target.checked : target.value;
@@ -38,12 +65,11 @@ const UserForm: React.FC<UserFormProps> = ({ onCancel, onConfirm }) => {
     };
 
   const handlePermissionChange =
-    (perm: keyof UserFormValues["permissionInventory"]) =>
+    (perm: keyof UserFormInput["permissionInventory"]) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const checked = e.target.checked;
 
       setValues((prev) => {
-        // กรณีกด All ให้ติ๊กทุกอัน / ปลดทุกอัน
         if (perm === "all") {
           return {
             ...prev,
@@ -62,7 +88,6 @@ const UserForm: React.FC<UserFormProps> = ({ onCancel, onConfirm }) => {
           [perm]: checked,
         };
 
-        // ถ้า view/add/edit/delete ติ๊กครบ → all = true
         next.all = next.view && next.add && next.edit && next.delete;
 
         return {

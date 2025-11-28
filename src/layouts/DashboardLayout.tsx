@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AppLayout from "./AppLayout";
 import CompanyProfilePage from "../features/company/CompanyProfilePage";
-import UserManagementPage from "../features/users/UserManagement";
+import UserManagementPage from "../features/users/UserManagemenPaget";
 import FinishedGoodsPage from "../features/products/ProductMaster";
 import StoneDiamondPage from "../features/products/StoneDiamondPage";
 import SemiMountPage from "../features/products/SemiMountPage";
@@ -36,8 +36,12 @@ const tabs: TabItem[] = [
   },
 ];
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onLogout, currentUser }) => {
-  const defaultTab = currentUser.role === "Admin" ? "company" : "product:finished";
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  onLogout,
+  currentUser,
+}) => {
+  const defaultTab =
+    currentUser.role === "Admin" ? "company" : "product:finished";
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
   const title =
@@ -57,7 +61,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onLogout, currentUser
       currentUserRole={currentUser.role}
     >
       {activeTab === "company" && <CompanyProfilePage />}
-      {activeTab === "user" && <UserManagementPage />}
+      {activeTab === "user" && <UserManagementPage currentUser={currentUser} />}
 
       {activeTab === "product:list" && <ProductListPage />}
       {activeTab === "product:finished" && <FinishedGoodsPage />}

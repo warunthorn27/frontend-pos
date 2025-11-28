@@ -1,20 +1,19 @@
-export type Status = "active" | "inactive";
-
-export interface UserRow {
-  id: number;
+export interface UserListItem {
+  id: string;
   name: string;
   email: string;
   phone: string;
-  status: Status;
+  status: "active" | "inactive";
 }
 
-export interface UserFormValues {
+export interface UserFormInput {
   username: string;
   password: string;
   email: string;
   phone: string;
-  status: Status;
+  status: "active" | "inactive";
   sendPasswordEmail: boolean;
+
   permissionInventory: {
     all: boolean;
     view: boolean;
@@ -22,4 +21,15 @@ export interface UserFormValues {
     edit: boolean;
     delete: boolean;
   };
+}
+
+export interface UserModel {
+  _id: string;
+  user_name: string;
+  user_email: string;
+  user_phone: string;
+  status: boolean; // true/false จาก DB
+  permissions?: unknown[]; // populated permissions
+  comp_id?: unknown; // populated company
+  user_role?: string;
 }

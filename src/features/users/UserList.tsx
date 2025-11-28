@@ -1,21 +1,25 @@
 import React from "react";
-import type { UserRow } from "../../types/user";
+import type { UserListItem } from "../../types/user";
 
-interface UserListProps {
-  users: UserRow[];
+interface Props {
+  users: UserListItem[];
   onCreateUser: () => void;
-  onEditUser?: (user: UserRow) => void;
-  onResetPassword?: (user: UserRow) => void;
+  onEditUser: (user: UserListItem) => void;
+  onResetPassword: (user: UserListItem) => void;
+  onToggleStatus: (u: UserListItem, isActive: boolean) => void;
+  maxUsers?: number;
 }
 
-const UserList: React.FC<UserListProps> = ({
+const UserList: React.FC<Props> = ({
   users,
   onCreateUser,
   onEditUser,
   onResetPassword,
+  onToggleStatus,
+  maxUsers = 3,
 }) => {
-  const total = 3; // mock: quota 3 user
-  const used = users.length;
+  const activeUsers = users.filter((u) => u.status === "active").length;
+  const canCreateUser = activeUsers < maxUsers;
 
   return (
     <div className="w-full bg-gray">
@@ -25,14 +29,19 @@ const UserList: React.FC<UserListProps> = ({
             User &amp; Permission
           </h2>
           <span className="px-2 py-1 rounded-md bg-[#FF8D28] text-[12px] text-white font-semibold">
-            {used}/{total}
+            {activeUsers}/3
           </span>
         </div>
 
         <span className="text-sm"></span>
         <button
           onClick={onCreateUser}
-          className="px-6 py-2 rounded-md bg-[#0088FF] text-xs font-normal text-white hover:bg-blue-500"
+          disabled={!canCreateUser}
+          className={`px-6 py-2 rounded-md text-xs font-normal text-white ${
+            canCreateUser
+              ? "bg-[#0088FF] hover:bg-blue-500"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
         >
           Create User
         </button>
@@ -58,8 +67,9 @@ const UserList: React.FC<UserListProps> = ({
             <div>{u.phone}</div>
 
             <div>
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full border text-[11px] ${
+              <button
+                onClick={() => onToggleStatus(u, u.status === "inactive")}
+                className={`inline-flex items-center px-3 py-1 rounded-full border text-[11px] cursor-pointer hover:opacity-80 ${
                   u.status === "active"
                     ? "border-green-500 text-green-600"
                     : "border-gray-400 text-gray-500"
@@ -71,14 +81,14 @@ const UserList: React.FC<UserListProps> = ({
                   }`}
                 />
                 {u.status === "active" ? "Active" : "Inactive"}
-              </span>
+              </button>
             </div>
 
             {/* ปุ่ม Edit + Reset Password */}
             <div className="flex justify-end gap-2 pr-4">
               <button
                 className="px-3 py-1 rounded-md bg-yellow-400 text-[11px] font-medium text-gray-900 hover:bg-yellow-300"
-                onClick={() => onEditUser?.(u)}
+                onClick={() => onEditUser(u)}
               >
                 Edit
               </button>

@@ -20,6 +20,8 @@ const App: React.FC = () => {
     return (
       <LoginPage
         onLoginSuccess={(data) => {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("comp_id", data.user.companyId || "");
           setAuth(data);
         }}
       />
@@ -28,7 +30,7 @@ const App: React.FC = () => {
 
   const { user, token, forceChangePassword } = auth;
 
-  // 2. ถ้าเป็น User และต้องเปลี่ยนรหัสครั้งแรก
+  // 2. ถ้าเป็น User frist time login ต้องเปลี่ยน password
   if (user.role === "User" && forceChangePassword) {
     return (
       <FirstChangePasswordPage
@@ -64,12 +66,15 @@ const App: React.FC = () => {
                 }
               : prev
           );
+
+          // Also update localStorage
+          localStorage.setItem("comp_id", newCompanyId);
         }}
       />
     );
   }
 
-  // 4. เคสปกติ: login แล้ว ผ่านทุกเงื่อนไข >> เข้า dashboard
+  // 4. login แล้ว ผ่านทุกเงื่อนไข >> เข้า dashboard
   return <DashboardLayout onLogout={handleLogout} currentUser={user} />;
 };
 
