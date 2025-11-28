@@ -40,7 +40,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
             <h2 className="text-2xl text-gray-800 font-semibold py-6">
               Forgot password
             </h2>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-500 mb-4">
               Send a request to the admin to reset your password
             </p>
 
@@ -149,7 +149,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
             <button
               onClick={onBack}
-              className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-2 rounded-md mb-2 mt-3"
+              className="bg-[#0088FF] hover:bg-[#037be4] text-white px-8 py-2 rounded-md mb-2 mt-3"
             >
               Login
             </button>

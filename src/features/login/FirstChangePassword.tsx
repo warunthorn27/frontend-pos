@@ -139,7 +139,7 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
 
           <button
             onClick={onSuccess}
-            className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-2 rounded-md mb-2 mt-8"
+            className="bg-[#0088FF] hover:bg-[#037be4] text-white px-8 py-2 rounded-md mb-2 mt-8"
           >
             Login
           </button>
@@ -152,37 +152,40 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
       <div className="bg-white w-[500px] p-10 rounded-xl shadow-lg text-center">
-        <div className="flex justify-center mb-4">
-          <svg
-            width="42"
-            height="42"
-            viewBox="-25 -25 90 90"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="20"
-              cy="20"
-              r="45"
-              stroke="#A3A8B8"
-              strokeWidth="6"
+        <div className="flex justify-center mb-1">
+          <div className="bg-blue-100 rounded-full p-3">
+            <svg
+              width="42"
+              height="42"
+              viewBox="0 0 48 48"
               fill="none"
-            />
-            <path
-              d="M14 28C12.9 28 11.9583 27.6083 11.175 26.825C10.3917 26.0417 10 25.1 10 24C10 22.9 10.3917 21.9583 11.175 21.175C11.9583 20.3917 12.9 20 14 20C15.1 20 16.0417 20.3917 16.825 21.175C17.6083 21.9583 18 22.9 18 24C18 25.1 17.6083 26.0417 16.825 26.825C16.0417 27.6083 15.1 28 14 28ZM14 36C10.6667 36 7.83333 34.8333 5.5 32.5C3.16667 30.1667 2 27.3333 2 24C2 20.6667 3.16667 17.8333 5.5 15.5C7.83333 13.1667 10.6667 12 14 12C16.2333 12 18.2583 12.55 20.075 13.65C21.8917 14.75 23.3333 16.2 24.4 18H42L48 24L39 33L35 30L31 33L26.75 30H24.4C23.3333 31.8 21.8917 33.25 20.075 34.35C18.2583 35.45 16.2333 36 14 36ZM14 32C15.8667 32 17.5083 31.4333 18.925 30.3C20.3417 29.1667 21.2833 27.7333 21.75 26H28L30.9 28.05L35 25L38.55 27.75L42.3 24L40.3 22H21.75C21.2833 20.2667 20.3417 18.8333 18.925 17.7C17.5083 16.5667 15.8667 16 14 16C11.8 16 9.91667 16.7833 8.35 18.35C6.78333 19.9167 6 21.8 6 24C6 26.2 6.78333 28.0833 8.35 29.65C9.91667 31.2167 11.8 32 14 32Z"
-              fill="#0088FF"
-            />
-          </svg>
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="20"
+                cy="20"
+                r="45"
+                stroke="#A3A8B8"
+                strokeWidth="6"
+                fill="none"
+              />
+              <path
+                d="M14 28C12.9 28 11.9583 27.6083 11.175 26.825C10.3917 26.0417 10 25.1 10 24C10 22.9 10.3917 21.9583 11.175 21.175C11.9583 20.3917 12.9 20 14 20C15.1 20 16.0417 20.3917 16.825 21.175C17.6083 21.9583 18 22.9 18 24C18 25.1 17.6083 26.0417 16.825 26.825C16.0417 27.6083 15.1 28 14 28ZM14 36C10.6667 36 7.83333 34.8333 5.5 32.5C3.16667 30.1667 2 27.3333 2 24C2 20.6667 3.16667 17.8333 5.5 15.5C7.83333 13.1667 10.6667 12 14 12C16.2333 12 18.2583 12.55 20.075 13.65C21.8917 14.75 23.3333 16.2 24.4 18H42L48 24L39 33L35 30L31 33L26.75 30H24.4C23.3333 31.8 21.8917 33.25 20.075 34.35C18.2583 35.45 16.2333 36 14 36ZM14 32C15.8667 32 17.5083 31.4333 18.925 30.3C20.3417 29.1667 21.2833 27.7333 21.75 26H28L30.9 28.05L35 25L38.55 27.75L42.3 24L40.3 22H21.75C21.2833 20.2667 20.3417 18.8333 18.925 17.7C17.5083 16.5667 15.8667 16 14 16C11.8 16 9.91667 16.7833 8.35 18.35C6.78333 19.9167 6 21.8 6 24C6 26.2 6.78333 28.0833 8.35 29.65C9.91667 31.2167 11.8 32 14 32Z"
+                fill="#0088FF"
+              />
+            </svg>
+          </div>
         </div>
-        <h1 className="mt-6 text-2xl font-semibold text-gray-900">
+
+        <h2 className="text-2xl text-gray-800 font-semibold py-6">
           Change password
-        </h1>
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
+          <div className="relative w-5/6 mx-auto">
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-gray-900 placeholder-gray-400 text-sm focus:outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -190,7 +193,7 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
               onClick={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? (
