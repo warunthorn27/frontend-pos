@@ -42,7 +42,7 @@ const SideBar: React.FC<SideBarProps> = ({
         px-4
       "
     >
-      <div className="flex justify-center py-5">
+      <div className="flex justify-center py-10">
         <img src={logoUrl} alt="Logo" width="127" height="73" />
       </div>
 

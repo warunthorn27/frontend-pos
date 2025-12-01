@@ -49,7 +49,7 @@ const UserList: React.FC<Props> = ({
 
       {/* ตาราง */}
       <div className="border shadow-sm rounded-md overflow-hidden text-xs">
-        <div className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-xs font-medium  border-b-2 bg-[#F1F1F1] text-black items-center px-6">
+        <div className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-xs font-medium  border-b-2 bg-[#FBFBFB] text-black items-center px-6">
           <div className="px-4 py-4">Name</div>
           <div className="px-4 py-4">Email</div>
           <div className="px-4 py-4">Phone</div>
@@ -60,11 +60,11 @@ const UserList: React.FC<Props> = ({
         {users.map((u) => (
           <div
             key={u.id}
-            className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-xs bg-[#FAFAFA] text-gray-800 h-10 items-center px-6"
+            className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-xs bg-white text-gray-800 h-10 items-center px-10 border-b"
           >
             <div>{u.name}</div>
-            <div>{u.email}</div>
-            <div>{u.phone}</div>
+            <div className="px-1.5">{u.email}</div>
+            <div className="px-3">{u.phone}</div>
 
             <div>
               <button
@@ -85,15 +85,15 @@ const UserList: React.FC<Props> = ({
             </div>
 
             {/* ปุ่ม Edit + Reset Password */}
-            <div className="flex justify-end gap-2 pr-4">
+            <div className="flex justify-end gap-2 pr-14">
               <button
-                className="px-3 py-1 rounded-md bg-yellow-400 text-[11px] font-medium text-gray-900 hover:bg-yellow-300"
+                className="px-3 py-1 rounded-md bg-[#ffda44] text-[11px] font-normal text-white hover:bg-yellow-400"
                 onClick={() => onEditUser(u)}
               >
                 Edit
               </button>
               <button
-                className="px-3 py-1 rounded-md bg-red-500 text-[11px] font-medium text-white hover:bg-red-400"
+                className="px-3 py-1 rounded-md bg-[#FF383C] text-[11px] font-normal text-white hover:bg-red-500"
                 onClick={() => onResetPassword?.(u)}
               >
                 Reset Password
