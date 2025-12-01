@@ -34,6 +34,13 @@ const SideBar: React.FC<SideBarProps> = ({
     setOpenDropdown(openDropdown === id ? null : id);
   };
 
+  const handleTabChange = (id: string) => {
+    onTabChange(id);
+    if (!id.startsWith("product:")) {
+      setOpenDropdown(null);
+    }
+  };
+
   return (
     <aside
       className="
@@ -51,19 +58,16 @@ const SideBar: React.FC<SideBarProps> = ({
           const hasChildren = !!tab.children;
           const isOpen = openDropdown === tab.id;
 
-          // ---------------------------
-          // ========== NO CHILD ==========
-          // ---------------------------
           if (!hasChildren) {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`w-full text-left px-4 py-2 rounded-md font-semibold flex items-center gap-2 ${
                   isActive
                     ? "bg-[#E5F3FF] text-[#0088FF] font-semibold"
-                    : "text-black hover:bg-[#E5F3FF] hover:text-[#0088FF]"
+                    : "text-black hover:text-[#0088FF]"
                 }`}
               >
                 {tab.id === "company" && (
@@ -155,9 +159,7 @@ const SideBar: React.FC<SideBarProps> = ({
             );
           }
 
-          // ---------------------------
-          // ========== WITH CHILD (dropdown) ==========
-          // ---------------------------
+          // dropdown
           return (
             <div key={tab.id} className="space-y-1">
               {/* Parent Button */}
@@ -170,7 +172,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   ${
                     isOpen
                       ? "bg-[#E5F3FF] text-[#0088FF] font-semibold"
-                      : "text-black hover:bg-[#E5F3FF] hover:text-[#0088FF]"
+                      : "text-black hover:text-[#0088FF]"
                   }
                 `}
               >
@@ -237,14 +239,14 @@ const SideBar: React.FC<SideBarProps> = ({
                     return (
                       <button
                         key={child.id}
-                        onClick={() => onTabChange(child.id)}
+                        onClick={() => handleTabChange(child.id)}
                         className={`
                           w-full text-left px-4 py-2 rounded-md text-sm
                           transition
                           ${
                             active
                               ? "text-[#0088FF] font-semibold"
-                              : "text-[#2DA9FF] hover:bg-[#E5F3FF] hover:text-[#0088FF]"
+                              : "text-[#2DA9FF] hover:text-[#0088FF]"
                           }
                         `}
                       >
