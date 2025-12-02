@@ -3,6 +3,7 @@ import ForgotPassword from "./ForgotPassword";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { loginApi } from "../../services/auth";
 import type { LoginResponse } from "../../types/auth";
+import warningIcon from "../../images/warning-icon.svg";
 
 interface LoginPageProps {
   onLoginSuccess: (data: LoginResponse) => void;
@@ -13,16 +14,40 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [showForgot, setShowForgot] = useState(false);
+  const [errors, setErrors] = useState<{
+    identifier?: string;
+    password?: string;
+  }>({});
 
-  // ถ้ากด forgot password >> แสดงหน้า ForgotPassword
+  const hasIdentifierError = !!errors.identifier;
+  const hasPasswordError = !!errors.password;
+
   if (showForgot) {
     return <ForgotPassword onBack={() => setShowForgot(false)} />;
   }
 
+  // เช็คการกรอกข้อมูล
+  const validateForm = () => {
+    const newErrors: { identifier?: string; password?: string } = {};
+
+    if (!identifier.trim()) {
+      newErrors.identifier = "Please enter valid email or username !";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Invalid password !";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
 
     try {
@@ -43,28 +68,55 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           Login
         </h1>
         <p className="text-sm text-center text-gray-500 mb-6">
-          Enter your email and password to login
+          Enter your email and password to log in
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-          {/* Email / Username */}
+          {/* ---------- Email / Username ---------- */}
           <div className="space-y-2">
             <label
               htmlFor="identifier"
               className="block text-sm font-medium text-gray-700"
             ></label>
-            <input
-              id="identifier"
-              type="text"
-              placeholder="Email or Username"
-              className="w-full rounded-lg border border-gray-300/70 bg-gray-50/60 px-4 py-3 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-            />
+
+            <div className="relative">
+              <input
+                id="identifier"
+                type="text"
+                placeholder="Email or Username"
+                className={`
+                  w-full rounded-lg px-4 py-3 pr-10 text-sm text-gray-900
+                  outline-none ring-0 transition
+                  bg-gray-50/60
+                  ${
+                    hasIdentifierError
+                      ? "border  border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
+                      : "border border-gray-300/70 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+                  }
+                `}
+                value={identifier}
+                onChange={(e) => {
+                  setIdentifier(e.target.value);
+                  // เคลียร์ error ทันทีที่เริ่มพิมพ์ใหม่
+                  if (errors.identifier) {
+                    setErrors((prev) => ({ ...prev, identifier: undefined }));
+                  }
+                }}
+              />
+
+              {hasIdentifierError && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <img src={warningIcon} alt="" className="w-5 h-5" />
+                </span>
+              )}
+            </div>
+
+            {errors.identifier && (
+              <p className="text-red-500 text-xs">{errors.identifier}</p>
+            )}
           </div>
 
-          {/* Password */}
+          {/* ---------- Password ---------- */}
           <div className="space-y-2">
             <label
               htmlFor="password"
@@ -76,11 +128,25 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full rounded-lg border border-gray-300/70 bg-gray-50/60 px-4 py-3 pr-12 text-sm text-gray-900 outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200 transition"
+                className={`
+                  w-full rounded-lg px-4 py-3 pr-12 text-sm text-gray-900
+                  outline-none ring-0 transition
+                  bg-gray-50/60
+                  ${
+                    hasPasswordError
+                      ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
+                      : "border border-gray-300/70 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+                  }
+                `}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) {
+                    setErrors((prev) => ({ ...prev, password: undefined }));
+                  }
+                }}
               />
+
               <button
                 type="button"
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
@@ -93,20 +159,24 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 )}
               </button>
             </div>
+
+            {errors.password && (
+              <p className="text-red-500 text-xs">{errors.password}</p>
+            )}
           </div>
 
-          {/* Forgot password */}
+          {/* ---------- Forgot password ---------- */}
           <div className="flex justify-end">
             <button
               type="button"
               className="text-xs font-medium text-gray-500 hover:text-blue-600 hover:underline"
               onClick={() => setShowForgot(true)}
             >
-              Forgot password?
+              Forgot Password ?
             </button>
           </div>
 
-          {/* Sign in button */}
+          {/* ---------- Login button ---------- */}
           <div>
             <button
               type="submit"
