@@ -60,13 +60,17 @@ const SideBar: React.FC<SideBarProps> = ({
 
           if (!hasChildren) {
             const isActive = activeTab === tab.id;
+            const isDisabled = tab.disabled;
             return (
               <button
                 key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
+                onClick={() => !isDisabled && handleTabChange(tab.id)}
+                disabled={isDisabled}
                 className={`w-full text-left px-4 py-2 rounded-md font-semibold flex items-center gap-2 ${
                   isActive
                     ? "bg-[#E5F3FF] text-[#0088FF] font-semibold"
+                    : isDisabled
+                    ? "text-gray-400 cursor-not-allowed"
                     : "text-black hover:text-[#0088FF]"
                 }`}
               >
@@ -164,7 +168,8 @@ const SideBar: React.FC<SideBarProps> = ({
             <div key={tab.id} className="space-y-1">
               {/* Parent Button */}
               <button
-                onClick={() => toggleDropdown(tab.id)}
+                onClick={() => !tab.disabled && toggleDropdown(tab.id)}
+                disabled={tab.disabled}
                 className={`
                   w-full flex items-center justify-between
                   px-4 py-2 rounded-md font-semibold
@@ -172,6 +177,8 @@ const SideBar: React.FC<SideBarProps> = ({
                   ${
                     isOpen
                       ? "bg-[#E5F3FF] text-[#0088FF] font-semibold"
+                      : tab.disabled
+                      ? "text-gray-400 cursor-not-allowed"
                       : "text-black hover:text-[#0088FF]"
                   }
                 `}
@@ -236,16 +243,22 @@ const SideBar: React.FC<SideBarProps> = ({
                 <div className="py-1">
                   {tab.children!.map((child) => {
                     const active = activeTab === child.id;
+                    const isChildDisabled = child.disabled;
                     return (
                       <button
                         key={child.id}
-                        onClick={() => handleTabChange(child.id)}
+                        onClick={() =>
+                          !isChildDisabled && handleTabChange(child.id)
+                        }
+                        disabled={isChildDisabled}
                         className={`
                           w-full text-left px-4 py-2 rounded-md text-sm
                           transition
                           ${
                             active
                               ? "text-[#0088FF] font-semibold"
+                              : isChildDisabled
+                              ? "text-gray-400 cursor-not-allowed"
                               : "text-[#2DA9FF] hover:text-[#0088FF]"
                           }
                         `}

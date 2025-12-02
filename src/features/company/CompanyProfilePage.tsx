@@ -3,12 +3,24 @@ import type { CompanyFormValues } from "./CompanyForm";
 import CompanyProfileView from "./CompanyProfileView";
 import CompanyForm from "./CompanyForm";
 
+interface CompanyProfilePageProps {
+  isFirstTime?: boolean;
+  onCompanyCreated?: (companyId: string) => void;
+}
+
 type Mode = "create" | "view" | "edit";
 
 const STORAGE_KEY = "companyProfile";
 
-const CompanyProfilePage: React.FC = () => {
+const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
+  isFirstTime = false,
+  onCompanyCreated,
+}) => {
   const [company, setCompany] = useState<CompanyFormValues | null>(() => {
+    if (isFirstTime) {
+      // For first time admin login, don't pre-fill from localStorage
+      return null;
+    }
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? (JSON.parse(stored) as CompanyFormValues) : null;
@@ -17,15 +29,21 @@ const CompanyProfilePage: React.FC = () => {
     }
   });
 
-  // ถ้ามี company อยู่แล้ว เปิดมาด้วยโหมด view เลย
+  // ถ้ามี company อยู่แล้ว เปิดมาด้วยโหมด view เลย แต่ถ้า isFirstTime บังคับ create
   const [mode, setMode] = useState<Mode>(() =>
-    localStorage.getItem(STORAGE_KEY) ? "view" : "create"
+    isFirstTime || !localStorage.getItem(STORAGE_KEY) ? "create" : "view"
   );
 
   const handleSubmit = (values: CompanyFormValues) => {
     // เก็บทั้งใน state (ให้ UI ใช้) และใน localStorage (ให้จำข้ามรอบ)
     setCompany(values);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    if (isFirstTime && onCompanyCreated) {
+      // TODO: ตรงนี้อนาคตค่อยเรียก API สร้าง Company จริง ๆ
+      // const newCompanyId = await createCompanyApi(values, token);
+      const newCompanyId = "TEMP_ID"; // สมมติ id ที่ backend ส่งกลับมา
+      onCompanyCreated(newCompanyId);
+    }
     setMode("view");
   };
 
