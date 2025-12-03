@@ -183,7 +183,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
               <div>
                 <label className="block mb-1 text-xs font-medium">
-                  Phone <span className="text-red-500">*</span>
+                  Phone
                 </label>
                 <input
                   className="w-full h-9 rounded-md border border-[#CFCFCF] bg-white px-3 text-xs outline-none"
