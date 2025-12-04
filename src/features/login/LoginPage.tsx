@@ -3,7 +3,7 @@ import ForgotPassword from "./ForgotPassword";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { loginApi } from "../../services/auth";
 import type { LoginResponse } from "../../types/auth";
-import warningIcon from "../../images/warning-icon.svg";
+import warningIcon from "../../assets/svg/warning-icon.svg";
 
 interface LoginPageProps {
   onLoginSuccess: (data: LoginResponse) => void;
@@ -64,10 +64,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
       <div className="w-full max-w-md bg-white/80 backdrop-blur rounded-xl shadow-lg px-8 py-10">
-        <h1 className="text-4xl text-center font-semibold text-gray-800 mb-10">
+        <h1 className="text-4xl text-center font-medium text-[#084072] mb-10">
           Login
         </h1>
-        <p className="text-sm text-center text-gray-500 mb-6">
+        <p className="text-base text-center text-[#9D9D9D] mb-7">
           Enter your email and password to log in
         </p>
 

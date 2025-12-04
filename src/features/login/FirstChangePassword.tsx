@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { changeFirstPasswordApi } from "../../services/auth";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
-import key from "../../images/key.svg";
-import check from "../../images/check.svg";
+import key from "../../assets/svg/key.svg";
+import check from "../../assets/svg/check.svg";
 
 interface FirstChangePasswordProps {
   token: string;
