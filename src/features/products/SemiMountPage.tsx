@@ -1,6 +1,5 @@
 import React from "react";
-import uploadImage from "../../images/upload-image.svg";
-
+import uploadImage from "../../assets/svg/upload-image.svg";
 const SemiMountPage: React.FC = () => {
   return (
     <div className="w-full">

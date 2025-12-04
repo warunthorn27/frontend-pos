@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import check from "../../images/check.svg";
-import emailIcon from "../../images/email.svg";
+import check from "../../assets/svg/check.svg";
+import emailIcon from "../../assets/svg/email.svg";
 
 interface ForgotPasswordProps {
   onBack: () => void;

@@ -1,6 +1,6 @@
 import React from "react";
 import type { CompanyFormValues } from "./CompanyForm";
-import edit from "../../images/edit.svg";
+import edit from "../../assets/svg/edit.svg";
 
 interface CompanyProfileViewProps {
   data: CompanyFormValues;

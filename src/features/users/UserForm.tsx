@@ -102,6 +102,19 @@ const UserForm: React.FC<UserFormProps> = ({
     onConfirm(values);
   };
 
+  const generatePassword = () => {
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let content = "";
+    const pwLength = 10;
+
+    for (let index = 0; index < pwLength; index++) {
+      content += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+
+    setValues((prev) => ({ ...prev, password: content }));
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="w-full">
@@ -155,13 +168,14 @@ const UserForm: React.FC<UserFormProps> = ({
                 </label>
                 <div className="flex justify-center gap-2">
                   <input
-                    type="password"
+                    type="text"
                     className="w-full h-9 rounded-md border border-[#CFCFCF] bg-white px-3 text-xs outline-none"
                     value={values.password}
                     onChange={handleChange("password")}
                   />
                   <button
                     type="button"
+                    onClick={generatePassword}
                     className="px-4 py-2 rounded-md bg-[#0088FF] text-xs font-normal hover:bg-blue-500 text-white"
                   >
                     Generate
@@ -182,9 +196,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 text-xs font-medium">
-                  Phone
-                </label>
+                <label className="block mb-1 text-xs font-medium">Phone</label>
                 <input
                   className="w-full h-9 rounded-md border border-[#CFCFCF] bg-white px-3 text-xs outline-none"
                   value={values.phone}
