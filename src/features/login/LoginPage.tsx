@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import ForgotPassword from "./ForgotPassword";
-import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { loginApi } from "../../services/auth";
 import type { LoginResponse } from "../../types/auth";
 import warningIcon from "../../assets/svg/warning-icon.svg";
-
-// ใช้ syntax ใหม่ที่ถูกต้องสำหรับ Vite 7
-import ReactIcon from "../../assets/svg/reactIcon.svg?react";
+import EyeIcon from "../../assets/svg/eye.svg?react";
+import EyeOffIcon from "../../assets/svg/eye-slash.svg?react";
 
 interface LoginPageProps {
   onLoginSuccess: (data: LoginResponse) => void;
@@ -18,7 +16,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
-  const [errors, setErrors] = useState<{ identifier?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    identifier?: string;
+    password?: string;
+  }>({});
 
   const hasIdentifierError = !!errors.identifier;
   const hasPasswordError = !!errors.password;
@@ -30,7 +31,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const validateForm = () => {
     const newErrors: { identifier?: string; password?: string } = {};
 
-    if (!identifier.trim()) newErrors.identifier = "Please enter valid email or username !";
+    if (!identifier.trim())
+      newErrors.identifier = "Please enter valid email or username !";
     if (!password.trim()) newErrors.password = "Invalid password !";
 
     setErrors(newErrors);
@@ -56,17 +58,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="w-full max-w-md bg-white/80 backdrop-blur rounded-xl shadow-lg px-8 py-10">
-        <h1 className="text-4xl text-center font-semibold text-gray-800 mb-8">
+      <div className="w-full max-w-md bg-white backdrop-blur rounded-xl shadow-lg px-8 py-10">
+        <h1 className="text-4xl text-center font-regular text-[#084072] mb-8">
           Login
         </h1>
 
-        {/* ใช้ ReactIcon */}
-        <div className="flex justify-center mb-4">
-          <ReactIcon width={120} height={120} color="red" />
-        </div>
-
-        <p className="text-sm text-center text-gray-500 mb-6">
+        <p className="text-sm text-center text-[#9D9D9D] font-regular mb-6">
           Enter your email and password to log in
         </p>
 
@@ -74,13 +71,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           {/* Email / Username */}
           <div className="space-y-2">
             <div className="relative">
-              <input
+              <input 
                 id="identifier"
                 type="text"
                 placeholder="Email or Username"
                 className={`
-                  w-full rounded-lg px-4 py-3 pr-10 text-sm text-gray-900
-                  outline-none transition bg-gray-50/60
+                  w-full rounded-lg px-4 py-3 pr-10 text-sm text-gray-900 font-light
+                  outline-none transition bg-white
                   ${
                     hasIdentifierError
                       ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
@@ -116,8 +113,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className={`
-                  w-full rounded-lg px-4 py-3 pr-12 text-sm text-gray-900
-                  outline-none transition bg-gray-50/60
+                  w-full rounded-lg px-4 py-3 pr-12 text-sm text-gray-900 font-light
+                  outline-none transition bg-white
                   ${
                     hasPasswordError
                       ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
@@ -139,9 +136,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
-                  <IoIosEye className="h-5 w-5" />
+                  <EyeIcon className="h-6 w-6" />
                 ) : (
-                  <IoIosEyeOff className="h-5 w-5" />
+                  <EyeOffIcon className="h-6 w-6" />
                 )}
               </button>
             </div>
@@ -155,7 +152,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-xs font-medium text-gray-500 hover:text-blue-600 hover:underline"
+              className="text-xs font-regular text-[#545454] hover:text-blue-600 hover:underline"
               onClick={() => setShowForgot(true)}
             >
               Forgot Password ?

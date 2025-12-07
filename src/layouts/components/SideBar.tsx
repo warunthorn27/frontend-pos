@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import type { TabItem } from "../DashboardLayout";
 import logoUrl from "../../assets/svg/logo.svg";
-import CompanyIcon from "../../assets/icons/company";
-import ProductIcon from "../../assets/icons/product";
-import UserIcon from "../../assets/icons/user";
-import { FaChevronRight } from "react-icons/fa";
-
+// ใช้ syntax ใหม่ที่ถูกต้องสำหรับ Vite 7
+import CompanyIcon from "../../assets/svg/company.svg?react";
+import UserIcon from "../../assets/svg/user.svg?react";
+import ProductIcon from "../../assets/svg/product.svg?react";
+import DropdownArrowIcon from "../../assets/svg/dropdown-arrow.svg?react";
 
 interface SideBarProps {
   tabs: TabItem[];
@@ -48,7 +48,7 @@ const SideBar: React.FC<SideBarProps> = ({
   return (
     <aside
       className="
-        w-[230px] h-[1080px] 
+        w-[240px] h-[1080px] 
         bg-[#EFF7FF] border-slate-200
         px-3
       "
@@ -57,7 +57,7 @@ const SideBar: React.FC<SideBarProps> = ({
         <img src={logoUrl} alt="Logo" width="107" height="61" />
       </div>
 
-      <nav className="space-y-2 text-sm">
+      <nav className="space-y-1 text-sm">
         {visibleTabs.map((tab) => {
           const hasChildren = !!tab.children;
           const isOpen = openDropdown === tab.id;
@@ -70,9 +70,9 @@ const SideBar: React.FC<SideBarProps> = ({
                 key={tab.id}
                 onClick={() => !isDisabled && handleTabChange(tab.id)}
                 disabled={isDisabled}
-                className={`w-full text-left px-4 py-2 rounded-md font-medium flex items-center gap-2 ${
+                className={`w-full text-left px-4 py-2 rounded-md font-regular flex items-center gap-2 ${
                   isActive
-                    ? "bg-[#E5F3FF] text-[#0088FF] font-medium"
+                    ? "bg-[#E5F3FF] text-[#0088FF]"
                     : isDisabled
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-black hover:text-[#0088FF]"
@@ -94,11 +94,11 @@ const SideBar: React.FC<SideBarProps> = ({
                 disabled={tab.disabled}
                 className={`
                   w-full flex items-center justify-between
-                  px-4 py-2 rounded-md font-medium
+                  px-4 py-2 rounded-md font-regular
                   transition
                   ${
                     isOpen
-                      ? "bg-[#E5F3FF] text-[#0088FF] font-medium"
+                      ? "bg-[#E5F3FF] text-[#0088FF]"
                       : tab.disabled
                       ? "text-gray-400 cursor-not-allowed"
                       : "text-black hover:text-[#0088FF]"
@@ -110,7 +110,7 @@ const SideBar: React.FC<SideBarProps> = ({
                   {tab.label}
                 </span>
 
-                <FaChevronRight
+                <DropdownArrowIcon
                   className={`transition-transform ${
                     isOpen ? "rotate-90" : ""
                   }`}
@@ -119,7 +119,7 @@ const SideBar: React.FC<SideBarProps> = ({
 
               {/* Dropdown items */}
               {isOpen && (
-                <div className="py-1">
+                <div>
                   {tab.children!.map((child) => {
                     const active = activeTab === child.id;
                     const isChildDisabled = child.disabled;
@@ -131,14 +131,14 @@ const SideBar: React.FC<SideBarProps> = ({
                         }
                         disabled={isChildDisabled}
                         className={`
-                          w-full text-left px-4 py-2 rounded-md text-sm
-                          transition
+                          w-full text-left p-12 py-2 rounded-md text-sm
+                          transition font-regular
                           ${
                             active
-                              ? "text-[#0088FF] font-medium"
+                              ? "text-[#0088FF]"
                               : isChildDisabled
                               ? "text-gray-400 cursor-not-allowed"
-                              : "text-[#2DA9FF] hover:text-[#0088FF]"
+                              : "text-[#76C5FF] hover:text-[#0088FF]"
                           }
                         `}
                       >

@@ -66,20 +66,18 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
     <div className="w-full">
       {/* ให้หัวข้อกับ card อยู่ใน container เดียวกัน เหมือนดีไซน์ */}
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-semibold text-[#0053A4] mb-6">
+        <h2 className="text-2xl font-regular text-[#0053A4] mb-[9px]">
           {isCreate ? "Create Company" : "Edit Company"}
         </h2>
 
-        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-16 py-12">
+        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-36 py-12">
           <form onSubmit={handleSubmit} className="w-full">
-            <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-10 gap-x-10 text-sm text-gray-800">
+            <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-10 gap-x-10 text-base text-gray-800">
               {/* General */}
-              <div className="font-semibold flex items-start pt-1">
-                General :
-              </div>
+              <div className="font-regular flex items-start">General :</div>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Company Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -89,7 +87,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Tax ID <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -99,7 +97,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -110,7 +108,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Company Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -122,12 +120,10 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
               </div>
 
               {/* Address */}
-              <div className="font-semibold flex items-start pt-1">
-                Address :
-              </div>
+              <div className="font-regular flex items-start">Address :</div>
               <div className="space-y-5">
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Company Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -138,7 +134,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block mb-1 text-xs font-medium">
+                    <label className="block mb-1 text-xs font-regular">
                       Country <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -151,7 +147,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-1 text-xs font-medium">
+                    <label className="block mb-1 text-xs font-regular">
                       Province <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -164,7 +160,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-1 text-xs font-medium">
+                    <label className="block mb-1 text-xs font-regular">
                       District <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -179,7 +175,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block mb-1 text-xs font-medium">
+                    <label className="block mb-1 text-xs font-regular">
                       Sub-district <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -192,7 +188,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-1 text-xs font-medium">
+                    <label className="block mb-1 text-xs font-regular">
                       Zipcode <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -205,12 +201,12 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
               </div>
 
               {/* Contact Person */}
-              <div className="font-semibold flex items-start pt-1">
+              <div className="font-regular flex items-start">
                 Contact Person :
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -220,7 +216,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -230,7 +226,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block mb-1 text-xs font-medium">
+                  <label className="block mb-1 text-xs font-regular">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -242,30 +238,29 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* ปุ่มด้านล่าง */}
-            <div className="mt-12 flex justify-center gap-4">
-              {!isCreate && (
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="px-7 py-2 rounded-md bg-[#FF383C] hover:bg-red-600 text-xs font-medium text-white"
-                >
-                  Cancel
-                </button>
-              )}
-              <button
-                type="submit"
-                className={`px-7 py-2 rounded-md text-xs font-normal text-white ${
-                  isCreate
-                    ? "bg-[#BFBFBF] hover:bg-[#34C759]" // แบบในดีไซน์: ปุ่ม Save สีเทา
-                    : "bg-[#34C759] hover:bg-[#2eb650]"
-                }`}
-              >
-                Save
-              </button>
-            </div>
           </form>
+        </div>
+        {/* ปุ่มด้านล่าง */}
+        <div className="mt-12 flex justify-center gap-4">
+          {!isCreate && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-7 py-2 rounded-md bg-[#FF383C] hover:bg-red-600 text-xs font-regular text-white"
+            >
+              Cancel
+            </button>
+          )}
+          <button
+            type="submit"
+            className={`px-7 py-2 rounded-md text-xs font-normal text-white ${
+              isCreate
+                ? "bg-[#BFBFBF] hover:bg-[#34C759]" // แบบในดีไซน์: ปุ่ม Save สีเทา
+                : "bg-[#34C759] hover:bg-[#2eb650]"
+            }`}
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>

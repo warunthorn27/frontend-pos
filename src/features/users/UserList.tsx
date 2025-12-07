@@ -23,9 +23,9 @@ const UserList: React.FC<Props> = ({
 
   return (
     <div className="w-full bg-gray">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-[9px]">
         <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-semibold text-[#0053A4]">
+          <h2 className="text-2xl font-regular text-[#0053A4]">
             User &amp; Permission
           </h2>
           <span className="px-2 py-1 rounded-md bg-[#FF8D28] text-[12px] text-white font-semibold">

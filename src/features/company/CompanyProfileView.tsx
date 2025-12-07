@@ -16,13 +16,13 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
       {/* ห่อหัวข้อ + card ด้วย container เดียวกัน เพื่อให้ขอบซ้ายตรงกัน */}
       <div className="max-w-7xl mx-auto">
         {/* หัวข้อ + ปุ่ม Edit อยู่นอกกรอบขาว */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-[#0053A4]">
+        <div className="flex items-center justify-between mb-[9px]">
+          <h1 className="text-2xl font-regular text-[#0053A4]">
             Company Profile
           </h1>
           <button
             onClick={onEdit}
-            className="px-4 py-2 rounded-md bg-[#FFCC00] text-sm font-normal text-white hover:bg-[#f8c704] flex items-center gap-2"
+            className="px-5 py-[10px] rounded-md bg-[#FFCC00] text-s font-regular text-white hover:bg-[#E6B903] flex items-center gap-[5px]"
           >
             <img src={edit} alt="" className="w-[20px]" />
             Edit
@@ -30,10 +30,10 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
         </div>
 
         {/* กรอบขาวหลัก แบบรูปที่ 3 */}
-        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-16 py-12">
-          <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-8 gap-x-10 text-sm text-gray-800">
+        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-36 py-12">
+          <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-7 gap-x-10 text-base text-black">
             {/* General */}
-            <div className="font-semibold flex items-start pt-1">General :</div>
+            <div className="font-regular flex items-start">General :</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="text-xs mb-1">
@@ -70,7 +70,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
             </div>
 
             {/* Address */}
-            <div className="font-semibold flex items-start pt-1">Address :</div>
+            <div className="font-regular flex items-start">Address :</div>
             <div className="space-y-4">
               <div>
                 <div className="text-xs mb-1">
@@ -129,7 +129,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
             </div>
 
             {/* Contact Person */}
-            <div className="font-semibold flex items-start pt-1">
+            <div className="font-regular flex items-start">
               Contact Person :
             </div>
             <div className="space-y-4">
