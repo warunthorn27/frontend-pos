@@ -20,6 +20,8 @@ export interface UserFormInput {
     add: boolean;
     edit: boolean;
     delete: boolean;
+    print: boolean;
+    export: boolean;
   };
 }
 

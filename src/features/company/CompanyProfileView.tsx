@@ -1,6 +1,6 @@
 import React from "react";
 import type { CompanyFormValues } from "./CompanyForm";
-import edit from "../../assets/svg/edit.svg";
+import EditIcon from "../../assets/svg/edit.svg?react";
 
 interface CompanyProfileViewProps {
   data: CompanyFormValues;
@@ -17,14 +17,14 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
       <div className="max-w-7xl mx-auto">
         {/* หัวข้อ + ปุ่ม Edit อยู่นอกกรอบขาว */}
         <div className="flex items-center justify-between mb-[9px]">
-          <h1 className="text-2xl font-regular text-[#0053A4]">
+          <h1 className="text-2xl font-regular text-[#06284B]">
             Company Profile
           </h1>
           <button
             onClick={onEdit}
-            className="px-5 py-[10px] rounded-md bg-[#FFCC00] text-s font-regular text-white hover:bg-[#E6B903] flex items-center gap-[5px]"
+            className="px-3 py-2 rounded-md bg-[#FFCC00] text-sm font-regular text-white hover:bg-[#E6B903] flex items-center gap-[5px]"
           >
-            <img src={edit} alt="" className="w-[20px]" />
+            <EditIcon className="w-[20px] text-white" />
             Edit
           </button>
         </div>

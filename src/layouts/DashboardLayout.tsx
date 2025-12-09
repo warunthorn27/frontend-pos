@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AppLayout from "./AppLayout";
 import CompanyProfilePage from "../features/company/CompanyProfilePage";
 import UserManagementPage from "../features/users/UserManagemenPaget";
-import FinishedGoodsPage from "../features/products/ProductMaster";
+import FinishedGoodsPage from "../features/products/ProductMasterPage";
 import StoneDiamondPage from "../features/products/StoneDiamondPage";
 import SemiMountPage from "../features/products/SemiMountPage";
 import OthersPage from "../features/products/OthersPage";

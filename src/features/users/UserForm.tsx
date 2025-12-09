@@ -20,6 +20,8 @@ const emptyValues: UserFormInput = {
     add: false,
     edit: false,
     delete: false,
+    print: false,
+    export: false,
   },
 };
 
@@ -46,6 +48,8 @@ const UserForm: React.FC<UserFormProps> = ({
           add: false,
           edit: false,
           delete: false,
+          print: false,
+          export: false,
         },
       };
     }
@@ -79,6 +83,8 @@ const UserForm: React.FC<UserFormProps> = ({
               add: checked,
               edit: checked,
               delete: checked,
+              print: checked,
+              export: checked,
             },
           };
         }
@@ -118,16 +124,16 @@ const UserForm: React.FC<UserFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="w-full">
-        <div className="max-w-7xl mx-auto rounded-lg bg-[#F7F7F7] shadow-md px-16 py-12">
+        <div className="max-w-7xl mx-auto rounded-lg bg-[#FAFAFA] shadow-md px-14 py-5">
           {/* Tabs */}
-          <div className="flex border-b border-gray-400 mb-8 text-sm">
+          <div className="flex border-b border-gray-300 mb-8 text-lg">
             <button
               type="button"
               onClick={() => setActiveTab("user")}
               className={`px-6 py-2 -mb-px border-b-2 ${
                 activeTab === "user"
-                  ? "border-blue-500 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-gray-800"
+                  ? "border-[#004E92] text-[#024C8A] font-regular"
+                  : "border-transparent text-black hover:text-[#024C8A]"
               }`}
             >
               User
@@ -137,8 +143,8 @@ const UserForm: React.FC<UserFormProps> = ({
               onClick={() => setActiveTab("permission")}
               className={`px-6 py-2 -mb-px border-b-2 ${
                 activeTab === "permission"
-                  ? "border-blue-500 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-gray-800"
+                  ? "border-[#004E92] text-[#024C8A] font-regular"
+                  : "border-transparent text-black hover:text-[#024C8A]"
               }`}
             >
               Permission
@@ -147,12 +153,12 @@ const UserForm: React.FC<UserFormProps> = ({
 
           {/* Tab content */}
           {activeTab === "user" && (
-            <div className="max-w-md mx-auto space-y-4 text-sm text-gray-800">
-              <h2 className="text-2xl font-medium text-center pt-3 pb-4 text-gray-900">
+            <div className="max-w-md mx-auto space-y-4 text-gray-800">
+              <h2 className="text-3xl font-normal text-center pt-6 pb-4 text-gray-900">
                 User
               </h2>
               <div>
-                <label className="block mb-1 text-xs font-medium">
+                <label className="block mb-1 text-xs font-regular">
                   Username <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -163,7 +169,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 text-xs font-medium">
+                <label className="block mb-1 text-xs font-regular">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="flex justify-center gap-2">
@@ -176,7 +182,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   <button
                     type="button"
                     onClick={generatePassword}
-                    className="px-4 py-2 rounded-md bg-[#0088FF] text-xs font-normal hover:bg-blue-500 text-white"
+                    className="px-7 py-2 rounded-md bg-[#0088FF] text-xs font-regular hover:bg-[#0574D6] text-white"
                   >
                     Generate
                   </button>
@@ -184,7 +190,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 text-xs font-medium">
+                <label className="block mb-1 text-xs font-regular">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -196,7 +202,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 text-xs font-medium">Phone</label>
+                <label className="block mb-1 text-xs font-regular">Phone</label>
                 <input
                   className="w-full h-9 rounded-md border border-[#CFCFCF] bg-white px-3 text-xs outline-none"
                   value={values.phone}
@@ -205,7 +211,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               <div>
-                <label className="block mb-1 text-xs font-medium">
+                <label className="block mb-1 text-xs font-regular">
                   Status <span className="text-red-500">*</span>
                 </label>
 
@@ -226,7 +232,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   </label>
 
                   {/* ข้อความเปลี่ยนตามสถานะ */}
-                  <span className="text-xs font-medium text-gray-800">
+                  <span className="text-xs font-regular text-gray-800">
                     {values.status === "active" ? "Active" : "Inactive"}
                   </span>
                 </div>
@@ -243,7 +249,7 @@ const UserForm: React.FC<UserFormProps> = ({
                 <label
                   htmlFor="sendPasswordEmail"
                   className="text-xs
-             font-medium cursor-pointer"
+             font-regular cursor-pointer"
                 >
                   Send password to email
                 </label>
@@ -252,23 +258,27 @@ const UserForm: React.FC<UserFormProps> = ({
           )}
 
           {activeTab === "permission" && (
-            <div className="text-sm text-gray-800">
-              <h2 className="text-2xl mb-4 font-semibold">Permission</h2>
+            <div className=" text-gray-800">
+              <h2 className="text-3xl mb-[30px] mt-[60px] font-meduim text-center">
+                Permission
+              </h2>
 
               <div className="overflow-x-auto">
-                <table className="min-w-[1100px] text-xs border border-gray-200">
+                <table className="min-w-[1100px] text-sm border border-gray-200">
                   <thead className="bg-gray-200">
                     <tr>
-                      <th className="px-4 py-2 text-left font-medium">Menu</th>
-                      <th className="px-4 py-2 font-medium">All</th>
-                      <th className="px-4 py-2 font-medium">View</th>
-                      <th className="px-4 py-2 font-medium">Add</th>
-                      <th className="px-4 py-2 font-medium">Edit</th>
-                      <th className="px-4 py-2 font-medium">Delete</th>
+                      <th className="px-4 py-2 text-left font-normal">Menu</th>
+                      <th className="px-4 py-2 font-normal">All</th>
+                      <th className="px-4 py-2 font-normal">View</th>
+                      <th className="px-4 py-2 font-normal">Add</th>
+                      <th className="px-4 py-2 font-normal">Edit</th>
+                      <th className="px-4 py-2 font-normal">Delete</th>
+                      <th className="px-4 py-2 font-normal">Print</th>
+                      <th className="px-4 py-2 font-normal">Export</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b-7">
+                    <tr className="border-b">
                       <td className="px-4 py-2">Inventory</td>
                       <td className="px-4 py-2 text-center">
                         <input
@@ -310,29 +320,44 @@ const UserForm: React.FC<UserFormProps> = ({
                           onChange={handlePermissionChange("delete")}
                         />
                       </td>
+                      <td className="px-4 py-2 text-center">
+                        <input
+                          className="cursor-pointer"
+                          type="checkbox"
+                          checked={values.permissionInventory.print}
+                          onChange={handlePermissionChange("print")}
+                        />
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <input
+                          className="cursor-pointer"
+                          type="checkbox"
+                          checked={values.permissionInventory.export}
+                          onChange={handlePermissionChange("export")}
+                        />
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           )}
-
-          {/* Buttons ด้านล่าง (ใช้ร่วมกันทั้งสองแท็บ) */}
-          <div className="mt-12 flex justify-center gap-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-7 py-2 rounded-md bg-[#FF383C] text-xs font-normal hover:bg-red-500 text-white"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-7 py-2 rounded-md bg-[#34C759] text-xs font-normal hover:bg-[#2eb650] text-white"
-            >
-              Confirm
-            </button>
-          </div>
+        </div>
+        {/* Buttons ด้านล่าง (ใช้ร่วมกันทั้งสองแท็บ) */}
+        <div className="mt-12 flex justify-center gap-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-7 py-2 rounded-md bg-[#FF383C] text-xs font-normal hover:bg-[#E71010] text-white"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-7 py-2 rounded-md bg-[#34C759] text-xs font-normal hover:bg-[#24913F] text-white"
+          >
+            Confirm
+          </button>
         </div>
       </div>
     </form>

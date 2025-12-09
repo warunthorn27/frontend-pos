@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FinishedGoodsPage from "./ProductMaster";
+import FinishedGoodsPage from "./ProductMasterPage";
 
 type ProductTab = "list" | "finished" | "stone" | "semiMount" | "others";
 
