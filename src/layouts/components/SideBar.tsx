@@ -6,6 +6,7 @@ import CompanyIcon from "../../assets/svg/company.svg?react";
 import UserIcon from "../../assets/svg/user.svg?react";
 import ProductIcon from "../../assets/svg/product.svg?react";
 import DropdownArrowIcon from "../../assets/svg/dropdown-arrow.svg?react";
+import CustomerIcon from "../../assets/svg/customer-report.svg?react";
 
 interface SideBarProps {
   tabs: TabItem[];
@@ -80,6 +81,7 @@ const SideBar: React.FC<SideBarProps> = ({
               >
                 {tab.id === "company" && <CompanyIcon />}
                 {tab.id === "user" && <UserIcon />}
+                {tab.id === "customer" && <CustomerIcon />}
                 {tab.label}
               </button>
             );

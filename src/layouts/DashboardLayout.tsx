@@ -7,6 +7,7 @@ import StoneDiamondPage from "../features/products/StoneDiamondPage";
 import SemiMountPage from "../features/products/SemiMountPage";
 import OthersPage from "../features/products/OthersPage";
 import ProductListPage from "../features/products/ProductListPage";
+import CustomerListPage from "../../src/features/customers/CustomerListPage";
 import type { AuthUser } from "../types/auth";
 
 export interface TabItem {
@@ -36,6 +37,7 @@ const baseTabs: TabItem[] = [
       { id: "product:list", label: "Product List" },
     ],
   },
+  { id: "customer", label: "Customer" },
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
@@ -67,7 +69,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       ? "company"
       : currentUser.role === "Admin"
       ? "company"
-      : "product:finished"
+      : "customer"
   );
 
   const title = mustCreateCompany
@@ -76,6 +78,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     ? "Company Profile"
     : activeTab === "user"
     ? "User Management"
+    : activeTab === "customer"
+    ? "Customer"
     : "Product";
 
   const handleTabChange = (nextId: string) => {
@@ -116,6 +120,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {activeTab === "product:stone" && <StoneDiamondPage />}
       {activeTab === "product:semi" && <SemiMountPage />}
       {activeTab === "product:others" && <OthersPage />}
+
+      {activeTab === "customer" && (
+        <CustomerListPage />
+      )}
     </AppLayout>
   );
 };

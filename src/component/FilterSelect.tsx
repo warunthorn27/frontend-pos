@@ -1,5 +1,4 @@
-import React from "react";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg?react";
+import DropdownArrow2 from "../assets/icons/dropdown-arrow2.svg?react";
 
 type FilterSelectProps = {
   label?: string;
@@ -43,7 +42,7 @@ export default function FilterSelect({
         </select>
 
         {/* ไอคอนลูกศร (filter arrow) */}
-        <ChevronDownIcon
+        <DropdownArrow2
           className="
             pointer-events-none
             absolute
