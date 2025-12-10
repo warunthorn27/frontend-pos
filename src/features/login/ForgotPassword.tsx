@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import check from "../../assets/svg/check.svg";
 import emailIcon from "../../assets/svg/email.svg";
+import { forgotPasswordApi } from "../../services/auth";
+import type { ApiMessageResponse } from "../../services/auth";
 
 interface ForgotPasswordProps {
   onBack: () => void;
@@ -9,6 +11,35 @@ interface ForgotPasswordProps {
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [apiResult, setApiResult] = useState<ApiMessageResponse | null>(null);
+
+  const handleRequest = async () => {
+    setErrorMessage(null);
+
+    if (!email.trim()) {
+      setErrorMessage("Please enter your email.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await forgotPasswordApi(email.trim());
+      console.log("Forgot Password Success", result);
+      setApiResult(result);
+      setSent(true);
+    } catch (err: unknown) {
+      console.log("Forgot Password Error", err);
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
@@ -19,24 +50,33 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <img src={emailIcon} alt="" className="w-[86px]" />
             </div>
 
-            <h2 className="text-2xl text-gray-800 font-semibold py-6">
+            <h2 className="text-2xl text-gray-800 font-regular py-6">
               Enter your email
             </h2>
             <p className="text-gray-500 text-sm mb-8">
               Enter your email to request a password reset from the admin.
             </p>
+
             <input
               type="email"
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               className="w-10/12 rounded-lg border border-gray-200 px-4 py-3 pr-12 text-gray-900 placeholder-gray-400 text-sm focus:outline-none ring-0 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
             />
+
+            {errorMessage && (
+              <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
+            )}
+
             <button
-              onClick={() => setSent(true)}
-              className="bg-[#0088FF] hover:bg-[#037be4] text-white px-7 py-2 rounded-md mb-2 mt-6"
+              onClick={handleRequest}
+              disabled={isSubmitting}
+              className="bg-[#0088FF] hover:bg-[#037be4] text-white px-7 py-2 rounded-md mb-2 mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Request
+              {isSubmitting ? "Sending..." : "Request"}
             </button>
             <div>
               <button
@@ -53,9 +93,14 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <img src={check} alt="" className="w-24" />
             </div>
 
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-700 mb-2">
               Your request has been successfully sent to the admin
             </p>
+
+            {/* message after sent email */}
+            {apiResult?.message && (
+              <p className="text-xs text-gray-500 mb-4">{apiResult.message}</p>
+            )}
 
             <button
               onClick={onBack}

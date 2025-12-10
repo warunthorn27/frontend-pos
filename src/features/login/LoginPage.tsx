@@ -71,7 +71,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           {/* Email / Username */}
           <div className="space-y-2">
             <div className="relative">
-              <input 
+              <input
                 id="identifier"
                 type="text"
                 placeholder="Email or Username"
@@ -136,9 +136,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
-                  <EyeIcon className="h-6 w-6" />
+                  <EyeIcon className="h-5 w-6 text-gray-500" />
                 ) : (
-                  <EyeOffIcon className="h-6 w-6" />
+                  <EyeOffIcon className="h-5 w-6 text-gray-500" />
                 )}
               </button>
             </div>

@@ -41,11 +41,37 @@ export async function loginApi(
   };
 }
 
+/** ใช้เป็นโครง response ที่มี message / success / error */
+export interface ApiMessageResponse {
+  success?: boolean;
+  message: string;
+  error?: string;
+}
+
+/** helper แปลง text เป็น ApiMessageResponse แบบ type-safe */
+function parseApiMessageResponse(
+  text: string,
+  defaultError: string
+): ApiMessageResponse {
+  try {
+    const parsed = JSON.parse(text) as Partial<ApiMessageResponse>;
+    const message = parsed.message ?? parsed.error ?? (text || defaultError);
+
+    return {
+      success: parsed.success,
+      message,
+      error: parsed.error,
+    };
+  } catch {
+    return { message: text || defaultError };
+  }
+}
+
 export async function changeFirstPasswordApi(
   token: string,
   userId: string,
   newPassword: string
-) {
+): Promise<ApiMessageResponse> {
   const res = await fetch(
     `${API_BASE_URL}/changefirstpassword-user/${userId}`,
     {
@@ -59,15 +85,29 @@ export async function changeFirstPasswordApi(
   );
 
   const text = await res.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = { message: text || "Server error" };
-  }
+  const data = parseApiMessageResponse(text, "Server error");
 
   if (!res.ok) {
     throw new Error(data.message || "Change password failed");
+  }
+
+  return data;
+}
+
+export async function forgotPasswordApi(
+  email: string
+): Promise<ApiMessageResponse> {
+  const res = await fetch(`${API_BASE_URL}/request-reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const text = await res.text();
+  const data = parseApiMessageResponse(text, "Request failed");
+
+  if (!res.ok) {
+    throw new Error(data.message || data.error || "Request failed");
   }
 
   return data;

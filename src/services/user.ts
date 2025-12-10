@@ -1,4 +1,3 @@
-// src/services/user.ts
 import type { UserFormInput, UserListItem, UserModel } from "../types/user";
 
 const API_BASE =
@@ -12,7 +11,7 @@ function getAuthHeaders() {
   };
 }
 
-/* ====== GET LIST ====== */
+// GET LIST OF USERS
 export async function fetchUsers(): Promise<UserListItem[]> {
   const comp_id = localStorage.getItem("comp_id");
 
@@ -41,7 +40,7 @@ export async function fetchUsers(): Promise<UserListItem[]> {
   return mapped;
 }
 
-/* ====== CREATE ====== */
+// CREATE USER
 export async function createUser(payload: UserFormInput): Promise<void> {
   const comp_id = localStorage.getItem("comp_id");
 
@@ -67,7 +66,7 @@ export async function createUser(payload: UserFormInput): Promise<void> {
   }
 }
 
-/* ====== UPDATE BY ADMIN ====== */
+// UPDATE USER BY ADMIN
 export async function updateUserByAdmin(
   id: string,
   payload: UserFormInput
@@ -92,7 +91,7 @@ export async function updateUserByAdmin(
   }
 }
 
-/* ====== RESET PASSWORD ====== */
+// RESET PASSWORD
 export async function resetPasswordByAdmin(
   id: string,
   newPassword: string
@@ -109,7 +108,7 @@ export async function resetPasswordByAdmin(
   }
 }
 
-/* ====== CHANGE STATUS ====== */
+// CHANGE STATUS
 export async function changeUserStatus(
   id: string,
   isActive: boolean

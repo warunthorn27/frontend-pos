@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { changeFirstPasswordApi } from "../../services/auth";
-import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import EyeIcon from "../../assets/svg/eye.svg?react";
+import EyeOffIcon from "../../assets/svg/eye-slash.svg?react";
 import key from "../../assets/svg/key.svg";
 import check from "../../assets/svg/check.svg";
 
@@ -81,7 +82,7 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
           <img src={key} alt="" className="w-20" />
         </div>
 
-        <h2 className="text-2xl text-gray-800 font-semibold py-6">
+        <h2 className="text-2xl text-gray-800 font-regular py-6">
           Change password
         </h2>
 
@@ -101,9 +102,9 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
               onClick={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? (
-                <IoIosEye className="h-5 w-5" />
+                <EyeIcon className="h-5 w-6 text-gray-500" />
               ) : (
-                <IoIosEyeOff className="h-5 w-5" />
+                <EyeOffIcon className="h-5 w-6 text-gray-500" />
               )}
             </button>
           </div>
