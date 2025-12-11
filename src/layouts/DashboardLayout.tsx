@@ -69,7 +69,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       ? "company"
       : currentUser.role === "Admin"
       ? "company"
-      : "customer"
+      : "product:finished"
   );
 
   const title = mustCreateCompany
@@ -121,9 +121,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {activeTab === "product:semi" && <SemiMountPage />}
       {activeTab === "product:others" && <OthersPage />}
 
-      {activeTab === "customer" && (
-        <CustomerListPage />
-      )}
+      {activeTab === "customer" && <CustomerListPage />}
     </AppLayout>
   );
 };

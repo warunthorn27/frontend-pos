@@ -35,7 +35,9 @@ const App: React.FC = () => {
         token={token}
         userId={user.id}
         onSuccess={() => {
-          handleLogout();
+          setAuth((prev) =>
+            prev ? { ...prev, forceChangePassword: false } : null
+          );
         }}
       />
     );

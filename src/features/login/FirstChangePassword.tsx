@@ -67,7 +67,7 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
             onClick={onSuccess}
             className="bg-[#0088FF] hover:bg-[#037be4] text-white px-8 py-2 rounded-md mb-2 mt-8"
           >
-            Login
+            Done
           </button>
         </div>
       </div>
