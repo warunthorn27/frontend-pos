@@ -1,17 +1,14 @@
 import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import UserList from "./UserList";
 import UserForm from "./UserForm";
 import useUsers from "../../hooks/useUsers";
 import type { UserFormInput, UserListItem } from "../../types/user";
-import type { AuthUser } from "../../types/auth";
+import type { DashboardOutletContext } from "../../layouts/DashboardLayout";
 
-interface UserManagementPageProps {
-  currentUser: AuthUser;
-}
+const UserManagementPage: React.FC = () => {
+  const { currentUser } = useOutletContext<DashboardOutletContext>();
 
-const UserManagementPage: React.FC<UserManagementPageProps> = ({
-  currentUser,
-}) => {
   const [mode, setMode] = useState<"list" | "create" | "edit">("list");
   const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
 
@@ -41,9 +38,18 @@ const UserManagementPage: React.FC<UserManagementPageProps> = ({
     try {
       if (mode === "edit" && editingUser) {
         await updateUser(editingUser.id, values);
+
+        if (values.password) {
+          await resetPassword(
+            editingUser.id,
+            values.password,
+            values.sendPasswordEmail
+          );
+        }
       } else {
         await createUser(values);
       }
+
       setMode("list");
       setEditingUser(null);
     } catch (error) {
@@ -74,8 +80,13 @@ const UserManagementPage: React.FC<UserManagementPageProps> = ({
             const newPass = prompt("Enter new password");
             if (!newPass) return;
 
+            const canSend = !!u.email?.trim();
+            const sendEmail = canSend
+              ? window.confirm("Send new password to user's email?")
+              : false;
+
             try {
-              await resetPassword(u.id, newPass);
+              await resetPassword(u.id, newPass, sendEmail);
               alert("Password reset!");
             } catch (error) {
               alert(

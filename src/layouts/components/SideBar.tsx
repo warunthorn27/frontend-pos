@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import type { TabItem } from "../DashboardLayout";
 import logoUrl from "../../assets/svg/logo.svg";
-// ใช้ syntax ใหม่ที่ถูกต้องสำหรับ Vite 7
 import CompanyIcon from "../../assets/svg/company.svg?react";
 import UserIcon from "../../assets/svg/user.svg?react";
 import ProductIcon from "../../assets/svg/product.svg?react";
@@ -21,27 +20,36 @@ const SideBar: React.FC<SideBarProps> = ({
   onTabChange,
   currentUserRole,
 }) => {
-  const initialDropdown = activeTab.startsWith("product:") ? "product" : null;
+  const isAdmin = currentUserRole === "Admin";
+
+  const initialDropdown = useMemo<string | null>(() => {
+    if (currentUserRole !== "User") return null;
+    return activeTab.startsWith("product:") ? "product" : null;
+  }, [currentUserRole, activeTab]);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(
     initialDropdown
   );
 
-  const isAdmin = currentUserRole === "Admin";
-
-  const visibleTabs = tabs.filter((tab) => {
-    if (!isAdmin && tab.id === "user") return false; // user ปกติไม่เห็นเมนูจัดการ user
-    if (!isAdmin && tab.id === "company") return false; // company ให้เฉพาะ admin
-    return true;
-  });
+  const visibleTabs = useMemo(() => {
+    return tabs.filter((tab) => {
+      if (!isAdmin && tab.id === "user") return false;
+      if (!isAdmin && tab.id === "company") return false;
+      return true;
+    });
+  }, [tabs, isAdmin]);
 
   const toggleDropdown = (id: string) => {
-    setOpenDropdown(openDropdown === id ? null : id);
+    if (!visibleTabs.some((tab) => tab.id === id)) return;
+    setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
   const handleTabChange = (id: string) => {
     onTabChange(id);
-    if (!id.startsWith("product:")) {
+
+    if (currentUserRole === "User" && id.startsWith("product:")) {
+      setOpenDropdown("product");
+    } else if (!id.startsWith("product:")) {
       setOpenDropdown(null);
     }
   };
@@ -49,7 +57,7 @@ const SideBar: React.FC<SideBarProps> = ({
   return (
     <aside
       className="
-        w-[240px] h-[1080px] 
+        w-[240px] h-[1080px]
         bg-[#EFF7FF] border-slate-200
         px-3
       "
@@ -60,15 +68,17 @@ const SideBar: React.FC<SideBarProps> = ({
 
       <nav className="space-y-1 text-sm">
         {visibleTabs.map((tab) => {
-          const hasChildren = !!tab.children;
+          const hasChildren = !!tab.children?.length;
           const isOpen = openDropdown === tab.id;
 
           if (!hasChildren) {
             const isActive = activeTab === tab.id;
             const isDisabled = tab.disabled;
+
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => !isDisabled && handleTabChange(tab.id)}
                 disabled={isDisabled}
                 className={`w-full text-left px-4 py-2 rounded-md font-regular flex items-center gap-2 ${
@@ -92,6 +102,7 @@ const SideBar: React.FC<SideBarProps> = ({
             <div key={tab.id} className="space-y-1">
               {/* Parent Button */}
               <button
+                type="button"
                 onClick={() => !tab.disabled && toggleDropdown(tab.id)}
                 disabled={tab.disabled}
                 className={`
@@ -125,15 +136,17 @@ const SideBar: React.FC<SideBarProps> = ({
                   {tab.children!.map((child) => {
                     const active = activeTab === child.id;
                     const isChildDisabled = child.disabled;
+
                     return (
                       <button
                         key={child.id}
+                        type="button"
                         onClick={() =>
                           !isChildDisabled && handleTabChange(child.id)
                         }
                         disabled={isChildDisabled}
                         className={`
-                          w-full text-left p-12 py-2 rounded-md text-sm
+                          w-full text-left pl-12 py-2 rounded-md text-sm
                           transition font-regular
                           ${
                             active

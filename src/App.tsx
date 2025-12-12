@@ -1,69 +1,167 @@
-import React, { useState } from "react";
+import { Routes, Route, Navigate, useOutletContext } from "react-router-dom";
+
 import LoginPage from "./features/login/LoginPage";
-import DashboardLayout from "./layouts/DashboardLayout";
 import FirstChangePasswordPage from "./features/login/FirstChangePassword";
-import type { LoginResponse } from "./types/auth";
 
-type AuthState = (LoginResponse & {}) | null;
+import DashboardLayout from "./layouts/DashboardLayout";
+import type { DashboardOutletContext } from "./layouts/DashboardLayout";
+import type { AuthUser } from "./types/auth";
 
-const App: React.FC = () => {
-  const [auth, setAuth] = useState<AuthState>(null);
+import RequireAuth from "./routes/RequireAuth";
+import RequireRole from "./routes/RequireRole";
 
-  const handleLogout = () => {
-    setAuth(null);
-  };
+import CompanyProfilePage from "./features/company/CompanyProfilePage";
+import UserManagementPage from "./features/users/UserManagemenPaget";
 
-  // 1. ยังไม่ login
-  if (!auth) {
-    return (
-      <LoginPage
-        onLoginSuccess={(data) => {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("comp_id", data.user.companyId || "");
-          setAuth(data);
-        }}
-      />
-    );
-  }
+import ProductMasterPage from "./features/products/ProductMasterPage";
+import StoneDiamondPage from "./features/products/StoneDiamondPage";
+import SemiMountPage from "./features/products/SemiMountPage";
+import OthersPage from "./features/products/OthersPage";
+import ProductListPage from "./features/products/ProductListPage";
+import CustomerListPage from "./features/customers/CustomerListPage";
 
-  const { user, token, forceChangePassword } = auth;
+import {
+  getToken,
+  getCurrentUser,
+  getForceChangePassword,
+  saveAuth,
+  clearAuthStorage,
+  setCompanyId,
+  setForceChangePassword,
+} from "./utils/authStorage";
 
-  // 2. ถ้าเป็น User frist time login ต้องเปลี่ยน password
-  if (user.role === "User" && forceChangePassword) {
-    return (
-      <FirstChangePasswordPage
-        token={token}
-        userId={user.id}
-        onSuccess={() => {
-          setAuth((prev) =>
-            prev ? { ...prev, forceChangePassword: false } : null
-          );
-        }}
-      />
-    );
-  }
+// wrapper อ่านจาก Outlet context แล้วส่งให้ CompanyProfilePage
+function CompanyPageRoute() {
+  const { mustCreateCompany, onCompanyCreated } =
+    useOutletContext<DashboardOutletContext>();
 
-  // 3. login แล้ว ผ่านทุกเงื่อนไข >> เข้า dashboard
   return (
-    <DashboardLayout
-      onLogout={handleLogout}
-      currentUser={user}
-      onCompanyCreated={(companyId) => {
-        // อัปเดต state auth ให้ user มี companyId แล้ว
-        setAuth((prev) =>
-          prev
-            ? {
-                ...prev,
-                user: { ...prev.user, companyId },
-              }
-            : prev
-        );
-
-        // Also update localStorage
-        localStorage.setItem("comp_id", companyId);
-      }}
+    <CompanyProfilePage
+      isFirstTime={mustCreateCompany}
+      onCompanyCreated={(companyId: string) => onCompanyCreated?.(companyId)}
     />
   );
-};
+}
 
-export default App;
+// index redirect: Admin -> company-profile, User -> product/product-master
+function DashboardIndexRedirect({ user }: { user: AuthUser }) {
+  if (user.role === "Admin") {
+    return <Navigate to="company-profile" replace />;
+  }
+  return <Navigate to="product/product-master" replace />;
+}
+
+export default function App() {
+  const token = getToken();
+  const currentUser = getCurrentUser();
+  const forceChangePassword = getForceChangePassword();
+
+  return (
+    <Routes>
+      {/* Public */}
+      <Route
+        path="/login"
+        element={
+          <LoginPage
+            onLoginSuccess={(data) => {
+              saveAuth(data);
+              window.location.href = "/dashboard";
+            }}
+          />
+        }
+      />
+
+      {/* First change password */}
+      <Route
+        path="/first-change-password"
+        element={
+          token && currentUser ? (
+            <FirstChangePasswordPage
+              token={token}
+              userId={currentUser.id}
+              onSuccess={() => {
+                setForceChangePassword(false);
+                window.location.href = "/dashboard";
+              }}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      {/* Protected Area */}
+      <Route element={<RequireAuth token={token} />}>
+        <Route
+          path="/dashboard"
+          element={
+            currentUser ? (
+              currentUser.role === "User" && forceChangePassword ? (
+                <Navigate to="/first-change-password" replace />
+              ) : (
+                <DashboardLayout
+                  onLogout={() => {
+                    clearAuthStorage();
+                    window.location.href = "/login";
+                  }}
+                  currentUser={currentUser}
+                  onCompanyCreated={(companyId) => {
+                    setCompanyId(companyId);
+                  }}
+                />
+              )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        >
+          {/* default แยกตาม role */}
+          <Route
+            index
+            element={
+              currentUser ? (
+                <DashboardIndexRedirect user={currentUser} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+
+          {/* Admin only */}
+          <Route
+            path="company-profile"
+            element={
+              <RequireRole user={currentUser}>
+                <CompanyPageRoute />
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="user-management"
+            element={
+              <RequireRole user={currentUser}>
+                <UserManagementPage />
+              </RequireRole>
+            }
+          />
+
+          {/* PRODUCT ROUTES */}
+          <Route path="product">
+            <Route path="product-master" element={<ProductMasterPage />} />
+            <Route path="stone-diamond" element={<StoneDiamondPage />} />
+            <Route path="semi-mount" element={<SemiMountPage />} />
+            <Route path="others" element={<OthersPage />} />
+            <Route path="product-list" element={<ProductListPage />} />
+          </Route>
+
+          {/* Customer */}
+          <Route path="customer" element={<CustomerListPage />} />
+        </Route>
+      </Route>
+
+      {/* fallback */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+}
