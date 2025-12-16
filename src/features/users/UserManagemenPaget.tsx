@@ -1,8 +1,10 @@
+// src/features/users/UserManagementPage.tsx
 import React, { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import UserList from "./UserList";
 import UserForm from "./UserForm";
-import useUsers from "../../hooks/useUsers";
+import ResetPasswordDialog from "./ResetPasswordDialog";
+import useUsers from "./hooks/useUsers";
 import type { UserFormInput, UserListItem } from "../../types/user";
 import type { DashboardOutletContext } from "../../layouts/DashboardLayout";
 
@@ -11,6 +13,10 @@ const UserManagementPage: React.FC = () => {
 
   const [mode, setMode] = useState<"list" | "create" | "edit">("list");
   const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
+
+  // reset password dialog
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetUser, setResetUser] = useState<UserListItem | null>(null);
 
   const { users, createUser, updateUser, resetPassword, toggleStatus } =
     useUsers();
@@ -26,6 +32,7 @@ const UserManagementPage: React.FC = () => {
       alert("Maximum 3 active users allowed for admin account");
       return;
     }
+
     setMode("create");
   };
 
@@ -37,11 +44,14 @@ const UserManagementPage: React.FC = () => {
   const handleConfirm = async (values: UserFormInput) => {
     try {
       if (mode === "edit" && editingUser) {
-        await updateUser(editingUser.id, values);
+        const userId = editingUser.id; // ✅ ล็อกไว้ก่อนกัน state เพี้ยน
 
+        await updateUser(userId, values);
+
+        // ถ้ามีการ generate password ใหม่ในหน้า edit ถึงจะ reset
         if (values.password) {
           await resetPassword(
-            editingUser.id,
+            userId,
             values.password,
             values.sendPasswordEmail
           );
@@ -55,6 +65,20 @@ const UserManagementPage: React.FC = () => {
     } catch (error) {
       alert(error instanceof Error ? error.message : "An error occurred");
     }
+  };
+
+  const openResetDialog = (u: UserListItem) => {
+    if (currentUser.role !== "Admin") {
+      alert("Only admin users can reset passwords");
+      return;
+    }
+    setResetUser(u);
+    setResetOpen(true);
+  };
+
+  const closeResetDialog = () => {
+    setResetOpen(false);
+    setResetUser(null);
   };
 
   return (
@@ -71,29 +95,7 @@ const UserManagementPage: React.FC = () => {
             setEditingUser(u);
             setMode("edit");
           }}
-          onResetPassword={async (u) => {
-            if (currentUser.role !== "Admin") {
-              alert("Only admin users can reset passwords");
-              return;
-            }
-
-            const newPass = prompt("Enter new password");
-            if (!newPass) return;
-
-            const canSend = !!u.email?.trim();
-            const sendEmail = canSend
-              ? window.confirm("Send new password to user's email?")
-              : false;
-
-            try {
-              await resetPassword(u.id, newPass, sendEmail);
-              alert("Password reset!");
-            } catch (error) {
-              alert(
-                error instanceof Error ? error.message : "An error occurred"
-              );
-            }
-          }}
+          onResetPassword={openResetDialog}
           onToggleStatus={async (u, isActive) => {
             if (currentUser.role !== "Admin") {
               alert("Only admin users can change user status");
@@ -122,6 +124,14 @@ const UserManagementPage: React.FC = () => {
           }
         />
       )}
+
+      {/* Reset Password Dialog (2 steps: confirm -> success + send email) */}
+      <ResetPasswordDialog
+        open={resetOpen}
+        user={resetUser}
+        onClose={closeResetDialog}
+        onResetPassword={resetPassword}
+      />
     </>
   );
 };

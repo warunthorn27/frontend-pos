@@ -1,10 +1,15 @@
-import type { UserFormInput, UserListItem, UserModel } from "../types/user";
+import type {
+  CreateUserRequest,
+  UpdateUserRequest,
+  UserFormInput,
+  UserListItem,
+  UserModel,
+} from "../types/user";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api";
 
 function getToken() {
-  // ✅ ต้องให้ชื่อ key ตรงกับตอน login ที่ set ไว้
   return localStorage.getItem("token") || "";
 }
 
@@ -13,7 +18,7 @@ function getAuthHeaders() {
   return {
     "Content-Type": "application/json",
     ...(token ? { authtoken: token } : {}),
-    // ✅ optional: รองรับมาตรฐาน Bearer ด้วย (ถ้า backend รองรับ)
+    // optional: รองรับมาตรฐาน Bearer ด้วย (ถ้า backend รองรับ)
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
@@ -22,8 +27,8 @@ function mapUserToListItem(u: UserModel): UserListItem {
   return {
     id: u._id,
     name: u.user_name,
-    email: u.user_email,
-    phone: u.user_phone,
+    email: u.user_email ?? "",
+    phone: u.user_phone ?? "",
     status: u.status ? "active" : "inactive",
   };
 }
@@ -63,26 +68,25 @@ export async function fetchUsers(): Promise<UserListItem[]> {
 export async function createUser(
   payload: UserFormInput
 ): Promise<UserListItem> {
-  // ✅ กันกรณีไม่มี token
-  if (!getToken()) {
-    throw new Error("No token. Please login again.");
-  }
+  if (!getToken()) throw new Error("No token. Please login again.");
 
-  // ✅ ถ้าติ๊กส่งอีเมล แต่ไม่มี email -> ไม่ให้ยิง createandsend
   if (payload.sendPasswordEmail && !payload.email?.trim()) {
     throw new Error("Email is required to send password.");
   }
 
-  const body = {
+  const body: CreateUserRequest = {
     user_name: payload.username,
     user_password: payload.password,
-    user_email: payload.email,
-    user_phone: payload.phone,
     user_role: "User",
-    // ✅ ไม่ส่ง comp_id แล้ว ให้ backend ผูกจาก adminUser.comp_id
     permissions: [],
     status: payload.status === "active",
   };
+
+  const email = payload.email.trim();
+  const phone = payload.phone.trim();
+
+  if (email) body.user_email = email;
+  if (phone) body.user_phone = phone;
 
   const endpoint = payload.sendPasswordEmail
     ? `${API_BASE}/createandsend-user`
@@ -95,9 +99,7 @@ export async function createUser(
   });
 
   const json = await readJson(res);
-
   if (!json.success) {
-    // ✅ ช่วย debug 403/401 ได้ดีขึ้น
     if (res.status === 401)
       throw new Error("Unauthorized. Please login again.");
     if (res.status === 403)
@@ -113,14 +115,18 @@ export async function updateUserByAdmin(
   id: string,
   payload: UserFormInput
 ): Promise<UserListItem> {
-  const body = {
+  const body: UpdateUserRequest = {
     user_name: payload.username,
-    user_email: payload.email,
-    user_phone: payload.phone,
     user_role: "User",
     permissions: [],
     status: payload.status === "active",
   };
+
+  const email = payload.email.trim();
+  const phone = payload.phone.trim();
+
+  if (email) body.user_email = email;
+  if (phone) body.user_phone = phone;
 
   const res = await fetch(`${API_BASE}/update-user-byadmin/${id}`, {
     method: "PUT",
@@ -129,7 +135,6 @@ export async function updateUserByAdmin(
   });
 
   const json = await readJson(res);
-
   if (!json.success) {
     if (res.status === 401)
       throw new Error("Unauthorized. Please login again.");

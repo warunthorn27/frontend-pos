@@ -33,7 +33,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             currentUserRole={currentUserRole}
           />
         </div>
-        <div className="w-56 flex-shrink-0"></div>{" "}
+
+        <div className="w-[240px] flex-shrink-0" />
         {/* Spacer for sidebar width */}
         <main className="flex-1 p-10">{children}</main>
       </div>
