@@ -5,7 +5,7 @@ interface TopBarProps {
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onLogout }) => (
-  <header className="h-14 bg-[#004E92] flex items-center justify-between px-8 text-sm">
+  <header className="w-full h-[60px] bg-[#004E92] flex items-center justify-between px-8 text-sm">
     <span className="font-medium text-gray-900"></span>
     <button
       onClick={onLogout}

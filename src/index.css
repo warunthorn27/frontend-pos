@@ -7,3 +7,12 @@
 :root{
     font-family: 'Prompt', sans-serif;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}

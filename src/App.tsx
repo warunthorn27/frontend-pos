@@ -13,7 +13,7 @@ import RequireRole from "./routes/RequireRole";
 import CompanyProfilePage from "./features/company/CompanyProfilePage";
 import UserManagementPage from "./features/users/UserManagemenPaget";
 
-import ProductMasterPage from "./features/products/ProductMasterPage";
+import ProductMasterPage from "./features/products/product-master/ProductMasterPage";
 import StoneDiamondPage from "./features/products/StoneDiamondPage";
 import SemiMountPage from "./features/products/SemiMountPage";
 import OthersPage from "./features/products/OthersPage";
@@ -57,6 +57,7 @@ export default function App() {
   const forceChangePassword = getForceChangePassword();
 
   return (
+    
     <Routes>
       {/* Public */}
       <Route
