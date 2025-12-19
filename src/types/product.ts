@@ -27,7 +27,7 @@ export type AdditionalStoneForm = {
   qty: string; // มีเฉพาะ additional
 };
 
-export type ProductMasterForm = {
+export type BaseProductForm = {
   productName: string;
   itemType: string;
   productSize: string;
@@ -45,4 +45,29 @@ export type ProductMasterForm = {
 
   primaryStone: PrimaryStoneForm;
   additionalStones: AdditionalStoneForm[];
+};
+
+export type StoneDiamondForm = {
+  weightUnit: WeightUnit;
+  nwt: string;
+  productName: string;
+  code: string;
+  description: string;
+  stoneName: string;
+  shape: string;
+  size: string;
+  weight: string;
+  color: string;
+  cutting: string;
+  quality: string;
+  clarity: string;
+};
+
+export type OthersForm = {
+  productName: string;
+  code: string;
+  productSize: string;
+  weight: string;
+  weightUnit: WeightUnit;
+  description: string;
 };

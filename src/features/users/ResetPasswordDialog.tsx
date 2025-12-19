@@ -176,7 +176,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
 
       setEmailSent(true);
 
-      // ✅ ปิด dialog ทันที แล้วโชว์ toast แบบในรูป
+      // ปิด dialog ทันที แล้วโชว์ toast แบบในรูป
       closeAll();
       showToast("Success", "Send Password to Email successfully.");
     } catch (e) {
