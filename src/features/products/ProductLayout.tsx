@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import FinishedGoodsPage from "./product-master/ProductMasterPage";
 
-type ProductTab = "list" | "finished" | "stone" | "semiMount" | "others";
+type ProductTab =
+  | "list"
+  | "finished"
+  | "stone"
+  | "semiMount"
+  | "accessories"
+  | "others";
 
 const ProductLayout: React.FC = () => {
   const [activeProductTab, setActiveProductTab] = useState<ProductTab>("list");
@@ -52,6 +58,17 @@ const ProductLayout: React.FC = () => {
               onClick={() => setActiveProductTab("semiMount")}
               className={`text-left px-4 py-2 text-xs ${
                 activeProductTab === "semiMount"
+                  ? "bg-white shadow-sm font-semibold"
+                  : "hover:bg-gray-200"
+              }`}
+            >
+              Semi-Mount
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveProductTab("accessories")}
+              className={`text-left px-4 py-2 text-xs ${
+                activeProductTab === "accessories"
                   ? "bg-white shadow-sm font-semibold"
                   : "hover:bg-gray-200"
               }`}

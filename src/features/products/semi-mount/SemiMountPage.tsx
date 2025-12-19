@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 import type {
-  BaseProductForm ,
+  BaseProductForm,
   SelectOption,
   PrimaryStoneForm,
   AdditionalStoneForm,
@@ -51,7 +51,7 @@ const emptyAdditionalStone = (): AdditionalStoneForm => ({
   qty: "",
 });
 
-const emptyForm: BaseProductForm  = {
+const emptyForm: BaseProductForm = {
   productName: "",
   itemType: "",
   productSize: "",
@@ -71,8 +71,8 @@ const emptyForm: BaseProductForm  = {
   additionalStones: [],
 };
 
-const ProductMasterPage: React.FC = () => {
-  const [form, setForm] = useState<BaseProductForm >(emptyForm);
+const SemiMountPage: React.FC = () => {
+  const [form, setForm] = useState<BaseProductForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
 
   const canSave = useMemo(() => {
@@ -114,7 +114,7 @@ const ProductMasterPage: React.FC = () => {
   };
 
   // helpers สำหรับ patch state
-  const patchForm = (patch: Partial<BaseProductForm >) => {
+  const patchForm = (patch: Partial<BaseProductForm>) => {
     setForm((s) => ({ ...s, ...patch }));
   };
 
@@ -128,9 +128,7 @@ const ProductMasterPage: React.FC = () => {
   return (
     <div className="w-full">
       <div className="w-[1630px] h-[848px] mx-auto">
-        <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
-          Semi
-        </h2>
+        <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">Semi</h2>
 
         {/* MAIN CANVAS */}
         <div className="w-[1630px] h-[848px] mx-auto rounded-md bg-[#FAFAFA] shadow-md px-10 py-8 overflow-y-auto hide-scrollbar">
@@ -221,4 +219,4 @@ const ProductMasterPage: React.FC = () => {
   );
 };
 
-export default ProductMasterPage;
+export default SemiMountPage;

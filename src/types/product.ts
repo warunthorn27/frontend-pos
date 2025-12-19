@@ -71,3 +71,13 @@ export type OthersForm = {
   weightUnit: WeightUnit;
   description: string;
 };
+
+export type AccessoriesForm = {
+  productName: string;
+  code: string;
+  productSize: string;
+  weight: string;
+  metal: string;
+  weightUnit: WeightUnit;
+  description: string;
+};

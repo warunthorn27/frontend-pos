@@ -42,7 +42,7 @@ function shallowEqual(a: Record<string, string>, b: Record<string, string>) {
   return true;
 }
 
-export default function ProductImagesCard({
+export default function SemimountImagesCard({
   max = 9,
   value,
   onChange,

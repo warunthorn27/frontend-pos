@@ -42,7 +42,7 @@ function shallowEqual(a: Record<string, string>, b: Record<string, string>) {
   return true;
 }
 
-export default function ProductImagesCard({
+export default function StoneDiamonImagesCard({
   max = 9,
   value,
   onChange,

@@ -52,7 +52,7 @@ const emptyStoneDiamondForm = (): StoneDiamondForm => ({
   nwt: "",
 });
 
-const ProductMasterPage: React.FC = () => {
+const StoneDiamondPage: React.FC = () => {
   const [form, setForm] = useState<StoneDiamondForm>(emptyStoneDiamondForm);
   const [images, setImages] = useState<File[]>([]);
 
@@ -135,4 +135,4 @@ const ProductMasterPage: React.FC = () => {
   );
 };
 
-export default ProductMasterPage;
+export default StoneDiamondPage;
