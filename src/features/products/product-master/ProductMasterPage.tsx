@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 import type {
-  ProductMasterForm,
+  BaseProductForm ,
   SelectOption,
   PrimaryStoneForm,
   AdditionalStoneForm,
@@ -51,7 +51,7 @@ const emptyAdditionalStone = (): AdditionalStoneForm => ({
   qty: "",
 });
 
-const emptyForm: ProductMasterForm = {
+const emptyForm: BaseProductForm = {
   productName: "",
   itemType: "",
   productSize: "",
@@ -72,7 +72,7 @@ const emptyForm: ProductMasterForm = {
 };
 
 const ProductMasterPage: React.FC = () => {
-  const [form, setForm] = useState<ProductMasterForm>(emptyForm);
+  const [form, setForm] = useState<BaseProductForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
 
   const canSave = useMemo(() => {
@@ -114,7 +114,7 @@ const ProductMasterPage: React.FC = () => {
   };
 
   // helpers สำหรับ patch state
-  const patchForm = (patch: Partial<ProductMasterForm>) => {
+  const patchForm = (patch: Partial<BaseProductForm>) => {
     setForm((s) => ({ ...s, ...patch }));
   };
 

@@ -1,13 +1,13 @@
 import React from "react";
 import type {
-  ProductMasterForm,
+  BaseProductForm,
   SelectOption,
 } from "../../../../types/product";
 import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
 
 type Props = {
-  value: ProductMasterForm;
-  onChange: (patch: Partial<ProductMasterForm>) => void;
+  value: BaseProductForm;
+  onChange: (patch: Partial<BaseProductForm>) => void;
   itemTypeOptions: SelectOption[];
   metalOptions: SelectOption[];
 };

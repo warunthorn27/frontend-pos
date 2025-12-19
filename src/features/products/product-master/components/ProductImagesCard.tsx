@@ -151,17 +151,7 @@ export default function ProductImagesCard({
       const arr = Array.from(files).filter(isAllowedImage);
       if (arr.length === 0) return;
 
-      // dedupe + keep order: current first, then new files (no duplicates by fileKey)
-      const map = new Map<string, File>();
-      for (const f of current) map.set(fileKey(f), f);
-
-      for (const f of arr) {
-        const k = fileKey(f);
-        if (!map.has(k)) map.set(k, f);
-        if (map.size >= max) break; // clamp early
-      }
-
-      const next = Array.from(map.values()).slice(0, max);
+      const next = [...current, ...arr].slice(0, max);
 
       // sync ref immediately to avoid race when user drops/selects again quickly
       valueRef.current = next;
