@@ -12,6 +12,9 @@ interface SideBarProps {
   activeTab: string;
   onTabChange: (id: string) => void;
   currentUserRole: "Admin" | "User";
+
+  lockApp: boolean; // true = disable ทั้งระบบยกเว้น allowedTabId
+  allowedTabId: string; // เช่น "company"
 }
 
 const SideBar: React.FC<SideBarProps> = ({
@@ -19,6 +22,8 @@ const SideBar: React.FC<SideBarProps> = ({
   activeTab,
   onTabChange,
   currentUserRole,
+  lockApp,
+  allowedTabId,
 }) => {
   const isAdmin = currentUserRole === "Admin";
 
@@ -39,12 +44,17 @@ const SideBar: React.FC<SideBarProps> = ({
     });
   }, [tabs, isAdmin]);
 
+  const isTabLocked = (tabId: string) => lockApp && tabId !== allowedTabId;
+
   const toggleDropdown = (id: string) => {
     if (!visibleTabs.some((tab) => tab.id === id)) return;
+    if (isTabLocked(id)) return;
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
   const handleTabChange = (id: string) => {
+    if (isTabLocked(id)) return;
+
     onTabChange(id);
 
     if (currentUserRole === "User" && id.startsWith("product:")) {
@@ -55,13 +65,7 @@ const SideBar: React.FC<SideBarProps> = ({
   };
 
   return (
-    <aside
-      className="
-        w-[240px] h-[1080px]
-        bg-[#EFF7FF] border-slate-200
-        px-3
-      "
-    >
+    <aside className="w-[240px] h-svh flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
       <div className="flex justify-center py-8">
         <img src={logoUrl} alt="Logo" width="107" height="61" />
       </div>
@@ -71,21 +75,23 @@ const SideBar: React.FC<SideBarProps> = ({
           const hasChildren = !!tab.children?.length;
           const isOpen = openDropdown === tab.id;
 
+          const locked = isTabLocked(tab.id);
+          const tabDisabled = !!tab.disabled || locked;
+
           if (!hasChildren) {
             const isActive = activeTab === tab.id;
-            const isDisabled = tab.disabled;
 
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => !isDisabled && handleTabChange(tab.id)}
-                disabled={isDisabled}
+                onClick={() => !tabDisabled && handleTabChange(tab.id)}
+                disabled={tabDisabled}
                 className={`w-full text-left px-4 py-2 rounded-md font-regular flex items-center gap-2 ${
                   isActive
                     ? "bg-[#E5F3FF] text-[#0088FF]"
-                    : isDisabled
-                    ? "text-gray-400 cursor-not-allowed"
+                    : tabDisabled
+                    ? "text-gray-400 cursor-not-allowed opacity-60"
                     : "text-black hover:text-[#0088FF]"
                 }`}
               >
@@ -100,20 +106,18 @@ const SideBar: React.FC<SideBarProps> = ({
           // dropdown
           return (
             <div key={tab.id} className="space-y-1">
-              {/* Parent Button */}
               <button
                 type="button"
-                onClick={() => !tab.disabled && toggleDropdown(tab.id)}
-                disabled={tab.disabled}
+                onClick={() => !tabDisabled && toggleDropdown(tab.id)}
+                disabled={tabDisabled}
                 className={`
                   w-full flex items-center justify-between
-                  px-4 py-2 rounded-md font-regular
-                  transition
+                  px-4 py-2 rounded-md font-regular transition
                   ${
                     isOpen
                       ? "bg-[#E5F3FF] text-[#0088FF]"
-                      : tab.disabled
-                      ? "text-gray-400 cursor-not-allowed"
+                      : tabDisabled
+                      ? "text-gray-400 cursor-not-allowed opacity-60"
                       : "text-black hover:text-[#0088FF]"
                   }
                 `}
@@ -130,29 +134,27 @@ const SideBar: React.FC<SideBarProps> = ({
                 />
               </button>
 
-              {/* Dropdown items */}
               {isOpen && (
                 <div>
                   {tab.children!.map((child) => {
                     const active = activeTab === child.id;
-                    const isChildDisabled = child.disabled;
+                    const childDisabled = !!child.disabled || locked;
 
                     return (
                       <button
                         key={child.id}
                         type="button"
                         onClick={() =>
-                          !isChildDisabled && handleTabChange(child.id)
+                          !childDisabled && handleTabChange(child.id)
                         }
-                        disabled={isChildDisabled}
+                        disabled={childDisabled}
                         className={`
-                          w-full text-left pl-12 py-2 rounded-md text-sm
-                          transition font-regular
+                          w-full text-left pl-12 py-2 rounded-md text-sm transition font-regular
                           ${
                             active
                               ? "text-[#0088FF]"
-                              : isChildDisabled
-                              ? "text-gray-400 cursor-not-allowed"
+                              : childDisabled
+                              ? "text-gray-400 cursor-not-allowed opacity-60"
                               : "text-[#76C5FF] hover:text-[#0088FF]"
                           }
                         `}

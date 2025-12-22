@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ForgotPassword from "./ForgotPassword";
 import { loginApi } from "../../services/auth";
+import { saveAuth } from "../../utils/authStorage";
 import type { LoginResponse } from "../../types/auth";
 import warningIcon from "../../assets/svg/warning-icon.svg";
 import EyeIcon from "../../assets/svg/eye.svg?react";
@@ -10,47 +12,58 @@ interface LoginPageProps {
   onLoginSuccess: (data: LoginResponse) => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showForgot, setShowForgot] = useState(false);
-  const [errors, setErrors] = useState<{
-    identifier?: string;
-    password?: string;
-  }>({});
+type FieldErrors = {
+  identifier?: string;
+  password?: string;
+};
 
-  const hasIdentifierError = !!errors.identifier;
-  const hasPasswordError = !!errors.password;
+const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
+
+  const [identifier, setIdentifier] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showForgot, setShowForgot] = useState<boolean>(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [serverError, setServerError] = useState<string>("");
+
+  const hasIdentifierError = Boolean(errors.identifier);
+  const hasPasswordError = Boolean(errors.password);
 
   if (showForgot) {
     return <ForgotPassword onBack={() => setShowForgot(false)} />;
   }
 
-  const validateForm = () => {
-    const newErrors: { identifier?: string; password?: string } = {};
-
-    if (!identifier.trim())
-      newErrors.identifier = "Please enter valid email or username !";
-    if (!password.trim()) newErrors.password = "Invalid password !";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateForm = (): boolean => {
+    const next: FieldErrors = {};
+    if (!identifier.trim()) next.identifier = "Please enter email or username.";
+    if (!password.trim()) next.password = "Please enter your password.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setServerError("");
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     try {
       const data = await loginApi(identifier, password);
+
+      // เก็บ token/user ลง storage ก่อน
+      saveAuth(data);
+
+      // ให้ App sync state (currentUser/token) และปลดล็อกหน้าอื่นๆ
       onLoginSuccess(data);
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed. Please check your credentials and try again.");
+
+      // ไป dashboard
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Login failed";
+      setServerError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -66,6 +79,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         <p className="text-sm text-center text-[#9D9D9D] font-regular mb-6">
           Enter your email and password to log in
         </p>
+
+        {serverError && (
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {serverError}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
           {/* Email / Username */}
@@ -85,7 +104,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   }
                 `}
                 value={identifier}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setIdentifier(e.target.value);
                   if (errors.identifier) {
                     setErrors((prev) => ({ ...prev, identifier: undefined }));
@@ -122,7 +141,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   }
                 `}
                 value={password}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setPassword(e.target.value);
                   if (errors.password) {
                     setErrors((prev) => ({ ...prev, password: undefined }));
@@ -134,6 +153,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 type="button"
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
                   <EyeIcon className="h-5 w-6 text-gray-500" />

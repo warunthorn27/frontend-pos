@@ -31,6 +31,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             activeTab={activeTab}
             onTabChange={onTabChange}
             currentUserRole={currentUserRole}
+            lockApp={false}
+            allowedTabId={""}
           />
         </div>
 
