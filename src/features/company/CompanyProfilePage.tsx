@@ -38,7 +38,7 @@ const CompanyProfilePage: React.FC<Props> = ({
   currentUser,
   onCompanyCreated,
 }) => {
-  // 🔑 source of truth สำหรับ companyId
+  // source of truth สำหรับ companyId
   const authCompanyId = useMemo(
     () => getUserCompanyId(currentUser),
     [currentUser]
@@ -59,7 +59,7 @@ const CompanyProfilePage: React.FC<Props> = ({
 
     const init = async () => {
       try {
-        // 🔒 ไม่มี companyId → บังคับ create
+        // ไม่มี companyId → บังคับ create
         if (!authCompanyId) {
           if (alive) {
             setCompanyId(null);
@@ -70,14 +70,14 @@ const CompanyProfilePage: React.FC<Props> = ({
           return;
         }
 
-        // ✅ มี companyId → โหลด company
+        // มี companyId → โหลด company
         setLoading(true);
         const api = await getCompanyById(authCompanyId);
 
         if (!alive) return;
 
         setCompany(mapCompanyApiToForm(api));
-        setCompanyId(api._id); // ⭐ สำคัญที่สุด
+        setCompanyId(api._id);
         setMode("view");
       } catch (e) {
         if (alive) {
@@ -124,7 +124,7 @@ const CompanyProfilePage: React.FC<Props> = ({
         const created = await createCompany(payload);
 
         setCompany(mapCompanyApiToForm(created));
-        setCompanyId(created._id); // ⭐ set state
+        setCompanyId(created._id);
         setMode("view");
 
         // persist company id (กัน refresh)
