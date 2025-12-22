@@ -231,9 +231,8 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
         <h2 className="text-2xl font-regular text-[#0053A4] mb-[9px]">
           {isCreate ? "Create Company" : "Edit Company"}
         </h2>
-
-        <div className="rounded-lg bg-[#FAFAFA] shadow-md px-36 py-12">
-          <form onSubmit={handleSubmit} className="w-full">
+        <form id="company-form" onSubmit={handleSubmit} className="w-full">
+          <div className="rounded-lg bg-[#FAFAFA] shadow-md px-36 py-12">
             {error ? (
               <div className="mb-4 text-sm text-red-600">{error}</div>
             ) : null}
@@ -427,39 +426,36 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 </div>
               </div>
             </div>
-
-            {/* submit button */}
-            <div className="mt-12 flex justify-center gap-4">
-              {!isCreate && (
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  disabled={disableCancel || Boolean(isSaving)}
-                  className="px-7 py-2 rounded-md bg-[#FF383C] hover:bg-red-600 text-xs font-regular text-white disabled:opacity-60"
-                >
-                  Cancel
-                </button>
-              )}
-
+          </div>
+          {/* ปุ่มอยู่นอกกรอบ */}
+          <div className="mt-10 flex justify-center gap-4">
+            {!isCreate && (
               <button
-                type="submit"
-                disabled={disableSave}
-                className={`px-7 py-2 rounded-md text-xs font-normal text-white disabled:cursor-not-allowed disabled:opacity-60 ${
-                  isCreate
-                    ? "bg-[#BFBFBF] hover:bg-[#34C759]"
-                    : "bg-[#34C759] hover:bg-[#2eb650]"
-                }`}
-                title={
-                  isCreate && !isValidRequired
-                    ? "Please fill all required fields"
-                    : ""
-                }
+                type="button"
+                onClick={onCancel}
+                disabled={disableCancel || Boolean(isSaving)}
+                className="px-7 py-2 rounded-md bg-[#FF383C] hover:bg-red-600 text-xs font-regular text-white disabled:opacity-60"
               >
-                {isSaving ? "Saving..." : "Save"}
+                Cancel
               </button>
-            </div>
-          </form>
-        </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={disableSave || isSaving}
+              className={`px-5 py-1 rounded-md text-lg font-normal
+                ${
+                  disableSave || isSaving
+                    ? "bg-[#BABABA] cursor-not-allowed text-[#545454]"
+                    : "bg-[#34C759] hover:bg-[#24913F] text-white"
+                }
+                `}
+              title={disableSave ? "Please fill all required fields" : ""}
+            >
+              {isSaving ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

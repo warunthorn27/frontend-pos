@@ -27,7 +27,7 @@ import {
 } from "./utils/authStorage";
 
 function CompanyPageRoute() {
-  const { mustCreateCompany, onCompanyCreated, currentUser } =
+  const { currentUser, onCompanyCreated } =
     useOutletContext<DashboardOutletContext>();
 
   if (!currentUser) {
@@ -36,9 +36,8 @@ function CompanyPageRoute() {
 
   return (
     <CompanyProfilePage
-      isFirstTime={mustCreateCompany}
       currentUser={currentUser}
-      onCompanyCreated={(companyId: string) => onCompanyCreated?.(companyId)}
+      onCompanyCreated={(id) => onCompanyCreated?.(id)}
     />
   );
 }
