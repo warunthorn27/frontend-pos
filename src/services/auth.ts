@@ -1,6 +1,33 @@
 import type { AuthUser, LoginResponse } from "../types/auth";
 
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api";
+
+type LoginApiRawResponse = {
+  success?: boolean;
+  token?: string;
+  user?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    role?: "Admin" | "User";
+    phone?: string;
+    status?: boolean;
+    permissionId?: string;
+    companyId?: string | null;
+  };
+  forceChangePassword?: boolean;
+  message?: string;
+  error?: string;
+};
+
+function parseJsonOrText(text: string): LoginApiRawResponse {
+  try {
+    return JSON.parse(text) as LoginApiRawResponse;
+  } catch {
+    return { message: text };
+  }
+}
 
 export async function loginApi(
   identifier: string,
@@ -15,25 +42,37 @@ export async function loginApi(
     }),
   });
 
-  const data = await res.json();
+  // สำคัญ: backend error เป็น text ได้
+  const text = await res.text();
+  const data = parseJsonOrText(text);
 
   if (!res.ok) {
     throw new Error(data.message || data.error || "Login failed");
   }
 
+  if (!data.token || !data.user) {
+    throw new Error("Invalid login response");
+  }
+
   const user: AuthUser = {
-    id: data.user.id,
-    name: data.user.name,
-    email: data.user.email,
-    role: data.user.role,
+    id: String(data.user.id ?? ""),
+    name: String(data.user.name ?? ""),
+    email: String(data.user.email ?? ""),
+    role: data.user.role ?? "User",
     phone: data.user.phone,
-    status: data.user.status,
-    permissionId: data.user.permissionId,
-    companyId: data.user.companyId,
+    status: Boolean(data.user.status),
+    permissionId: data.user.permissionId
+      ? String(data.user.permissionId)
+      : undefined,
+    companyId: data.user.companyId ? String(data.user.companyId) : null,
   };
 
+  if (!user.id || !user.role) {
+    throw new Error("Invalid user data from server");
+  }
+
   return {
-    success: data.success,
+    success: Boolean(data.success),
     token: data.token,
     user,
     forceChangePassword: data.forceChangePassword,

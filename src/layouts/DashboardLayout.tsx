@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "./AppLayout";
 import type { AuthUser } from "../types/auth";
+import {
+  setCompanyId as persistCompanyId,
+} from "../utils/authStorage";
 
 export interface TabItem {
   id: string;
@@ -29,6 +32,7 @@ const TAB_TO_PATH: Record<string, string> = {
   "product:finished": "/dashboard/product/product-master",
   "product:stone": "/dashboard/product/stone-diamond",
   "product:semi": "/dashboard/product/semi-mount",
+  "product:accessories": "/dashboard/product/accessories",
   "product:others": "/dashboard/product/others",
   "product:list": "/dashboard/product/product-list",
 
@@ -55,22 +59,15 @@ function getTitleFromTab(tabId: string): string {
   return "Dashboard";
 }
 
-const baseTabs: TabItem[] = [
-  { id: "company", label: "Company Profile" },
-  { id: "user", label: "User Management" },
-  {
-    id: "product",
-    label: "Product",
-    children: [
-      { id: "product:finished", label: "Product Master" },
-      { id: "product:stone", label: "Stone / Diamond" },
-      { id: "product:semi", label: "Semi-Mount" },
-      { id: "product:others", label: "Others" },
-      { id: "product:list", label: "Product List" },
-    ],
-  },
-  { id: "customer", label: "Customer" },
-];
+function getUserCompanyId(u: AuthUser): string | null {
+  const raw =
+    (u as unknown as { companyId?: string }).companyId ??
+    (u as unknown as { comp_id?: string }).comp_id ??
+    (u as unknown as { compId?: string }).compId ??
+    null;
+
+  return raw ?? null;
+}
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onLogout,
@@ -80,59 +77,73 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const hasCompany =
-    Boolean(currentUser.companyId) || Boolean(localStorage.getItem("comp_id"));
+  // ตัด getCompanyId ออกตอน init
+  const [companyIdLocal, setCompanyIdLocal] = useState<string | null>(() => {
+    return getUserCompanyId(currentUser);
+  });
 
-  const mustCreateCompany = currentUser.role === "Admin" && !hasCompany;
+  useEffect(() => {
+    setCompanyIdLocal(getUserCompanyId(currentUser));
+  }, [currentUser]);
 
-  const activeTab = useMemo(() => {
-    return getTabIdFromPath(location.pathname);
-  }, [location.pathname]);
+  const mustCreateCompany = useMemo(() => {
+    return currentUser.role === "Admin" && !companyIdLocal;
+  }, [currentUser.role, companyIdLocal]);
 
-  // admin ยังไม่มี company บังคับไปหน้า company
+  const activeTab = useMemo(
+    () => getTabIdFromPath(location.pathname),
+    [location.pathname]
+  );
+  const title = useMemo(() => getTitleFromTab(activeTab), [activeTab]);
+
+  const tabs: TabItem[] = useMemo(() => {
+    const lock = mustCreateCompany;
+
+    const productChildren = [
+      { id: "product:finished", label: "Product Master", disabled: lock },
+      { id: "product:stone", label: "Stone/Diamond", disabled: lock },
+      { id: "product:semi", label: "Semi-mount", disabled: lock },
+      { id: "product:accessories", label: "Accessories", disabled: lock },
+      { id: "product:others", label: "Others", disabled: lock },
+      { id: "product:list", label: "Product List", disabled: lock },
+    ];
+
+    return [
+      { id: "company", label: "Company Profile", disabled: false },
+      { id: "user", label: "User Management", disabled: lock },
+      {
+        id: "product",
+        label: "Product",
+        disabled: lock,
+        children: productChildren,
+      },
+      { id: "customer", label: "Customer", disabled: lock },
+    ];
+  }, [mustCreateCompany]);
+
+  // ✅ ถ้าต้อง create company → บังคับอยู่หน้า company เท่านั้น
   useEffect(() => {
     if (!mustCreateCompany) return;
-
     const companyPath = TAB_TO_PATH.company;
     if (location.pathname !== companyPath) {
       navigate(companyPath, { replace: true });
     }
   }, [mustCreateCompany, location.pathname, navigate]);
 
-  const tabs: TabItem[] = useMemo(() => {
-    // User ซ่อน company + user management
-    const roleFiltered =
-      currentUser.role === "Admin"
-        ? baseTabs
-        : baseTabs.filter((t) => t.id !== "company" && t.id !== "user");
+  const handleTabChange = (tabId: string) => {
+    // block ถ้ายังต้อง create company
+    if (mustCreateCompany && tabId !== "company") return;
 
-    // admin ยังไม่มี company disable ทุก tab ยกเว้น company
-    return roleFiltered.map((tab) => ({
-      ...tab,
-      disabled: mustCreateCompany && tab.id !== "company",
-      children: tab.children?.map((child) => ({
-        ...child,
-        disabled: mustCreateCompany && tab.id !== "company",
-      })),
-    }));
-  }, [currentUser.role, mustCreateCompany]);
-
-  const title = mustCreateCompany
-    ? "Create Company"
-    : getTitleFromTab(activeTab);
-
-  const handleTabChange = (nextId: string) => {
-    if (mustCreateCompany && nextId !== "company") return;
-    if (nextId === "product") return;
-
-    const nextPath = TAB_TO_PATH[nextId];
-    if (!nextPath) return;
-
-    navigate(nextPath);
+    const path = TAB_TO_PATH[tabId];
+    if (path) navigate(path);
   };
 
   const handleCompanyCreated = (companyId: string) => {
-    localStorage.setItem("comp_id", companyId);
+    // ✅ ปลดล็อกทันที
+    setCompanyIdLocal(companyId);
+    // ✅ persist กัน refresh หลุด
+    persistCompanyId(companyId);
+    // ✅ ส่งกลับไปให้ parent sync ต่อ (ถ้ามี)
     onCompanyCreated?.(companyId);
   };
 

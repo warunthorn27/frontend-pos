@@ -15,12 +15,17 @@ export function saveAuth(data: LoginResponse) {
     JSON.stringify(Boolean(data.forceChangePassword))
   );
 
-  if (data.user.companyId) {
-    localStorage.setItem(COMP_KEY, data.user.companyId);
+  const cid = data.user.companyId;
+
+  // ✅ สำคัญ: ถ้าไม่มี companyId ต้องลบ comp_id เดิมทิ้ง
+  if (cid) {
+    localStorage.setItem(COMP_KEY, String(cid));
+  } else {
+    localStorage.removeItem(COMP_KEY);
   }
 }
 
-export function clearAuthStorage() {
+export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(FORCE_KEY);
@@ -41,6 +46,10 @@ export function getCurrentUser(): AuthUser | null {
   }
 }
 
+export function setCurrentUser(user: AuthUser) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
 export function getForceChangePassword(): boolean {
   const raw = localStorage.getItem(FORCE_KEY);
   if (!raw) return false;
@@ -58,11 +67,11 @@ export function setForceChangePassword(next: boolean) {
 export function setCompanyId(companyId: string) {
   localStorage.setItem(COMP_KEY, companyId);
 
-  // update user object (ให้ currentUser.companyId ไม่หลุด)
+  // sync user object
   const u = getCurrentUser();
   if (u) {
-    const next = { ...u, companyId };
-    localStorage.setItem(USER_KEY, JSON.stringify(next));
+    const next: AuthUser = { ...u, companyId };
+    setCurrentUser(next);
   }
 }
 

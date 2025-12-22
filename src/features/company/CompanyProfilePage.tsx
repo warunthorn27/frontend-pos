@@ -1,68 +1,171 @@
-import React, { useState } from "react";
-import type { CompanyFormValues } from "./CompanyForm";
+import React, { useEffect, useMemo, useState } from "react";
+import CompanyForm, { type CompanyFormValues } from "./CompanyForm";
 import CompanyProfileView from "./CompanyProfileView";
-import CompanyForm from "./CompanyForm";
-
-interface CompanyProfilePageProps {
-  isFirstTime?: boolean;
-  onCompanyCreated?: (companyId: string) => void;
-}
+import type { AuthUser } from "../../types/auth";
+import {
+  createCompany,
+  getCompanyById,
+  mapCompanyApiToForm,
+  mapCompanyFormToPayload,
+  updateCompany,
+} from "../../services/company";
+import { setCompanyId as persistCompanyId } from "../../utils/authStorage";
+import { getCompanyId } from "../../utils/authStorage";
 
 type Mode = "create" | "view" | "edit";
 
-const STORAGE_KEY = "companyProfile";
+function getUserCompanyId(u?: AuthUser | null): string | null {
+  if (!u) return null;
 
-const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
-  isFirstTime = false,
+  const raw =
+    (u as unknown as { companyId?: string }).companyId ??
+    (u as unknown as { comp_id?: string }).comp_id ??
+    (u as unknown as { compId?: string }).compId ??
+    null;
+
+  // fallback: ถ้า user object ยังไม่อัปเดต ให้ใช้ค่าที่ persist ไว้
+  return raw ?? getCompanyId() ?? null;
+}
+
+type Props = {
+  isFirstTime: boolean;
+  currentUser?: AuthUser | null;
+  onCompanyCreated: (companyId: string) => void;
+};
+
+const CompanyProfilePage: React.FC<Props> = ({
+  isFirstTime,
+  currentUser,
   onCompanyCreated,
 }) => {
-  const [company, setCompany] = useState<CompanyFormValues | null>(() => {
-    if (isFirstTime) {
-      // For first time admin login, don't pre-fill from localStorage
-      return null;
-    }
+  const companyId = useMemo(() => getUserCompanyId(currentUser), [currentUser]);
+
+  const [mode, setMode] = useState<Mode>(isFirstTime ? "create" : "view");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [company, setCompany] = useState<CompanyFormValues | null>(null);
+  const [initialized, setInitialized] = useState(false);
+
+  if (!currentUser) {
+    return <div className="p-6 text-sm text-gray-500">Loading user...</div>;
+  }
+
+  // Get Company
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    let alive = true;
+
+    const init = async () => {
+      try {
+        if (isFirstTime) {
+          if (alive) {
+            setMode("create");
+            setInitialized(true);
+          }
+          return;
+        }
+
+        if (!companyId) {
+          if (alive) {
+            setMode("create");
+            setInitialized(true);
+          }
+          return;
+        }
+
+        setLoading(true);
+        const api = await getCompanyById(companyId);
+
+        if (!alive) return;
+
+        setCompany(mapCompanyApiToForm(api));
+        setMode("view");
+      } catch (e) {
+        if (alive) {
+          setError(e instanceof Error ? e.message : "Get company failed");
+        }
+      } finally {
+        if (alive) {
+          setLoading(false);
+          setInitialized(true);
+        }
+      }
+    };
+
+    init();
+
+    return () => {
+      alive = false;
+    };
+  }, [companyId, isFirstTime]);
+
+  if (!initialized) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  // Create/Update
+  const handleSubmit = async (values: CompanyFormValues) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as CompanyFormValues) : null;
-    } catch {
-      return null;
-    }
-  });
+      const payload = mapCompanyFormToPayload(values);
 
-  // ถ้ามี company อยู่แล้ว เปิดมาด้วยโหมด view เลย แต่ถ้า isFirstTime บังคับ create
-  const [mode, setMode] = useState<Mode>(() =>
-    isFirstTime || !localStorage.getItem(STORAGE_KEY) ? "create" : "view"
-  );
+      if (mode === "create") {
+        const created = await createCompany(payload);
+        const newId = created._id;
 
-  const handleSubmit = (values: CompanyFormValues) => {
-    // เก็บทั้งใน state (ให้ UI ใช้) และใน localStorage (ให้จำข้ามรอบ)
-    setCompany(values);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-    if (isFirstTime && onCompanyCreated) {
-      // TODO: ตรงนี้อนาคตค่อยเรียก API สร้าง Company จริง ๆ
-      // const newCompanyId = await createCompanyApi(values, token);
-      const newCompanyId = "TEMP_ID"; // สมมติ id ที่ backend ส่งกลับมา
-      onCompanyCreated(newCompanyId);
+        setCompany(mapCompanyApiToForm(created));
+        setMode("view");
+
+        // ปลดล็อก sidebar (DashboardLayout จะ set state)
+        onCompanyCreated(newId);
+
+        // กัน refresh หลุด
+        persistCompanyId(newId);
+      } else {
+        if (!companyId) throw new Error("Missing companyId");
+        const updated = await updateCompany(companyId, payload);
+        setCompany(mapCompanyApiToForm(updated));
+        setMode("view");
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setLoading(false);
     }
-    setMode("view");
   };
 
-  // ถ้าอยู่โหมด view และมีข้อมูล company แสดงหน้าโปรไฟล์
+  if (loading && mode === "view" && !company) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (error && mode === "view") {
+    return (
+      <div className="p-6">
+        <div className="text-red-600">{error}</div>
+      </div>
+    );
+  }
+
   if (mode === "view" && company) {
     return (
       <CompanyProfileView
         data={company}
-        onEdit={() => setMode("edit")} // แก้ไขได้อย่างเดียว ไม่มี create ใหม่แล้ว
+        onEdit={() => setMode("edit")}
+        isSaving={loading}
       />
     );
   }
 
-  // ใช้ฟอร์มเดียวกันทั้ง create / edit
   return (
     <CompanyForm
-      mode={mode as "create" | "edit"}
-      initialValues={company} // ตอน create = null, ตอน edit = ค่าเดิม
-      onCancel={() => setMode("view")}
+      mode={mode === "edit" ? "edit" : "create"}
+      initialValues={company}
+      isFirstTime={isFirstTime}
+      isSaving={loading}
+      error={error}
+      onCancel={() => (company ? setMode("view") : setMode("create"))}
       onSubmit={handleSubmit}
     />
   );

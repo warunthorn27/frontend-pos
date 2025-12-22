@@ -12,32 +12,36 @@ import RequireRole from "./routes/RequireRole";
 
 import CompanyProfilePage from "./features/company/CompanyProfilePage";
 import UserManagementPage from "./features/users/UserManagemenPaget";
-
+import StoneDiamondPage from "./features/products/stone-diamond/StoneDiamondPage";
+import SemiMountPage from "./features/products/semi-mount/SemiMountPage";
+import OthersPage from "./features/products/others/OthersPage";
 import ProductMasterPage from "./features/products/product-master/ProductMasterPage";
-import StoneDiamondPage from "./features/products/StoneDiamondPage";
-import SemiMountPage from "./features/products/SemiMountPage";
-import OthersPage from "./features/products/OthersPage";
-import ProductListPage from "./features/products/ProductListPage";
+import ProductListPage from "./features/products/product-list/ProductListPage";
 import CustomerListPage from "./features/customers/CustomerListPage";
+import AccessoriesPage from "./features/products/accessories/AccessoriesPage";
 
 import {
   getToken,
   getCurrentUser,
   getForceChangePassword,
   saveAuth,
-  clearAuthStorage,
   setCompanyId,
   setForceChangePassword,
 } from "./utils/authStorage";
 
 // wrapper อ่านจาก Outlet context แล้วส่งให้ CompanyProfilePage
 function CompanyPageRoute() {
-  const { mustCreateCompany, onCompanyCreated } =
+  const { mustCreateCompany, onCompanyCreated, currentUser } =
     useOutletContext<DashboardOutletContext>();
+
+  if (!currentUser) {
+    return <div className="p-6 text-sm text-gray-500">Loading user...</div>;
+  }
 
   return (
     <CompanyProfilePage
       isFirstTime={mustCreateCompany}
+      currentUser={currentUser}
       onCompanyCreated={(companyId: string) => onCompanyCreated?.(companyId)}
     />
   );
@@ -57,7 +61,6 @@ export default function App() {
   const forceChangePassword = getForceChangePassword();
 
   return (
-    
     <Routes>
       {/* Public */}
       <Route
@@ -92,7 +95,7 @@ export default function App() {
       />
 
       {/* Protected Area */}
-      <Route element={<RequireAuth token={token} />}>
+      <Route element={<RequireAuth />}>
         <Route
           path="/dashboard"
           element={
@@ -102,7 +105,6 @@ export default function App() {
               ) : (
                 <DashboardLayout
                   onLogout={() => {
-                    clearAuthStorage();
                     window.location.href = "/login";
                   }}
                   currentUser={currentUser}
@@ -152,6 +154,7 @@ export default function App() {
             <Route path="product-master" element={<ProductMasterPage />} />
             <Route path="stone-diamond" element={<StoneDiamondPage />} />
             <Route path="semi-mount" element={<SemiMountPage />} />
+            <Route path="Accessories" element={<AccessoriesPage />} />
             <Route path="others" element={<OthersPage />} />
             <Route path="product-list" element={<ProductListPage />} />
           </Route>

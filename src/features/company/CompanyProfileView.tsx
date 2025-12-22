@@ -5,31 +5,32 @@ import EditIcon from "../../assets/svg/edit.svg?react";
 interface CompanyProfileViewProps {
   data: CompanyFormValues;
   onEdit: () => void;
+  isSaving?: boolean;
 }
 
 const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
   data,
   onEdit,
+  isSaving,
 }) => {
   return (
     <div className="w-full">
-      {/* ห่อหัวข้อ + card ด้วย container เดียวกัน เพื่อให้ขอบซ้ายตรงกัน */}
       <div className="max-w-7xl mx-auto">
-        {/* หัวข้อ + ปุ่ม Edit อยู่นอกกรอบขาว */}
         <div className="flex items-center justify-between mb-[9px]">
           <h1 className="text-2xl font-regular text-[#06284B]">
             Company Profile
           </h1>
+
           <button
             onClick={onEdit}
-            className="px-3 py-2 rounded-md bg-[#FFCC00] text-sm font-regular text-white hover:bg-[#E6B903] flex items-center gap-[5px]"
+            disabled={Boolean(isSaving)}
+            className="px-3 py-2 rounded-md bg-[#FFCC00] text-sm font-regular text-white hover:bg-[#E6B903] flex items-center gap-[5px] disabled:opacity-60"
           >
             <EditIcon className="w-[20px] text-white" />
             Edit
           </button>
         </div>
 
-        {/* กรอบขาวหลัก แบบรูปที่ 3 */}
         <div className="rounded-lg bg-[#FAFAFA] shadow-md px-36 py-12">
           <div className="grid grid-cols-[160px,minmax(0,1fr)] gap-y-7 gap-x-10 text-base text-black">
             {/* General */}
@@ -162,7 +163,6 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
             </div>
           </div>
         </div>
-        {/* end card */}
       </div>
     </div>
   );
