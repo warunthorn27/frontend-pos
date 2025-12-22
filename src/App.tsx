@@ -1,15 +1,11 @@
 import { Routes, Route, Navigate, useOutletContext } from "react-router-dom";
-
 import LoginPage from "./features/login/LoginPage";
 import FirstChangePasswordPage from "./features/login/FirstChangePassword";
-
 import DashboardLayout from "./layouts/DashboardLayout";
 import type { DashboardOutletContext } from "./layouts/DashboardLayout";
 import type { AuthUser } from "./types/auth";
-
 import RequireAuth from "./routes/RequireAuth";
 import RequireRole from "./routes/RequireRole";
-
 import CompanyProfilePage from "./features/company/CompanyProfilePage";
 import UserManagementPage from "./features/users/UserManagemenPaget";
 import StoneDiamondPage from "./features/products/stone-diamond/StoneDiamondPage";
@@ -27,9 +23,9 @@ import {
   saveAuth,
   setCompanyId,
   setForceChangePassword,
+  clearAuth,
 } from "./utils/authStorage";
 
-// wrapper อ่านจาก Outlet context แล้วส่งให้ CompanyProfilePage
 function CompanyPageRoute() {
   const { mustCreateCompany, onCompanyCreated, currentUser } =
     useOutletContext<DashboardOutletContext>();
@@ -47,7 +43,6 @@ function CompanyPageRoute() {
   );
 }
 
-// index redirect: Admin -> company-profile, User -> product/product-master
 function DashboardIndexRedirect({ user }: { user: AuthUser }) {
   if (user.role === "Admin") {
     return <Navigate to="company-profile" replace />;
@@ -62,6 +57,9 @@ export default function App() {
 
   return (
     <Routes>
+      {/* root */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
       {/* Public */}
       <Route
         path="/login"
@@ -75,7 +73,7 @@ export default function App() {
         }
       />
 
-      {/* First change password */}
+      {/* First Change Password */}
       <Route
         path="/first-change-password"
         element={
@@ -104,10 +102,11 @@ export default function App() {
                 <Navigate to="/first-change-password" replace />
               ) : (
                 <DashboardLayout
+                  currentUser={currentUser}
                   onLogout={() => {
+                    clearAuth();
                     window.location.href = "/login";
                   }}
-                  currentUser={currentUser}
                   onCompanyCreated={(companyId) => {
                     setCompanyId(companyId);
                   }}
@@ -118,7 +117,7 @@ export default function App() {
             )
           }
         >
-          {/* default แยกตาม role */}
+          {/* default route */}
           <Route
             index
             element={
@@ -149,12 +148,12 @@ export default function App() {
             }
           />
 
-          {/* PRODUCT ROUTES */}
+          {/* Product */}
           <Route path="product">
             <Route path="product-master" element={<ProductMasterPage />} />
             <Route path="stone-diamond" element={<StoneDiamondPage />} />
             <Route path="semi-mount" element={<SemiMountPage />} />
-            <Route path="Accessories" element={<AccessoriesPage />} />
+            <Route path="accessories" element={<AccessoriesPage />} />
             <Route path="others" element={<OthersPage />} />
             <Route path="product-list" element={<ProductListPage />} />
           </Route>
@@ -165,7 +164,7 @@ export default function App() {
       </Route>
 
       {/* fallback */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
