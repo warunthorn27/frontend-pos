@@ -10,15 +10,13 @@ const RequireCompany: React.FC = () => {
     return <div className="p-6 text-sm text-gray-500">Loading user...</div>;
   }
 
-  // Guard: Admin ยังไม่มี company → บังคับมาหน้า company profile
+  // Guard อย่างเดียว
   if (currentUser.role === "Admin" && mustCreateCompany) {
     return <Navigate to="/dashboard/company-profile" replace />;
   }
 
-  // Route: Company Profile
   return (
     <CompanyProfilePage
-      isFirstTime={mustCreateCompany}
       currentUser={currentUser}
       onCompanyCreated={(companyId) => onCompanyCreated?.(companyId)}
     />
