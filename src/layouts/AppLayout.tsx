@@ -22,23 +22,26 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Topbar */}
       <TopBar onLogout={onLogout} />
-      <div className="flex">
-        <div className="absolute left-0 top-0 z-10">
-          <SideBar
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-            currentUserRole={currentUserRole}
-            lockApp={false}
-            allowedTabId={""}
-          />
-        </div>
 
-        <div className="w-[240px] flex-shrink-0" />
-        {/* Spacer for sidebar width */}
-        <main className="flex-1 p-10">{children}</main>
+      {/* Body */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <SideBar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          currentUserRole={currentUserRole}
+          lockApp={false}
+          allowedTabId=""
+        />
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-10 bg-gray-50">
+          {children}
+        </main>
       </div>
     </div>
   );

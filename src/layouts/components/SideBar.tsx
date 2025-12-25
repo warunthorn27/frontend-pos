@@ -65,7 +65,7 @@ const SideBar: React.FC<SideBarProps> = ({
   };
 
   return (
-    <aside className="w-[240px] h-svh flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
+    <aside className="w-[240px] flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
       <div className="flex justify-center py-8">
         <img src={logoUrl} alt="Logo" width="107" height="61" />
       </div>
