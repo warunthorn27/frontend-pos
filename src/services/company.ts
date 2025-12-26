@@ -1,4 +1,3 @@
-// src/services/company.ts
 import type {
   CompanyApiModel,
   CreateCompanyPayload,
@@ -6,25 +5,13 @@ import type {
   CreateCompanyResponse,
   UpdateCompanyResponse,
 } from "../types/company";
-import { getToken } from "../utils/authStorage";
-
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api";
+import { API_BASE, getAuthHeaders } from "./apiClient";
 
 type ApiErrorShape = {
   message?: string;
   error?: string;
   success?: boolean;
 };
-
-function getAuthHeaders(): Record<string, string> {
-  const token = getToken() ?? "";
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { authtoken: token } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
 
 async function readJsonOrText<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -44,8 +31,7 @@ function pickMessage(e: unknown, fallback: string): string {
   }
   return fallback;
 }
-
-/** GET company by id */
+// GET company by id
 export async function getCompanyById(
   companyId: string
 ): Promise<CompanyApiModel> {
@@ -72,12 +58,12 @@ export async function getCompanyById(
   return json.data;
 }
 
-/** CREATE company */
+// CREATE company
 export async function createCompany(
   payload: CreateCompanyPayload
 ): Promise<CompanyApiModel> {
-  const token = getToken();
-  if (!token) throw new Error("No token. Please login again.");
+  // const token = getToken();
+  // if (!token) throw new Error("No token. Please login again.");
 
   const res = await fetch(`${API_BASE}/create-comp`, {
     method: "POST",
@@ -104,13 +90,13 @@ export async function createCompany(
   return json.company;
 }
 
-/** UPDATE company */
+// UPDATE company
 export async function updateCompany(
   companyId: string,
   payload: CreateCompanyPayload
 ): Promise<CompanyApiModel> {
-  const token = getToken();
-  if (!token) throw new Error("No token. Please login again.");
+  // const token = getToken();
+  // if (!token) throw new Error("No token. Please login again.");
 
   const res = await fetch(`${API_BASE}/update-comp/${companyId}`, {
     method: "PUT",
@@ -133,7 +119,7 @@ export async function updateCompany(
   return json.data;
 }
 
-/** mapping helpers (อิงจากที่คุณ import ใช้อยู่) */
+// mapping helpers
 export function mapCompanyApiToForm(api: CompanyApiModel) {
   return {
     companyName: api.comp_name ?? "",

@@ -17,7 +17,7 @@ export function saveAuth(data: LoginResponse) {
 
   const cid = data.user.companyId;
 
-  // ✅ สำคัญ: ถ้าไม่มี companyId ต้องลบ comp_id เดิมทิ้ง
+  // สำคัญ: ถ้าไม่มี companyId ต้องลบ comp_id เดิมทิ้ง
   if (cid) {
     localStorage.setItem(COMP_KEY, String(cid));
   } else {

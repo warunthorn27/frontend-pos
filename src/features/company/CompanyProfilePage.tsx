@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import CompanyForm, { type CompanyFormValues } from "./CompanyForm";
-import CompanyProfileView from "./CompanyProfileView";
+import CompanyForm, { type CompanyFormValues } from "./components/CompanyForm";
+import CompanyProfileView from "./components/CompanyProfileView";
 import type { AuthUser } from "../../types/auth";
 import {
   createCompany,

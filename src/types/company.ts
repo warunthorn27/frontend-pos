@@ -16,7 +16,6 @@ export interface CompanyFormValues {
   contactEmail: string;
 }
 
-/** shape ที่ได้จาก Mongo/Backend */
 export interface CompanyApiModel {
   _id: string;
   comp_name: string;
@@ -65,3 +64,7 @@ export interface UpdateCompanyResponse {
   message: string;
   data: CompanyApiModel;
 }
+
+export type CompanyProfileViewData = CompanyFormValues & {
+  logoUrl?: string;
+};

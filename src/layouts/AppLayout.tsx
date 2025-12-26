@@ -39,7 +39,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         />
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-10 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-10 bg-white">
           {children}
         </main>
       </div>
