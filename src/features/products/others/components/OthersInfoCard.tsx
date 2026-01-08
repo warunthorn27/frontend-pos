@@ -21,39 +21,6 @@ function Label({
   );
 }
 
-// function SelectField({
-//   value,
-//   onChange,
-//   options,
-//   icon,
-// }: {
-//   value: string;
-//   onChange: (v: string) => void;
-//   options: SelectOption[];
-//   icon?: React.ReactNode;
-// }) {
-//   return (
-//     <div className="relative">
-//       <select
-//         value={value}
-//         onChange={(e) => onChange(e.target.value)}
-//         className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 pr-10 text-sm text-[#545454] font-light outline-none appearance-none"
-//       >
-//         {options.map((o) => (
-//           <option key={o.value} value={o.value}>
-//             {o.label}
-//           </option>
-//         ))}
-//       </select>
-//       {icon && (
-//         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-//           {icon}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
 function WeightInput({
   value,
   onChange,
@@ -112,69 +79,74 @@ function Input({
   );
 }
 
-const StoneDiamondInfoCard: React.FC<Props> = ({ value, onChange }) => {
+const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
   return (
-    <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-      <div className="grid grid-cols-[525px]">
-        {/* LEFT */}
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <Label required>Product Name</Label>
-            <Input
-              value={value.productName}
-              onChange={(v) => onChange({ productName: v })}
-            />
-          </div>
-
-          <div>
-            <Label required>Code</Label>
-            <Input value={value.code} onChange={(v) => onChange({ code: v })} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-x-10 mb-4">
-          <div className="flex flex-col gap-y-4 mt-4">
+    <div className="h-full min-h-0 w-full rounded-2xl border bg-white flex flex-col overflow-hidden">
+      {/* BODY (scroll ได้) */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5">
+        <div className="grid grid-cols-1 max-w-[525px] w-full">
+          {/* LEFT */}
+          <div className="flex flex-col gap-y-4">
             <div>
-              <Label required>Product Size</Label>
+              <Label required>Product Name</Label>
               <Input
-                value={value.productSize}
-                onChange={(v) => onChange({ productSize: v })}
+                value={value.productName}
+                onChange={(v) => onChange({ productName: v })}
               />
             </div>
-          </div>
 
-          <div className="flex flex-col gap-y-4 mt-4">
             <div>
-              <Label required>Weight</Label>
-              <WeightInput
-                value={value.weight}
-                onChange={(v) => onChange({ weight: v })}
-                unit={value.weightUnit}
-                onUnitChange={(u) => onChange({ weightUnit: u })}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+              <Label required>Code</Label>
+              <Input
+                value={value.code}
+                onChange={(v) => onChange({ code: v })}
               />
             </div>
           </div>
-        </div>
 
+          <div className="grid grid-cols-2 gap-x-10 mb-4">
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Product Size</Label>
+                <Input
+                  value={value.productSize}
+                  onChange={(v) => onChange({ productSize: v })}
+                />
+              </div>
+            </div>
 
-        <div>
-          <Label>Description</Label>
-          <textarea
-            value={value.description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              onChange({ description: e.target.value })
-            }
-            maxLength={300}
-            className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
-          />
-          <p className="text-xs text-[#7A7A7A]">
-            *Description should not exceed 300 letters
-          </p>
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Weight</Label>
+                <WeightInput
+                  value={value.weight}
+                  onChange={(v) => onChange({ weight: v })}
+                  unit={value.weightUnit}
+                  onUnitChange={(u) => onChange({ weightUnit: u })}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label>Description</Label>
+            <textarea
+              value={value.description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                onChange({ description: e.target.value })
+              }
+              maxLength={300}
+              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
+            />
+            <p className="text-xs text-[#7A7A7A]">
+              *Description should not exceed 300 letters
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default StoneDiamondInfoCard;
+export default OthersInfoCard;

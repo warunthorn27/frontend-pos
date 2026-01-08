@@ -1,34 +1,7 @@
 import React, { useMemo, useState } from "react";
-
 import type { OthersForm } from "../../../types/product";
-
 import ProductImagesCard from "./components/OthersImagesCard";
 import OthersInfoCard from "./components/OthersInfoCard";
-
-// const emptyPrimaryStone = (): PrimaryStoneForm => ({
-//   stoneName: "",
-//   shape: "",
-//   size: "",
-//   weightCts: "",
-//   weightUnit: "cts",
-//   color: "",
-//   cutting: "",
-//   quality: "",
-//   clarity: "",
-// });
-
-// const emptyAdditionalStone = (): AdditionalStoneForm => ({
-//   stoneName: "",
-//   shape: "",
-//   size: "",
-//   weightCts: "",
-//   weightUnit: "cts",
-//   color: "",
-//   cutting: "",
-//   quality: "",
-//   clarity: "",
-//   qty: "",
-// });
 
 const emptyStoneDiamondForm = (): OthersForm => ({
   productName: "",
@@ -60,16 +33,16 @@ const OthersPage: React.FC = () => {
 
   return (
     <div className="w-full">
-      <div className="w-[1630px] h-[848px] mx-auto">
+      <div className="w-full max-w-[1600px] mx-auto h-full flex flex-col min-h-0">
         <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
           Others
         </h2>
 
         {/* MAIN CANVAS */}
-        <div className="w-[1630px] h-[848px] mx-auto rounded-md bg-[#FAFAFA] shadow-md px-10 py-8 overflow-y-auto hide-scrollbar">
+        <div className="flex-1 min-h-[700px] rounded-md bg-[#FAFAFA] shadow-md px-10 py-8 flex">
           {/* TOP ROW: images + product info */}
-          <div className="grid grid-cols-[464px,1fr] gap-6 items-start">
-            <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+          <div className="flex-1 min-h-0 grid grid-cols-[464px,1fr] gap-6 items-stretch">
+            <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5 self-start">
               <ProductImagesCard max={9} value={images} onChange={setImages} />
             </div>
 
@@ -78,7 +51,7 @@ const OthersPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-10 flex justify-center gap-4">
+        <div className="mt-10 flex justify-center gap-4 shrink-0">
           <button
             type="button"
             className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
