@@ -8,8 +8,12 @@ import {
 import CompanyImageCard from "./CompanyImageCard";
 import DropdownArrow from "../../../assets/svg/dropdown-arrow2.svg?react";
 import ConfirmDialog from "../../../component/dialog/ConfirmDialog";
+import type { CompanyFormValues } from "../../../types/company";
 
-//UI REUSE (LOCAL ONLY)
+// Thai phone only (0XXXXXXXXX)
+const TH_PHONE_REGEX = /^0\d{9}$/;
+
+const isValidThaiPhone = (v: string) => TH_PHONE_REGEX.test(v);
 
 const Card = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-[#FAFAFA] rounded-lg shadow px-8 py-8">{children}</div>
@@ -93,24 +97,6 @@ const SelectWrapper = ({
   </div>
 );
 
-// TYPES
-
-export interface CompanyFormValues {
-  companyName: string;
-  taxId: string;
-  email: string;
-  phone: string;
-  companyAddress: string;
-  country: string;
-  province: string;
-  district: string;
-  subDistrict: string;
-  zipcode: string;
-  contactName: string;
-  contactPhone: string;
-  contactEmail: string;
-}
-
 interface CompanyFormProps {
   mode: "create" | "edit";
   initialValues: CompanyFormValues | null;
@@ -118,7 +104,8 @@ interface CompanyFormProps {
   isSaving?: boolean;
   error?: string | null;
   onCancel: () => void;
-  onSubmit: (values: CompanyFormValues) => void | Promise<void>;
+  onSubmit: (values: CompanyFormValues, image: File | null) => void;
+  onImageRemove?: () => void;
 }
 
 const emptyValues: CompanyFormValues = {
@@ -135,6 +122,7 @@ const emptyValues: CompanyFormValues = {
   contactName: "",
   contactPhone: "",
   contactEmail: "",
+  companyFile: null,
 };
 
 // COMPONENT
@@ -146,6 +134,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
   error,
   onCancel,
   onSubmit,
+  onImageRemove,
 }) => {
   const [values, setValues] = useState<CompanyFormValues>({
     ...emptyValues,
@@ -174,8 +163,12 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
   const [subDistricts, setSubDistrictsState] = useState<SubDistrictItem[]>([]);
   const [addrLoading, setAddrLoading] = useState(false);
   const [addrError, setAddrError] = useState<string | null>(null);
-
   const [image, setImage] = useState<File | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [contactPhoneError, setContactPhoneError] = useState<string | null>(
+    null
+  );
+  const [removeOldImage, setRemoveOldImage] = useState(false);
 
   // ADDRESS
 
@@ -292,7 +285,19 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(values);
+
+    // validate ก่อนส่ง
+    if (!isValidThaiPhone(values.phone)) {
+      setPhoneError("เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0");
+      return;
+    }
+
+    if (!isValidThaiPhone(values.contactPhone)) {
+      setContactPhoneError("เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0");
+      return;
+    }
+
+    onSubmit(values, image);
   };
 
   const isCreate = mode === "create";
@@ -311,13 +316,18 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
     values.contactPhone &&
     values.contactEmail;
 
-  const disableSave = Boolean(isSaving) || (isCreate && !isValidRequired);
+  // const disableSave = Boolean(isSaving) || (isCreate && !isValidRequired);
+  const disableSave =
+    Boolean(isSaving) ||
+    !isValidRequired ||
+    Boolean(phoneError) ||
+    Boolean(contactPhoneError);
 
   // RENDER
 
   return (
     <div className="w-full">
-      <div className="w-[1642px] h-[860px] mx-auto">
+      <div className="w-full max-w-[1600px] mx-auto h-full flex flex-col">
         <h2 className="text-2xl font-regular text-[#084072] mb-5">
           {isCreate ? "Create Company" : "Edit Company"}
         </h2>
@@ -331,7 +341,19 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
 
             <div className="grid grid-cols-[240px,1fr,1fr] gap-x-[50px] gap-y-[50px]">
               <div className="row-span-2">
-                <CompanyImageCard value={image} onChange={setImage} />
+                <CompanyImageCard
+                  value={image}
+                  compFile={
+                    removeOldImage ? null : initialValues?.companyFile ?? null
+                  }
+                  onChange={(file) => {
+                    setImage(file);
+                    if (file === null) {
+                      setRemoveOldImage(true);
+                      onImageRemove?.();
+                    }
+                  }}
+                />
               </div>
 
               <section className="col-span-2">
@@ -363,8 +385,18 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     <Label>Company Phone</Label>
                     <PhoneInput
                       value={values.phone}
-                      onChange={(v) => setValues((p) => ({ ...p, phone: v }))}
+                      onChange={(v) => {
+                        setValues((p) => ({ ...p, phone: v }));
+                        setPhoneError(
+                          v && !isValidThaiPhone(v)
+                            ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
+                            : null
+                        );
+                      }}
                     />
+                    {phoneError && (
+                      <p className="text-sm text-red-600 mt-1">{phoneError}</p>
+                    )}
                   </div>
                 </Grid2>
               </section>
@@ -473,10 +505,20 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     <Label>Phone</Label>
                     <PhoneInput
                       value={values.contactPhone}
-                      onChange={(v) =>
-                        setValues((p) => ({ ...p, contactPhone: v }))
-                      }
+                      onChange={(v) => {
+                        setValues((p) => ({ ...p, contactPhone: v }));
+                        setContactPhoneError(
+                          v && !isValidThaiPhone(v)
+                            ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
+                            : null
+                        );
+                      }}
                     />
+                    {contactPhoneError && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {contactPhoneError}
+                      </p>
+                    )}
                   </div>
                 </div>
               </section>

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import type { TabItem } from "../DashboardLayout";
-import logoUrl from "../../assets/svg/logo.svg";
 import CompanyIcon from "../../assets/svg/company.svg?react";
 import UserIcon from "../../assets/svg/user.svg?react";
 import ProductIcon from "../../assets/svg/product.svg?react";
@@ -15,6 +14,7 @@ interface SideBarProps {
 
   lockApp: boolean; // true = disable ทั้งระบบยกเว้น allowedTabId
   allowedTabId: string; // เช่น "company"
+  companyLogo?: string;
 }
 
 const SideBar: React.FC<SideBarProps> = ({
@@ -24,6 +24,7 @@ const SideBar: React.FC<SideBarProps> = ({
   currentUserRole,
   lockApp,
   allowedTabId,
+  companyLogo,
 }) => {
   const isAdmin = currentUserRole === "Admin";
 
@@ -66,8 +67,19 @@ const SideBar: React.FC<SideBarProps> = ({
 
   return (
     <aside className="w-[240px] flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
-      <div className="flex justify-center py-8">
-        <img src={logoUrl} alt="Logo" width="107" height="61" />
+      <div className="flex justify-center py-6">
+        {companyLogo ? (
+          <img
+            src={companyLogo}
+            alt="Company Logo"
+            className="max-w-[107px] max-h-[107px] object-contain"
+          />
+        ) : (
+          <div className="flex flex-col items-center text-gray-400">
+            <CompanyIcon className="w-10 h-10 mb-2" />
+            <span className="text-xs">No logo</span>
+          </div>
+        )}
       </div>
 
       <nav className="space-y-1 text-sm">

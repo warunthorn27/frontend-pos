@@ -10,6 +10,7 @@ interface AppLayoutProps {
   onTabChange: (id: string) => void;
   onLogout: () => void;
   currentUserRole: "Admin" | "User";
+  companyLogo?: string;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onTabChange,
   onLogout,
   currentUserRole,
+  companyLogo,
   children,
 }) => {
   return (
@@ -36,12 +38,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           currentUserRole={currentUserRole}
           lockApp={false}
           allowedTabId=""
+          companyLogo={companyLogo}
         />
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-10 bg-white">
-          {children}
-        </main>
+        <main className="flex-1 overflow-hidden p-10 bg-white">{children}</main>
       </div>
     </div>
   );

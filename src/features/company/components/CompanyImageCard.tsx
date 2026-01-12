@@ -1,10 +1,11 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import UploadImage from "../../../assets/svg/upload-image.svg?react";
 import TrashIcon from "../../../assets/svg/trash.svg?react";
 import ZoomoutIcon from "../../../assets/svg/zoom-out.svg?react";
 
 type Props = {
   value: File | null;
+  compFile: string | null;
   onChange: (file: File | null) => void;
 };
 
@@ -18,18 +19,31 @@ function isAllowedImage(file: File) {
   return true;
 }
 
-export default function SingleImageUploadCard({ value, onChange }: Props) {
+export default function SingleImageUploadCard({
+  value,
+  compFile,
+  onChange,
+}: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // states that were missing
   const [isViewing, setIsViewing] = useState(false);
   const isUploading = false; // single image UI-only (future-proof)
 
-  const previewUrl = React.useMemo(() => {
-    if (!value) return null;
-    if (!(value instanceof File)) return null;
-    return URL.createObjectURL(value);
-  }, [value]);
+  const previewUrl = useMemo(() => {
+    // มีไฟล์ใหม่ที่เลือก
+    if (value instanceof File) {
+      return URL.createObjectURL(value);
+    }
+
+    // ไม่มีไฟล์ใหม่ แต่มีรูปจาก backend
+    if (compFile) {
+      return compFile;
+    }
+
+    // ไม่มีรูปเลย
+    return null;
+  }, [value, compFile]);
 
   const pickFile = useCallback(() => {
     inputRef.current?.click();

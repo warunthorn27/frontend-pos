@@ -14,6 +14,8 @@ export interface CompanyFormValues {
   contactName: string;
   contactPhone: string;
   contactEmail: string;
+
+  companyFile?: string | null;
 }
 
 export interface CompanyApiModel {
@@ -30,6 +32,7 @@ export interface CompanyApiModel {
   comp_person_name: string;
   comp_person_phone: string;
   comp_person_email: string;
+  comp_file: string | null;
 }
 
 export interface CreateCompanyPayload {
@@ -45,6 +48,7 @@ export interface CreateCompanyPayload {
   comp_person_name: string;
   comp_person_phone: string;
   comp_person_email: string;
+  comp_file?: string | null;
 }
 
 // response ที่คาดจาก backend

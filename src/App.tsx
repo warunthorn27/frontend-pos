@@ -37,7 +37,7 @@ function CompanyPageRoute() {
   return (
     <CompanyProfilePage
       currentUser={currentUser}
-      onCompanyCreated={(id) => onCompanyCreated?.(id)}
+      onCompanyCreated={(id, logoUrl) => onCompanyCreated?.(id, logoUrl)}
     />
   );
 }

@@ -2,9 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "./AppLayout";
 import type { AuthUser } from "../types/auth";
-import {
-  setCompanyId as persistCompanyId,
-} from "../utils/authStorage";
+import { setCompanyId as persistCompanyId } from "../utils/authStorage";
+import { getCompanyById } from "../services/company";
 
 export interface TabItem {
   id: string;
@@ -16,12 +15,12 @@ export interface TabItem {
 export interface DashboardLayoutProps {
   onLogout: () => void;
   currentUser: AuthUser;
-  onCompanyCreated?: (companyId: string) => void;
+  onCompanyCreated?: (companyId: string, logo?: string) => void;
 }
 
 export type DashboardOutletContext = {
   mustCreateCompany: boolean;
-  onCompanyCreated?: (companyId: string) => void;
+  onCompanyCreated?: (companyId: string, logo?: string) => void;
   currentUser: AuthUser;
 };
 
@@ -77,7 +76,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ตัด getCompanyId ออกตอน init
+  // =========================
+  // COMPANY LOGO (SIDEBAR)
+  // =========================
+  const [companyLogo, setCompanyLogo] = useState<string | undefined>(undefined);
+
+  // =========================
+  // COMPANY ID STATE
+  // =========================
   const [companyIdLocal, setCompanyIdLocal] = useState<string | null>(() => {
     return getUserCompanyId(currentUser);
   });
@@ -94,8 +100,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     () => getTabIdFromPath(location.pathname),
     [location.pathname]
   );
+
   const title = useMemo(() => getTitleFromTab(activeTab), [activeTab]);
 
+  // =========================
+  // TABS
+  // =========================
   const tabs: TabItem[] = useMemo(() => {
     const lock = mustCreateCompany;
 
@@ -121,9 +131,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     ];
   }, [mustCreateCompany]);
 
-  // ✅ ถ้าต้อง create company → บังคับอยู่หน้า company เท่านั้น
+  // =========================
+  // FORCE COMPANY CREATE
+  // =========================
   useEffect(() => {
     if (!mustCreateCompany) return;
+
     const companyPath = TAB_TO_PATH.company;
     if (location.pathname !== companyPath) {
       navigate(companyPath, { replace: true });
@@ -131,21 +144,47 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, [mustCreateCompany, location.pathname, navigate]);
 
   const handleTabChange = (tabId: string) => {
-    // block ถ้ายังต้อง create company
     if (mustCreateCompany && tabId !== "company") return;
 
     const path = TAB_TO_PATH[tabId];
     if (path) navigate(path);
   };
 
-  const handleCompanyCreated = (companyId: string) => {
-    // ✅ ปลดล็อกทันที
+  // =========================
+  // COMPANY CREATED / UPDATED
+  // =========================
+  const handleCompanyCreated = (companyId: string, logo?: string) => {
     setCompanyIdLocal(companyId);
-    // ✅ persist กัน refresh หลุด
     persistCompanyId(companyId);
-    // ✅ ส่งกลับไปให้ parent sync ต่อ (ถ้ามี)
-    onCompanyCreated?.(companyId);
+
+    if (logo) {
+      setCompanyLogo(logo);
+    } else {
+      setCompanyLogo(undefined);
+    }
+
+    onCompanyCreated?.(companyId, logo);
   };
+
+  useEffect(() => {
+    const loadCompanyLogo = async () => {
+      if (!companyIdLocal) return;
+
+      try {
+        const company = await getCompanyById(companyIdLocal);
+
+        if (company.comp_file) {
+          setCompanyLogo(company.comp_file);
+        } else {
+          setCompanyLogo(undefined);
+        }
+      } catch (e) {
+        console.error("Load company logo failed", e);
+      }
+    };
+
+    loadCompanyLogo();
+  }, [companyIdLocal]);
 
   return (
     <AppLayout
@@ -155,6 +194,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       onTabChange={handleTabChange}
       onLogout={onLogout}
       currentUserRole={currentUser.role}
+      companyLogo={companyLogo}
     >
       <Outlet
         context={

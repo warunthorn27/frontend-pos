@@ -2,8 +2,8 @@ import type {
   CompanyApiModel,
   CreateCompanyPayload,
   GetCompanyByIdResponse,
-  CreateCompanyResponse,
-  UpdateCompanyResponse,
+  // CreateCompanyResponse,
+  // UpdateCompanyResponse,
 } from "../types/company";
 import { API_BASE, getAuthHeaders } from "./apiClient";
 
@@ -60,72 +60,65 @@ export async function getCompanyById(
 
 // CREATE company
 export async function createCompany(
-  payload: CreateCompanyPayload
+  formData: FormData
 ): Promise<CompanyApiModel> {
-  // const token = getToken();
-  // if (!token) throw new Error("No token. Please login again.");
+  const token = localStorage.getItem("token");
 
   const res = await fetch(`${API_BASE}/create-comp`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
+    headers: {
+      ...(token ? { authtoken: token } : {}),
+    },
+    body: formData,
   });
 
-  const json = await readJsonOrText<CreateCompanyResponse & ApiErrorShape>(res);
+  const json = await res.json();
 
   if (!res.ok) {
-    if (res.status === 401)
-      throw new Error("Unauthorized. Please login again.");
-    throw new Error(pickMessage(json, "Create company failed"));
+    throw new Error(json?.message || "Create company failed");
   }
 
-  // backend ตาม type คือ { success, company }
-  if (!("company" in json) || !json.company) {
-    // เผื่อบาง backend ส่ง {data: company}
-    const maybe = json as unknown as { data?: CompanyApiModel };
-    if (maybe.data) return maybe.data;
-    throw new Error("Invalid create company response");
-  }
-
-  return json.company;
+  return json.data ?? json.company;
 }
 
 // UPDATE company
 export async function updateCompany(
   companyId: string,
-  payload: CreateCompanyPayload
+  formData: FormData
 ): Promise<CompanyApiModel> {
-  // const token = getToken();
-  // if (!token) throw new Error("No token. Please login again.");
+  const token = localStorage.getItem("token");
 
   const res = await fetch(`${API_BASE}/update-comp/${companyId}`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
+    headers: {
+      ...(token ? { authtoken: token } : {}),
+    },
+    body: formData,
   });
 
-  const json = await readJsonOrText<UpdateCompanyResponse & ApiErrorShape>(res);
+  const json = await res.json();
 
   if (!res.ok) {
     if (res.status === 401)
       throw new Error("Unauthorized. Please login again.");
-    throw new Error(pickMessage(json, "Update company failed"));
-  }
-
-  if (!("data" in json) || !json.data) {
-    throw new Error("Invalid update company response");
+    throw new Error(json?.message || "Update company failed");
   }
 
   return json.data;
 }
 
-// mapping helpers
+function e164ToThaiLocal(v?: string | null): string {
+  if (!v) return "";
+  if (v.startsWith("+66")) return "0" + v.slice(3);
+  return v;
+}
+
 export function mapCompanyApiToForm(api: CompanyApiModel) {
   return {
     companyName: api.comp_name ?? "",
     taxId: api.comp_taxid ?? "",
     email: api.comp_email ?? "",
-    phone: api.comp_phone ?? "",
+    phone: e164ToThaiLocal(api.comp_phone),
     companyAddress: api.comp_addr ?? "",
     country: "Thailand",
     province: api.comp_prov ?? "",
@@ -133,8 +126,9 @@ export function mapCompanyApiToForm(api: CompanyApiModel) {
     subDistrict: api.comp_subdist ?? "",
     zipcode: api.comp_zip ?? "",
     contactName: api.comp_person_name ?? "",
-    contactPhone: api.comp_person_phone ?? "",
+    contactPhone: e164ToThaiLocal(api.comp_person_phone),
     contactEmail: api.comp_person_email ?? "",
+    companyFile: api.comp_file ?? null,
   };
 }
 
