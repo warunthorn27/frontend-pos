@@ -5,6 +5,7 @@ import type {
   SelectOption,
 } from "../../../../types/product";
 import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
+import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
 
 type Props = {
   value: AccessoriesForm;
@@ -123,72 +124,87 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
   metalOptions,
 }) => {
   return (
-    <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-      <div className="grid grid-cols-[525px]">
-        {/* LEFT */}
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <Label required>Product Name</Label>
-            <Input
-              value={value.productName}
-              onChange={(v) => onChange({ productName: v })}
-            />
-          </div>
-
-          <div>
-            <Label required>Code</Label>
-            <Input value={value.code} onChange={(v) => onChange({ code: v })} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-x-10 mb-4">
-          <div className="flex flex-col gap-y-4 mt-4">
-            <div>
-              <Label required>Product Size</Label>
-              <Input
-                value={value.productSize}
-                onChange={(v) => onChange({ productSize: v })}
-              />
-            </div>
-
-            <div>
-              <Label required>Metal</Label>
-              <SelectField
-                value={value.metal}
-                onChange={(v) => onChange({ metal: v })}
-                options={metalOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-y-4 mt-4">
-            <div>
-              <Label required>Weight</Label>
-              <WeightInput
-                value={value.weight}
-                onChange={(v) => onChange({ weight: v })}
-                unit={value.weightUnit}
-                onUnitChange={(u) => onChange({ weightUnit: u })}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <Label>Description</Label>
-          <textarea
-            value={value.description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              onChange({ description: e.target.value })
-            }
-            maxLength={300}
-            className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
+    <div className="w-full rounded-2xl border bg-white">
+      <div className="px-6 py-5">
+        {/* HEADER : Toggle */}
+        <div className="flex items-center gap-3 mb-4">
+          <ToggleSwitch
+            checked={value.active}
+            onChange={(checked) => onChange({ active: checked })}
           />
-          <p className="text-xs text-[#7A7A7A]">
-            *Description should not exceed 300 letters
-          </p>
+          <span className="text-sm text-[#1F2937]">
+            {value.active ? "Active" : "Inactive"}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 max-w-[525px] w-full">
+          {/* LEFT */}
+          <div className="flex flex-col gap-y-4">
+            <div>
+              <Label required>Product Name</Label>
+              <Input
+                value={value.productName}
+                onChange={(v) => onChange({ productName: v })}
+              />
+            </div>
+
+            <div>
+              <Label required>Code</Label>
+              <Input
+                value={value.code}
+                onChange={(v) => onChange({ code: v })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-10 mb-4">
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Product Size</Label>
+                <Input
+                  value={value.productSize}
+                  onChange={(v) => onChange({ productSize: v })}
+                />
+              </div>
+
+              <div>
+                <Label required>Metal</Label>
+                <SelectField
+                  value={value.metal}
+                  onChange={(v) => onChange({ metal: v })}
+                  options={metalOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Weight</Label>
+                <WeightInput
+                  value={value.weight}
+                  onChange={(v) => onChange({ weight: v })}
+                  unit={value.weightUnit}
+                  onUnitChange={(u) => onChange({ weightUnit: u })}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label>Description</Label>
+            <textarea
+              value={value.description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                onChange({ description: e.target.value })
+              }
+              maxLength={300}
+              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
+            />
+            <p className="text-xs text-[#7A7A7A]">
+              *Description should not exceed 300 letters
+            </p>
+          </div>
         </div>
       </div>
     </div>
