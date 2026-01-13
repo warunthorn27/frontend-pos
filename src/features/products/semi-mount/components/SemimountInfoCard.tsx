@@ -1,8 +1,5 @@
 import React from "react";
-import type {
-  BaseProductForm,
-  SelectOption,
-} from "../../../../types/product";
+import type { BaseProductForm, SelectOption } from "../../../../types/product";
 import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
 
 type Props = {
@@ -106,8 +103,8 @@ const SemimountInfoCard: React.FC<Props> = ({
   metalOptions,
 }) => {
   return (
-    <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-      <div className="grid grid-cols-[450px_240px_240px] gap-x-10">
+    <div className="h-full min-h-0 w-full rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+      <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-10">
         {/* LEFT */}
         <div className="flex flex-col gap-y-4">
           <div>
@@ -131,7 +128,7 @@ const SemimountInfoCard: React.FC<Props> = ({
                 onChange({ description: e.target.value })
               }
               maxLength={300}
-              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
+              className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
             />
             <p className="text-xs text-[#7A7A7A]">
               *Description should not exceed 300 letters
@@ -162,10 +159,10 @@ const SemimountInfoCard: React.FC<Props> = ({
           </div>
 
           <div>
-            <Label required>Gwt</Label>
+            <Label required>Nwt</Label>
             <UnitInput
-              value={value.gwt}
-              onChange={(v) => onChange({ gwt: v })}
+              value={value.nwt}
+              onChange={(v) => onChange({ nwt: v })}
               unit="g"
             />
           </div>
@@ -190,10 +187,10 @@ const SemimountInfoCard: React.FC<Props> = ({
           </div>
 
           <div>
-            <Label required>Nwt</Label>
+            <Label required>Gwt</Label>
             <UnitInput
-              value={value.nwt}
-              onChange={(v) => onChange({ nwt: v })}
+              value={value.gwt}
+              onChange={(v) => onChange({ gwt: v })}
               unit="g"
             />
           </div>
