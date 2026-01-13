@@ -5,6 +5,7 @@ import type {
   WeightUnit,
 } from "../../../../types/product";
 import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
+import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
 
 type Props = {
   value: StoneDiamondForm;
@@ -131,120 +132,135 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
   clarityOptions,
 }) => {
   return (
-    <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-      <div className="grid grid-cols-[525px]">
-        {/* LEFT */}
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <Label required>Product Name</Label>
-            <Input
-              value={value.productName}
-              onChange={(v) => onChange({ productName: v })}
-            />
-          </div>
-
-          <div>
-            <Label required>Code</Label>
-            <Input value={value.code} onChange={(v) => onChange({ code: v })} />
-          </div>
-
-          <div>
-            <Label>Description</Label>
-            <textarea
-              value={value.description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                onChange({ description: e.target.value })
-              }
-              maxLength={300}
-              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
-            />
-            <p className="text-xs text-[#7A7A7A]">
-              *Description should not exceed 300 letters
-            </p>
-          </div>
+    <div className="w-full rounded-2xl border bg-white">
+      <div className="px-6 py-5">
+        {/* HEADER : Toggle */}
+        <div className="flex items-center gap-3 mb-4">
+          <ToggleSwitch
+            checked={value.active}
+            onChange={(checked) => onChange({ active: checked })}
+          />
+          <span className="text-sm text-[#1F2937]">
+            {value.active ? "Active" : "Inactive"}
+          </span>
         </div>
-
-        <div className="grid grid-cols-2 gap-x-10">
-          {/* MID */}
-          <div className="flex flex-col gap-y-4 mt-4">
+        <div className="grid grid-cols-1 max-w-[525px] w-full">
+          {/* LEFT */}
+          <div className="flex flex-col gap-y-4">
             <div>
-              <Label required>Stone Name</Label>
-              <SelectField
-                value={value.stoneName}
-                onChange={(v) => onChange({ stoneName: v })}
-                options={stoneNameOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
-            </div>
-
-            <div>
-              <Label required>Size</Label>
+              <Label required>Product Name</Label>
               <Input
-                value={value.size}
-                onChange={(v) => onChange({ size: v })}
+                value={value.productName}
+                onChange={(v) => onChange({ productName: v })}
               />
             </div>
 
             <div>
-              <Label>Color</Label>
+              <Label required>Code</Label>
               <Input
-                value={value.color}
-                onChange={(v) => onChange({ color: v })}
+                value={value.code}
+                onChange={(v) => onChange({ code: v })}
               />
             </div>
 
             <div>
-              <Label>Quality</Label>
-              <SelectField
-                value={value.quality}
-                onChange={(v) => onChange({ quality: v })}
-                options={qualityOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+              <Label>Description</Label>
+              <textarea
+                value={value.description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  onChange({ description: e.target.value })
+                }
+                maxLength={300}
+                className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
               />
+              <p className="text-xs text-[#7A7A7A]">
+                *Description should not exceed 300 letters
+              </p>
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div className="flex flex-col gap-y-4 mt-4">
-            <div>
-              <Label required>Shape</Label>
-              <SelectField
-                value={value.shape}
-                onChange={(v) => onChange({ shape: v })}
-                options={shapeOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
+          <div className="grid grid-cols-2 gap-x-10">
+            {/* MID */}
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Stone Name</Label>
+                <SelectField
+                  value={value.stoneName}
+                  onChange={(v) => onChange({ stoneName: v })}
+                  options={stoneNameOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
+
+              <div>
+                <Label required>Size</Label>
+                <Input
+                  value={value.size}
+                  onChange={(v) => onChange({ size: v })}
+                />
+              </div>
+
+              <div>
+                <Label>Color</Label>
+                <Input
+                  value={value.color}
+                  onChange={(v) => onChange({ color: v })}
+                />
+              </div>
+
+              <div>
+                <Label>Quality</Label>
+                <SelectField
+                  value={value.quality}
+                  onChange={(v) => onChange({ quality: v })}
+                  options={qualityOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
             </div>
 
-            <div>
-              <Label required>Weight</Label>
-              <WeightInput
-                value={value.weight}
-                onChange={(v) => onChange({ weight: v })}
-                unit={value.weightUnit}
-                onUnitChange={(u) => onChange({ weightUnit: u })}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
-            </div>
+            {/* RIGHT */}
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div>
+                <Label required>Shape</Label>
+                <SelectField
+                  value={value.shape}
+                  onChange={(v) => onChange({ shape: v })}
+                  options={shapeOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
 
-            <div>
-              <Label>Cutting</Label>
-              <SelectField
-                value={value.cutting}
-                onChange={(v) => onChange({ cutting: v })}
-                options={cuttingOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
-            </div>
+              <div>
+                <Label required>S. Weight</Label>
+                <WeightInput
+                  value={value.weight}
+                  onChange={(v) => onChange({ weight: v })}
+                  unit={value.weightUnit}
+                  onUnitChange={(u) => onChange({ weightUnit: u })}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
 
-            <div>
-              <Label>Clarity</Label>
-              <SelectField
-                value={value.clarity}
-                onChange={(v) => onChange({ clarity: v })}
-                options={clarityOptions}
-                icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
-              />
+              <div>
+                <Label>Cutting</Label>
+                <SelectField
+                  value={value.cutting}
+                  onChange={(v) => onChange({ cutting: v })}
+                  options={cuttingOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
+
+              <div>
+                <Label>Clarity</Label>
+                <SelectField
+                  value={value.clarity}
+                  onChange={(v) => onChange({ clarity: v })}
+                  options={clarityOptions}
+                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                />
+              </div>
             </div>
           </div>
         </div>
