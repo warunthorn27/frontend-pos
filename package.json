@@ -10,8 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@heroicons/react": "^2.2.0",
     "@material-tailwind/react": "^2.1.10",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/joy": "^5.0.0-beta.52",
+    "@mui/material": "^7.3.7",
+    "@mui/system": "^7.3.7",
     "axios": "^1.13.2",
     "postcss": "^8.5.6",
     "react": "^19.2.0",
