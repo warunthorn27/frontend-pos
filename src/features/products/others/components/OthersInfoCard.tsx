@@ -1,6 +1,7 @@
 import React from "react";
 import type { WeightUnit, OthersForm } from "../../../../types/product";
 import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
+import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
 
 type Props = {
   value: OthersForm;
@@ -81,9 +82,18 @@ function Input({
 
 const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
   return (
-    <div className="h-full min-h-0 w-full rounded-2xl border bg-white flex flex-col overflow-hidden">
-      {/* BODY (scroll ได้) */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5">
+    <div className="w-full rounded-2xl border bg-white">
+      <div className="px-6 py-5">
+        {/* HEADER : Toggle */}
+        <div className="flex items-center gap-3 mb-4">
+          <ToggleSwitch
+            checked={value.active}
+            onChange={(checked) => onChange({ active: checked })}
+          />
+          <span className="text-sm text-[#1F2937]">
+            {value.active ? "Active" : "Inactive"}
+          </span>
+        </div>
         <div className="grid grid-cols-1 max-w-[525px] w-full">
           {/* LEFT */}
           <div className="flex flex-col gap-y-4">
@@ -137,7 +147,7 @@ const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
                 onChange({ description: e.target.value })
               }
               maxLength={300}
-              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none resize-none"
+              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
             />
             <p className="text-xs text-[#7A7A7A]">
               *Description should not exceed 300 letters
