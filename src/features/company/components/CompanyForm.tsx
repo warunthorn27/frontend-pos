@@ -15,9 +15,11 @@ const TH_PHONE_REGEX = /^0\d{9}$/;
 
 const isValidThaiPhone = (v: string) => TH_PHONE_REGEX.test(v);
 
-const Card = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-[#FAFAFA] rounded-lg shadow px-8 py-8">{children}</div>
-);
+// const Card = ({ children }: { children: React.ReactNode }) => (
+//   <div className="flex-1 min-h-0 rounded-lg bg-[#FAFAFA] shadow flex flex-col overflow-hidden">
+//     {children}
+//   </div>
+// );
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <h2 className="text-lg font-normal text-[#084072] mb-6">{children}</h2>
@@ -326,206 +328,222 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
   // RENDER
 
   return (
-    <div className="w-full">
-      <div className="w-full max-w-[1600px] mx-auto h-full flex flex-col">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      <div className="w-full max-w-[1690px] mx-auto flex flex-col flex-1 min-h-0">
         <h2 className="text-2xl font-regular text-[#084072] mb-5">
           {isCreate ? "Create Company" : "Edit Company"}
         </h2>
 
-        <form onSubmit={handleSubmit}>
-          <Card>
-            {error && <div className="mb-4 text-sm text-red-600">{error}</div>}
-            {addrError && (
-              <div className="mb-4 text-sm text-red-600">{addrError}</div>
-            )}
+        {/* MAIN CANVAS */}
+        <div className="flex-1 min-h-0 rounded-lg bg-[#FAFAFA] shadow flex flex-col overflow-hidden">
+          <form
+            id="company-form"
+            onSubmit={handleSubmit}
+            className="flex-1 min-h-0"
+          >
+            {/* CONTENT (scroll) */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-8 py-8">
+              {error && (
+                <div className="mb-4 text-sm text-red-600">{error}</div>
+              )}
+              {addrError && (
+                <div className="mb-4 text-sm text-red-600">{addrError}</div>
+              )}
 
-            <div className="grid grid-cols-[240px,1fr,1fr] gap-x-[50px] gap-y-[50px]">
-              <div className="row-span-2">
-                <CompanyImageCard
-                  value={image}
-                  compFile={
-                    removeOldImage ? null : initialValues?.companyFile ?? null
-                  }
-                  onChange={(file) => {
-                    setImage(file);
-                    if (file === null) {
-                      setRemoveOldImage(true);
-                      onImageRemove?.();
+              <div className="grid grid-cols-[240px,1fr,1fr] gap-x-[50px] gap-y-[50px]">
+                <div className="row-span-2">
+                  <CompanyImageCard
+                    value={image}
+                    compFile={
+                      removeOldImage ? null : initialValues?.companyFile ?? null
                     }
-                  }}
-                />
+                    onChange={(file) => {
+                      setImage(file);
+                      if (file === null) {
+                        setRemoveOldImage(true);
+                        onImageRemove?.();
+                      }
+                    }}
+                  />
+                </div>
+
+                <section className="col-span-2">
+                  <SectionTitle>General</SectionTitle>
+                  <Grid2>
+                    <div>
+                      <Label>Company Name</Label>
+                      <Input
+                        value={values.companyName}
+                        onChange={handleChange("companyName")}
+                      />
+                    </div>
+                    <div>
+                      <Label>Tax ID</Label>
+                      <Input
+                        value={values.taxId}
+                        onChange={handleChange("taxId")}
+                      />
+                    </div>
+                    <div>
+                      <Label>Email</Label>
+                      <Input
+                        value={values.email}
+                        onChange={handleChange("email")}
+                      />
+                    </div>
+                    <div>
+                      <Label>Company Phone</Label>
+                      <PhoneInput
+                        value={values.phone}
+                        onChange={(v) => {
+                          setValues((p) => ({ ...p, phone: v }));
+                          setPhoneError(
+                            v && !isValidThaiPhone(v)
+                              ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
+                              : null
+                          );
+                        }}
+                      />
+                      {phoneError && (
+                        <p className="text-sm text-red-600 mt-1">
+                          {phoneError}
+                        </p>
+                      )}
+                    </div>
+                  </Grid2>
+                </section>
+
+                <section>
+                  <SectionTitle>Address</SectionTitle>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Address</Label>
+                      <Input
+                        value={values.companyAddress}
+                        onChange={handleChange("companyAddress")}
+                      />
+                    </div>
+
+                    <SubGrid2>
+                      <div>
+                        <Label>Country</Label>
+                        <SelectWrapper>
+                          <Select
+                            value={values.country}
+                            onChange={handleChange("country")}
+                          >
+                            <option value="Thailand">Thailand</option>
+                          </Select>
+                        </SelectWrapper>
+                      </div>
+                      <div>
+                        <Label>Province</Label>
+                        <SelectWrapper>
+                          <Select
+                            value={values.province}
+                            onChange={(e) =>
+                              handleProvinceChange(e.target.value)
+                            }
+                          >
+                            <option value="">Select</option>
+                            {provinces.map((p) => (
+                              <option key={p}>{p}</option>
+                            ))}
+                          </Select>
+                        </SelectWrapper>
+                      </div>
+                    </SubGrid2>
+
+                    <SubGrid2>
+                      <div>
+                        <Label>District</Label>
+                        <SelectWrapper>
+                          <Select
+                            value={values.district}
+                            onChange={(e) =>
+                              handleDistrictChange(e.target.value)
+                            }
+                            disabled={addrLoading}
+                          >
+                            <option value="">Select</option>
+                            {districts.map((d) => (
+                              <option key={d}>{d}</option>
+                            ))}
+                          </Select>
+                        </SelectWrapper>
+                      </div>
+                      <div>
+                        <Label>Sub-District</Label>
+                        <SelectWrapper>
+                          <Select
+                            value={values.subDistrict}
+                            onChange={(e) =>
+                              handleSubDistrictChange(e.target.value)
+                            }
+                            disabled={addrLoading}
+                          >
+                            <option value="">Select</option>
+                            {subDistrictOptions.map((s) => (
+                              <option key={s}>{s}</option>
+                            ))}
+                          </Select>
+                        </SelectWrapper>
+                      </div>
+                    </SubGrid2>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <Label>Zipcode</Label>
+                        <Input value={values.zipcode} readOnly />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <SectionTitle>Contact Person</SectionTitle>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Name</Label>
+                      <Input
+                        value={values.contactName}
+                        onChange={handleChange("contactName")}
+                      />
+                    </div>
+                    <div>
+                      <Label>Email</Label>
+                      <Input
+                        value={values.contactEmail}
+                        onChange={handleChange("contactEmail")}
+                      />
+                    </div>
+                    <div>
+                      <Label>Phone</Label>
+                      <PhoneInput
+                        value={values.contactPhone}
+                        onChange={(v) => {
+                          setValues((p) => ({ ...p, contactPhone: v }));
+                          setContactPhoneError(
+                            v && !isValidThaiPhone(v)
+                              ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
+                              : null
+                          );
+                        }}
+                      />
+                      {contactPhoneError && (
+                        <p className="text-sm text-red-600 mt-1">
+                          {contactPhoneError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </section>
               </div>
-
-              <section className="col-span-2">
-                <SectionTitle>General</SectionTitle>
-                <Grid2>
-                  <div>
-                    <Label>Company Name</Label>
-                    <Input
-                      value={values.companyName}
-                      onChange={handleChange("companyName")}
-                    />
-                  </div>
-                  <div>
-                    <Label>Tax ID</Label>
-                    <Input
-                      value={values.taxId}
-                      onChange={handleChange("taxId")}
-                    />
-                  </div>
-                  <div>
-                    <Label>Email</Label>
-                    <Input
-                      value={values.email}
-                      onChange={handleChange("email")}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Company Phone</Label>
-                    <PhoneInput
-                      value={values.phone}
-                      onChange={(v) => {
-                        setValues((p) => ({ ...p, phone: v }));
-                        setPhoneError(
-                          v && !isValidThaiPhone(v)
-                            ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
-                            : null
-                        );
-                      }}
-                    />
-                    {phoneError && (
-                      <p className="text-sm text-red-600 mt-1">{phoneError}</p>
-                    )}
-                  </div>
-                </Grid2>
-              </section>
-
-              <section>
-                <SectionTitle>Address</SectionTitle>
-                <div className="space-y-4">
-                  <div>
-                    <Label>Address</Label>
-                    <Input
-                      value={values.companyAddress}
-                      onChange={handleChange("companyAddress")}
-                    />
-                  </div>
-
-                  <SubGrid2>
-                    <div>
-                      <Label>Country</Label>
-                      <SelectWrapper>
-                        <Select
-                          value={values.country}
-                          onChange={handleChange("country")}
-                        >
-                          <option value="Thailand">Thailand</option>
-                        </Select>
-                      </SelectWrapper>
-                    </div>
-                    <div>
-                      <Label>Province</Label>
-                      <SelectWrapper>
-                        <Select
-                          value={values.province}
-                          onChange={(e) => handleProvinceChange(e.target.value)}
-                        >
-                          <option value="">Select</option>
-                          {provinces.map((p) => (
-                            <option key={p}>{p}</option>
-                          ))}
-                        </Select>
-                      </SelectWrapper>
-                    </div>
-                  </SubGrid2>
-
-                  <SubGrid2>
-                    <div>
-                      <Label>District</Label>
-                      <SelectWrapper>
-                        <Select
-                          value={values.district}
-                          onChange={(e) => handleDistrictChange(e.target.value)}
-                          disabled={addrLoading}
-                        >
-                          <option value="">Select</option>
-                          {districts.map((d) => (
-                            <option key={d}>{d}</option>
-                          ))}
-                        </Select>
-                      </SelectWrapper>
-                    </div>
-                    <div>
-                      <Label>Sub-District</Label>
-                      <SelectWrapper>
-                        <Select
-                          value={values.subDistrict}
-                          onChange={(e) =>
-                            handleSubDistrictChange(e.target.value)
-                          }
-                          disabled={addrLoading}
-                        >
-                          <option value="">Select</option>
-                          {subDistrictOptions.map((s) => (
-                            <option key={s}>{s}</option>
-                          ))}
-                        </Select>
-                      </SelectWrapper>
-                    </div>
-                  </SubGrid2>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <Label>Zipcode</Label>
-                      <Input value={values.zipcode} readOnly />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <SectionTitle>Contact Person</SectionTitle>
-                <div className="space-y-4">
-                  <div>
-                    <Label>Name</Label>
-                    <Input
-                      value={values.contactName}
-                      onChange={handleChange("contactName")}
-                    />
-                  </div>
-                  <div>
-                    <Label>Email</Label>
-                    <Input
-                      value={values.contactEmail}
-                      onChange={handleChange("contactEmail")}
-                    />
-                  </div>
-                  <div>
-                    <Label>Phone</Label>
-                    <PhoneInput
-                      value={values.contactPhone}
-                      onChange={(v) => {
-                        setValues((p) => ({ ...p, contactPhone: v }));
-                        setContactPhoneError(
-                          v && !isValidThaiPhone(v)
-                            ? "เบอร์โทรต้องเป็น 10 หลัก และขึ้นต้นด้วย 0"
-                            : null
-                        );
-                      }}
-                    />
-                    {contactPhoneError && (
-                      <p className="text-sm text-red-600 mt-1">
-                        {contactPhoneError}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </section>
             </div>
-          </Card>
+          </form>
 
-          <div className="mt-10 flex justify-center gap-4">
+          {/* ===== FOOTER (ไม่ scroll / ไม่ขยับ / zoom ยังไงก็นิ่ง) ===== */}
+          <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4 bg-[#FAFAFA]">
             {!isCreate && (
               <button
                 type="button"
@@ -536,7 +554,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     onCancel();
                   }
                 }}
-                className="w-[100px] h-[37px] rounded-md bg-[#FF383C] hover:bg-[#E71010] text-white"
+                className="px-7 py-2 rounded-md bg-[#FF383C] hover:bg-[#E71010] text-white text-[13px]"
               >
                 Cancel
               </button>
@@ -544,18 +562,21 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
 
             <button
               type="submit"
+              form="company-form"
               disabled={disableSave}
-              className={`w-[100px] h-[37px] rounded-md ${
+              className={[
+                "px-8 py-2 rounded-md text-[13px]",
                 disableSave
-                  ? "bg-[#BABABA]"
-                  : "bg-[#34C759] hover:bg-[#24913F] text-white"
-              }`}
+                  ? "bg-[#CFCFCF] text-white cursor-not-allowed"
+                  : "bg-[#34C759] hover:bg-[#24913F] text-white",
+              ].join(" ")}
             >
               {isSaving ? "Saving..." : "Save"}
             </button>
           </div>
-        </form>
+        </div>
       </div>
+
       <ConfirmDialog
         open={showCancelDialog}
         title="Cancel"
