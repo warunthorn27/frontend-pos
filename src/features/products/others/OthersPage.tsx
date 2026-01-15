@@ -2,8 +2,10 @@ import React, { useMemo, useState } from "react";
 import type { OthersForm } from "../../../types/product";
 import ProductImagesCard from "./components/OthersImagesCard";
 import OthersInfoCard from "./components/OthersInfoCard";
+import { useParams } from "react-router-dom";
+import { createOthers, updateOthers } from "../../../services/product";
 
-const emptyStoneDiamondForm = (): OthersForm => ({
+const emptyForm: OthersForm = {
   active: true,
   productName: "",
   code: "",
@@ -11,10 +13,12 @@ const emptyStoneDiamondForm = (): OthersForm => ({
   weight: "0.00",
   weightUnit: "g",
   description: "",
-});
+};
 
 const OthersPage: React.FC = () => {
-  const [form, setForm] = useState<OthersForm>(emptyStoneDiamondForm);
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
+  const [form, setForm] = useState<OthersForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
 
   const canSave = useMemo(() => {
@@ -22,14 +26,47 @@ const OthersPage: React.FC = () => {
       form.productName.trim() !== "" &&
       form.code.trim() !== "" &&
       form.productSize.trim() !== "" &&
-      form.weight.trim() !== "" &&
-      form.description.trim() !== ""
+      form.weight.trim() !== ""
     );
   }, [form]);
 
   // helpers สำหรับ patch state
   const patchForm = (patch: Partial<OthersForm>) => {
     setForm((s) => ({ ...s, ...patch }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("product_name", form.productName.trim());
+      formData.append("code", form.code.trim());
+      formData.append("category", "others");
+      formData.append("product_size", form.productSize);
+      formData.append("weight", form.weight);
+
+      if (form.description) formData.append("description", form.description);
+
+      formData.append("unit", form.weightUnit);
+
+      images.forEach((img) => formData.append("files", img));
+
+      if (isEdit && id) {
+        await updateOthers(id, formData);
+      } else {
+        await createOthers(formData);
+      }
+
+      // reset form
+      setForm(emptyForm);
+      setImages([]);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert("Save failed");
+      }
+    }
   };
 
   return (
@@ -64,7 +101,7 @@ const OthersPage: React.FC = () => {
               type="button"
               className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
               onClick={() => {
-                setForm(emptyStoneDiamondForm);
+                setForm(emptyForm);
                 setImages([]);
               }}
             >
@@ -74,6 +111,7 @@ const OthersPage: React.FC = () => {
             <button
               type="button"
               disabled={!canSave}
+              onClick={handleSave}
               className={[
                 "px-8 py-2 rounded-md text-[13px] font-normal",
                 canSave
