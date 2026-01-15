@@ -339,10 +339,10 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
           <form
             id="company-form"
             onSubmit={handleSubmit}
-            className="flex-1 min-h-0"
+            className="flex-1 min-h-0 flex flex-col"
           >
             {/* CONTENT (scroll) */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-8 py-8">
+            <div className="flex-1 min-h-0 overflow-y-auto hide-scrollbar px-8 py-8">
               {error && (
                 <div className="mb-4 text-sm text-red-600">{error}</div>
               )}
