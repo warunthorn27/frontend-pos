@@ -1,10 +1,8 @@
 import React from "react";
 import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
-import WeightInput from "../../common/WeightInput";
-import {
-  WEIGHT_UNIT_OPTIONS,
-  type OthersForm,
-} from "../../../../types/product";
+import WeightInput from "../../../../component/input/WeightInput";
+import type { OthersForm } from "../../../../types/product/form";
+import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
 
 type Props = {
   value: OthersForm;

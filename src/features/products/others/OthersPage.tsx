@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
-import type { OthersForm } from "../../../types/product";
 import ProductImagesCard from "./components/OthersImagesCard";
 import OthersInfoCard from "./components/OthersInfoCard";
 import { useParams } from "react-router-dom";
 import { createOthers, updateOthers } from "../../../services/product";
+import type { OthersForm } from "../../../types/product/form";
 
 const emptyForm: OthersForm = {
   active: true,
