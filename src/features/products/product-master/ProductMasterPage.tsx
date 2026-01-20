@@ -17,7 +17,7 @@ import type {
   BackendAccessory,
   BackendAdditionalStone,
 } from "../../../types/product/response";
-import ProductFormTemplate from "../../../component/template/ProductFormTemplate";
+import ProductFormPageTemplate from "../../../component/template/ProductFormPageTemplate";
 
 /* ---------- empty factories ---------- */
 
@@ -322,7 +322,7 @@ const ProductMasterPage: React.FC = () => {
   };
 
   return (
-    <ProductFormTemplate
+    <ProductFormPageTemplate
       title="Product Master"
       form={form}
       images={images}

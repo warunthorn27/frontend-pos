@@ -46,7 +46,7 @@ type Props = {
   onSave: () => void;
 };
 
-const ProductFormTemplate: React.FC<Props> = ({
+const ProductFormPageTemplate: React.FC<Props> = ({
   title,
   form,
   images,
@@ -156,4 +156,4 @@ const ProductFormTemplate: React.FC<Props> = ({
   );
 };
 
-export default ProductFormTemplate;
+export default ProductFormPageTemplate;

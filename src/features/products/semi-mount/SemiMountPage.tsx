@@ -17,7 +17,7 @@ import type {
   BackendAccessory,
   BackendAdditionalStone,
 } from "../../../types/product/response";
-import ProductFormTemplate from "../../../component/template/ProductFormTemplate";
+import ProductFormPageTemplate from "../../../component/template/ProductFormPageTemplate";
 
 const emptyAccessories = (): AccessoriesForm => ({
   active: true,
@@ -315,7 +315,7 @@ const SemiMountPage: React.FC = () => {
   };
 
   return (
-    <ProductFormTemplate
+    <ProductFormPageTemplate
       title="Semi-Mount"
       form={form}
       images={images}
