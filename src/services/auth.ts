@@ -42,7 +42,6 @@ export async function loginApi(
     }),
   });
 
-  // สำคัญ: backend error เป็น text ได้
   const text = await res.text();
   const data = parseJsonOrText(text);
 
@@ -80,7 +79,6 @@ export async function loginApi(
   };
 }
 
-/** ใช้เป็นโครง response ที่มี message / success / error */
 export interface ApiMessageResponse {
   success?: boolean;
   message: string;
@@ -118,6 +116,7 @@ export async function changeFirstPasswordApi(
       headers: {
         "Content-Type": "application/json",
         authtoken: token,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ new_password: newPassword }),
     }
@@ -136,10 +135,10 @@ export async function changeFirstPasswordApi(
 export async function forgotPasswordApi(
   email: string
 ): Promise<ApiMessageResponse> {
-  const res = await fetch(`${API_BASE_URL}/request-reset-password`, {
+  const res = await fetch(`${API_BASE_URL}/forgotPassword`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ user_email: email }),
   });
 
   const text = await res.text();
