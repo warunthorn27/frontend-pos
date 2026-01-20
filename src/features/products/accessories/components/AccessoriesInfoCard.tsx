@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  WEIGHT_UNIT_OPTIONS,
-  type AccessoriesForm,
-  type SelectOption,
-} from "../../../../types/product";
 import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
-import CreatableSelect from "../../../../component/masterData/CreatableSelect";
 import WeightInput from "../../common/WeightInput";
+import type { AccessoriesForm } from "../../../../types/product/form";
+import type { SelectOption } from "../../../../types/shared/select";
+import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
+import MasterInputSelect from "../../../../component/masterData/MasterInputSelect";
 
 type Props = {
   value: AccessoriesForm;
@@ -94,7 +92,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
 
               <div>
                 <Label required>Metal</Label>
-                <CreatableSelect
+                <MasterInputSelect
                   value={value.metal}
                   onChange={(v) => onChange({ metal: v })}
                   options={metalOptions}

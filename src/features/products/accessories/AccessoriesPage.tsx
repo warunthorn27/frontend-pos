@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from "react";
-
-import type { AccessoriesForm } from "../../../types/product";
-
 import AccessoriesInfoCard from "./components/AccessoriesInfoCard";
 import AccessoriesImagesCard from "./components/AccessoriesImagesCard";
 import { useProductMasters } from "../hook/useProductMasters";
 import { createAccessory, updateAccessory } from "../../../services/product";
 import { useParams } from "react-router-dom";
+import type { AccessoriesForm } from "../../../types/product/form";
 
 const emptyForm: AccessoriesForm = {
   active: true,
@@ -33,7 +31,6 @@ const AccessoriesPage: React.FC = () => {
       form.productSize.trim() !== "" &&
       form.weight.trim() !== "" &&
       form.metal.trim() !== ""
-      // form.description.trim() !== ""
     );
   }, [form]);
 
