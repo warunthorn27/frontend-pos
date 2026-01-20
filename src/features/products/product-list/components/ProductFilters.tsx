@@ -1,39 +1,39 @@
-import DropdownArrow2 from "../../../../assets/svg/dropdown-arrow2.svg?react";
 import PrintIcon from "../../../../assets/svg/print.svg?react";
 import FileExcel from "../../../../assets/svg/file-x.svg?react";
 import ExportIcon from "../../../../assets/svg/export.svg?react";
 import SearchIcon from "../../../../assets/svg/search.svg?react";
+import type { SelectOption } from "../../../../types/shared/select";
+import MasterSelect from "../../../../component/masterData/MasterSelect";
 
 type Props = {
-  category: string;
-  itemType: string;
+  categories: string[];
+  categoryOptions: SelectOption[];
+
   search: string;
-  onChangeCategory: (v: string) => void;
-  onChangeItemType: (v: string) => void;
+  onChangeCategories: (v: string[]) => void;
   onChangeSearch: (v: string) => void;
+
   onPrint: () => void;
   onExportExcel: () => void;
 };
 
-const categories = [
-  "Product Master",
-  "Stone / Diamond",
-  "Semi-Mount",
-  "Others",
-  "Accessories",
-];
-const itemTypes = ["Pendant", "Diamond", "Ring"];
-
 export default function ProductFilters({
-  category,
-  itemType,
+  categories,
+  categoryOptions,
   search,
-  onChangeCategory,
-  onChangeItemType,
+  onChangeCategories,
   onChangeSearch,
   onPrint,
   onExportExcel,
 }: Props) {
+  // const handleCategoryChange = (value: string | null | undefined) => {
+  //   onChangeCategory(value ?? "");
+  // };
+
+  // const handleItemTypeChange = (value: string | null | undefined) => {
+  //   onChangeItemType(value ?? "");
+  // };
+
   return (
     <div className="flex items-center gap-4">
       {/* left filters */}
@@ -50,44 +50,23 @@ export default function ProductFilters({
           </span>
         </div>
 
-        <div className="relative">
-          <select
-            value={category}
-            onChange={(e) => onChangeCategory(e.target.value)}
-            className="w-[200px] h-[40px] rounded-md border border-[#E6E6E6] bg-white px-3 pr-9 text-sm text-[#545454] font-light outline-none appearance-none"
-          >
-            <option value="">Category</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[#6B7280]">
-            <DropdownArrow2 className="w-3 h-2" />
-          </span>
-        </div>
+        <MasterSelect
+          values={categories}
+          options={categoryOptions}
+          onChange={onChangeCategories}
+          placeholder="Category"
+        />
 
-        <div className="relative">
-          <select
-            value={itemType}
-            onChange={(e) => onChangeItemType(e.target.value)}
-            className="w-[200px] h-[40px] rounded-md border border-[#E6E6E6] bg-white px-3 pr-9 text-sm text-[#545454] font-light outline-none appearance-none"
-          >
-            <option value="">Item Type</option>
-            {itemTypes.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[#6B7280]">
-            <DropdownArrow2 className="w-3 h-2" />
-          </span>
-        </div>
+        {/* <MasterSelect
+          value={itemType}
+          options={itemTypeOptions}
+          onChange={handleItemTypeChange}
+          placeholder="Item Type"
+          // disabled={!category}
+        /> */}
       </div>
 
-      {/* right search + icons */}
+      {/* right icons */}
       <div className="ml-auto flex items-center gap-3">
         <button
           type="button"
