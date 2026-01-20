@@ -1,19 +1,18 @@
 import React from "react";
-import type {
-  StoneDiamondForm,
-  SelectOption,
-  WeightUnit,
-} from "../../../../types/product";
-import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
 import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
+import WeightInput from "../../../../component/input/WeightInput";
+import type { StoneDiamondForm } from "../../../../types/product/form";
+import type { SelectOption } from "../../../../types/shared/select";
+import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
+import MasterInputSelect from "../../../../component/masterData/MasterInputSelect";
 
 type Props = {
   value: StoneDiamondForm;
   onChange: (patch: Partial<StoneDiamondForm>) => void;
   stoneNameOptions: SelectOption[];
-  qualityOptions: SelectOption[];
   shapeOptions: SelectOption[];
   cuttingOptions: SelectOption[];
+  qualityOptions: SelectOption[];
   clarityOptions: SelectOption[];
 };
 
@@ -28,81 +27,6 @@ function Label({
     <label className="block text-base font-normal text-black">
       {children} {required ? <span className="text-red-500">*</span> : null}
     </label>
-  );
-}
-
-function SelectField({
-  value,
-  onChange,
-  options,
-  icon,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: SelectOption[];
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 pr-10 text-sm text-[#545454] font-light outline-none appearance-none"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      {icon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          {icon}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function WeightInput({
-  value,
-  onChange,
-  unit,
-  onUnitChange,
-  icon,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  unit: WeightUnit;
-  onUnitChange: (u: WeightUnit) => void;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="relative">
-      {/* ตัวเลข */}
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        inputMode="decimal"
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-[88px] text-sm outline-none"
-      />
-
-      {/* dropdown หน่วย */}
-      <div className="absolute right-0 top-0 h-[38px] pr-1">
-        <select
-          value={unit}
-          onChange={(e) => onUnitChange(e.target.value as WeightUnit)}
-          className="h-[38px] w-full bg-transparent pl-3 pr-7 text-sm font-light text-[#545454] outline-none appearance-none"
-        >
-          <option value="cts">cts</option>
-          <option value="g">g</option>
-        </select>
-
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-          {icon ?? <DropdownArrowIcon className="w-3 h-3 text-black" />}
-        </span>
-      </div>
-    </div>
   );
 }
 
@@ -126,9 +50,9 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
   value,
   onChange,
   stoneNameOptions,
-  qualityOptions,
   shapeOptions,
   cuttingOptions,
+  qualityOptions,
   clarityOptions,
 }) => {
   return (
@@ -184,11 +108,10 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Stone Name</Label>
-                <SelectField
+                <MasterInputSelect
                   value={value.stoneName}
                   onChange={(v) => onChange({ stoneName: v })}
                   options={stoneNameOptions}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
                 />
               </div>
 
@@ -210,11 +133,10 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
 
               <div>
                 <Label>Quality</Label>
-                <SelectField
+                <MasterInputSelect
                   value={value.quality}
                   onChange={(v) => onChange({ quality: v })}
                   options={qualityOptions}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
                 />
               </div>
             </div>
@@ -223,11 +145,10 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Shape</Label>
-                <SelectField
+                <MasterInputSelect
                   value={value.shape}
                   onChange={(v) => onChange({ shape: v })}
                   options={shapeOptions}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
                 />
               </div>
 
@@ -235,30 +156,28 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                 <Label required>S. Weight</Label>
                 <WeightInput
                   value={value.weight}
-                  onChange={(v) => onChange({ weight: v })}
-                  unit={value.weightUnit}
-                  onUnitChange={(u) => onChange({ weightUnit: u })}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+                  unit={value.unit}
+                  unitOptions={WEIGHT_UNIT_OPTIONS}
+                  onChangeValue={(v) => onChange({ weight: v })}
+                  onChangeUnit={(u) => onChange({ unit: u })}
                 />
               </div>
 
               <div>
                 <Label>Cutting</Label>
-                <SelectField
+                <MasterInputSelect
                   value={value.cutting}
                   onChange={(v) => onChange({ cutting: v })}
                   options={cuttingOptions}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
                 />
               </div>
 
               <div>
                 <Label>Clarity</Label>
-                <SelectField
+                <MasterInputSelect
                   value={value.clarity}
                   onChange={(v) => onChange({ clarity: v })}
                   options={clarityOptions}
-                  icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
                 />
               </div>
             </div>

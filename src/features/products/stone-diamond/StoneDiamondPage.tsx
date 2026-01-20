@@ -1,42 +1,15 @@
 import React, { useMemo, useState } from "react";
-
-import type { StoneDiamondForm, SelectOption } from "../../../types/product";
-
+import type { StoneDiamondForm } from "../../../types/product/form";
 import StoneDiamondInfoCard from "./components/StoneDiamondInfoCard";
 import StoneDiamondImagesCard from "./components/StoneDiamondImagesCard";
+import { useParams } from "react-router-dom";
+import { useProductMasters } from "../hook/useProductMasters";
+import {
+  createStoneDiamond,
+  updateStoneDiamond,
+} from "../../../services/product";
 
-const stoneNameOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const qualityOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const shapeOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const cuttingOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const clarityOptions: SelectOption[] = [{ label: "Select", value: "" }];
-
-// const emptyPrimaryStone = (): PrimaryStoneForm => ({
-//   stoneName: "",
-//   shape: "",
-//   size: "",
-//   weightCts: "",
-//   weightUnit: "cts",
-//   color: "",
-//   cutting: "",
-//   quality: "",
-//   clarity: "",
-// });
-
-// const emptyAdditionalStone = (): AdditionalStoneForm => ({
-//   stoneName: "",
-//   shape: "",
-//   size: "",
-//   weightCts: "",
-//   weightUnit: "cts",
-//   color: "",
-//   cutting: "",
-//   quality: "",
-//   clarity: "",
-//   qty: "",
-// });
-
-const emptyStoneDiamondForm = (): StoneDiamondForm => ({
+const emptyStoneDiamondForm: StoneDiamondForm = {
   active: true,
   productName: "",
   code: "",
@@ -49,33 +22,78 @@ const emptyStoneDiamondForm = (): StoneDiamondForm => ({
   cutting: "",
   quality: "",
   clarity: "",
-  weightUnit: "cts",
-  nwt: "",
-});
+  unit: "g",
+};
 
 const StoneDiamondPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
   const [form, setForm] = useState<StoneDiamondForm>(emptyStoneDiamondForm);
   const [images, setImages] = useState<File[]>([]);
+
+  const {
+    stoneNameOptions,
+    shapeOptions,
+    cuttingOptions,
+    qualityOptions,
+    clarityOptions,
+  } = useProductMasters();
+
+  /* ---------- loadProduct ---------- */
+
+  const patchForm = (patch: Partial<StoneDiamondForm>) => {
+    setForm((s) => ({ ...s, ...patch }));
+  };
 
   const canSave = useMemo(() => {
     return (
       form.productName.trim() !== "" &&
       form.code.trim() !== "" &&
-      form.description.trim() !== "" &&
       form.stoneName.trim() !== "" &&
       form.shape.trim() !== "" &&
       form.size.trim() !== "" &&
-      form.weight.trim() !== "" &&
-      form.color.trim() !== "" &&
-      form.cutting.trim() !== "" &&
-      form.quality.trim() !== "" &&
-      form.clarity.trim() !== ""
+      form.weight.trim() !== ""
     );
   }, [form]);
 
-  // helpers สำหรับ patch state
-  const patchForm = (patch: Partial<StoneDiamondForm>) => {
-    setForm((s) => ({ ...s, ...patch }));
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("product_name", form.productName.trim());
+      formData.append("code", form.code.trim());
+      formData.append("category", "stone");
+
+      // stone schema required fields
+      formData.append("stone_name", form.stoneName);
+      formData.append("shape", form.shape);
+      formData.append("size", form.size);
+      formData.append("net_weight", form.weight);
+
+      if (form.description) {
+        formData.append("description", form.description);
+      }
+
+      formData.append("unit", form.unit);
+
+      images.forEach((img) => formData.append("files", img));
+
+      if (isEdit && id) {
+        await updateStoneDiamond(id, formData);
+      } else {
+        await createStoneDiamond(formData);
+      }
+
+      // reset form
+      setForm(emptyStoneDiamondForm);
+      setImages([]);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert("Save failed");
+      }
+    }
   };
 
   return (
@@ -112,6 +130,7 @@ const StoneDiamondPage: React.FC = () => {
               </div>
             </div>
           </div>
+
           {/* Footer */}
           <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
             <button
@@ -128,6 +147,7 @@ const StoneDiamondPage: React.FC = () => {
             <button
               type="button"
               disabled={!canSave}
+              onClick={handleSave}
               className={[
                 "px-8 py-2 rounded-md text-[13px] font-normal",
                 canSave
