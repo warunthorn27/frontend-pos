@@ -1,6 +1,6 @@
 import React from "react";
 import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
-import WeightInput from "../../common/WeightInput";
+import WeightInput from "../../../../component/input/WeightInput";
 import type { AccessoriesForm } from "../../../../types/product/form";
 import type { SelectOption } from "../../../../types/shared/select";
 import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
