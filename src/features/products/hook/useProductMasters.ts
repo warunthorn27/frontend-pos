@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchMasterOptions } from "../../../services/master";
 import type { SelectOption } from "../../../types/shared/select";
+import { MASTER_TYPES } from "../../../types/master";
 
 export function useProductMasters() {
   const [loading, setLoading] = useState(true);
@@ -30,14 +31,14 @@ export function useProductMasters() {
         metals,
         accessories,
       ] = await Promise.all([
-        fetchMasterOptions("stone_name"),
-        fetchMasterOptions("shape"),
-        fetchMasterOptions("cutting"),
-        fetchMasterOptions("quality"),
-        fetchMasterOptions("clarity"),
-        fetchMasterOptions("item_type"),
-        fetchMasterOptions("metal"),
-        fetchMasterOptions("accessory"),
+        fetchMasterOptions(MASTER_TYPES.stoneName),
+        fetchMasterOptions(MASTER_TYPES.shape),
+        fetchMasterOptions(MASTER_TYPES.cutting),
+        fetchMasterOptions(MASTER_TYPES.quality),
+        fetchMasterOptions(MASTER_TYPES.clarity),
+        fetchMasterOptions(MASTER_TYPES.itemType),
+        fetchMasterOptions(MASTER_TYPES.metal),
+        fetchMasterOptions(MASTER_TYPES.accessory),
       ]);
 
       setStoneNameOptions(stoneNames);
