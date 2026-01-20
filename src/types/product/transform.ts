@@ -27,7 +27,7 @@ export function mapStoneFormToPayload(
 
 export type ProductRow = {
   id: string;
-  image: string | null;
+  imageUrl: string | null;
   code: string;
   productName: string;
   category: string;
