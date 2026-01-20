@@ -1,14 +1,15 @@
 import React from "react";
+import PlusIcon from "../../../assets/svg/plus.svg?react";
+import AdditionalStoneSection from "./AdditionalStoneSection";
+import RemoveIcon from "../../../assets/svg/remove.svg?react";
+import WeightInput from "../../../component/input/WeightInput";
 import type {
   AdditionalStoneForm,
   PrimaryStoneForm,
-  SelectOption,
-  WeightUnit,
-} from "../../../../types/product";
-import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
-import PlusIcon from "../../../../assets/svg/plus.svg?react";
-import AdditionalStoneSection from "./AdditionalStoneSection";
-import RemoveIcon from "../../../../assets/svg/remove.svg?react";
+} from "../../../types/product/form";
+import type { SelectOption } from "../../../types/shared/select";
+import { WEIGHT_UNIT_OPTIONS } from "../../../types/shared/unit";
+import MasterInputSelect from "../../../component/masterData/MasterInputSelect";
 
 /* Types */
 
@@ -61,79 +62,9 @@ function Input({
   );
 }
 
-function SelectField({
-  value,
-  onChange,
-  options,
-  icon,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: SelectOption[];
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 pr-10 text-sm text-[#545454] font-light outline-none appearance-none"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-
-      <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-        {icon ?? <DropdownArrowIcon className="w-3 h-3 text-black" />}
-      </span>
-    </div>
-  );
-}
-
-function WeightInput({
-  value,
-  onChange,
-  unit,
-  onUnitChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  unit: WeightUnit;
-  onUnitChange: (u: WeightUnit) => void;
-}) {
-  return (
-    <div className="relative">
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        inputMode="decimal"
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-[88px] text-sm outline-none"
-      />
-
-      <div className="absolute right-0 top-0 h-[38px] pr-1">
-        <select
-          value={unit}
-          onChange={(e) => onUnitChange(e.target.value as WeightUnit)}
-          className="h-full bg-transparent pl-3 pr-7 text-sm font-light text-[#545454] outline-none appearance-none"
-        >
-          <option value="cts">cts</option>
-          <option value="g">g</option>
-        </select>
-
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-          <DropdownArrowIcon className="w-3 h-3 text-black" />
-        </span>
-      </div>
-    </div>
-  );
-}
-
 /* Component */
 
-const PrimaryStoneCard: React.FC<Props> = ({
+const PrimaryStoneSection: React.FC<Props> = ({
   value,
   additionalStones,
   onChangePrimary,
@@ -156,19 +87,21 @@ const PrimaryStoneCard: React.FC<Props> = ({
       <div className="grid grid-cols-3 gap-x-10 gap-y-4">
         <div>
           <Label>Stone Name</Label>
-          <SelectField
+          <MasterInputSelect
             value={value.stoneName}
             onChange={(v) => onChangePrimary({ stoneName: v })}
             options={stoneNameOptions}
+            placeholder="Select"
           />
         </div>
 
         <div>
           <Label>Shape</Label>
-          <SelectField
+          <MasterInputSelect
             value={value.shape}
             onChange={(v) => onChangePrimary({ shape: v })}
             options={shapeOptions}
+            placeholder="Select"
           />
         </div>
 
@@ -183,10 +116,11 @@ const PrimaryStoneCard: React.FC<Props> = ({
         <div>
           <Label>S. Weight</Label>
           <WeightInput
-            value={value.weightCts}
-            onChange={(v) => onChangePrimary({ weightCts: v })}
-            unit={value.weightUnit}
-            onUnitChange={(u) => onChangePrimary({ weightUnit: u })}
+            value={value.weight}
+            unit={value.unit}
+            unitOptions={WEIGHT_UNIT_OPTIONS}
+            onChangeValue={(v) => onChangePrimary({ weight: v })}
+            onChangeUnit={(u) => onChangePrimary({ unit: u })}
           />
         </div>
 
@@ -200,28 +134,31 @@ const PrimaryStoneCard: React.FC<Props> = ({
 
         <div>
           <Label>Cutting</Label>
-          <SelectField
+          <MasterInputSelect
             value={value.cutting}
             onChange={(v) => onChangePrimary({ cutting: v })}
             options={cuttingOptions}
+            placeholder="Select"
           />
         </div>
 
         <div>
           <Label>Quality</Label>
-          <SelectField
+          <MasterInputSelect
             value={value.quality}
             onChange={(v) => onChangePrimary({ quality: v })}
             options={qualityOptions}
+            placeholder="Select"
           />
         </div>
 
         <div>
           <Label>Clarity</Label>
-          <SelectField
+          <MasterInputSelect
             value={value.clarity}
             onChange={(v) => onChangePrimary({ clarity: v })}
             options={clarityOptions}
+            placeholder="Select"
           />
         </div>
       </div>
@@ -262,20 +199,8 @@ const PrimaryStoneCard: React.FC<Props> = ({
           Add Stone
         </button>
       </div>
-
-      {/* ---------------- Add Stone ---------------- */}
-      {/* <div className="mt-6">
-        <button
-          type="button"
-          onClick={onAddStone}
-          className="flex items-center gap-x-[10px] text-[#0690F1] text-base"
-        >
-          <PlusIcon className="w-[24px] h-[24px]" />
-          Add Stone
-        </button>
-      </div> */}
     </div>
   );
 };
 
-export default PrimaryStoneCard;
+export default PrimaryStoneSection;

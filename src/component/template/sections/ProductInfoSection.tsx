@@ -1,12 +1,15 @@
 import React from "react";
-import type { BaseProductForm, SelectOption } from "../../../../types/product";
-import DropdownArrowIcon from "../../../../assets/svg/dropdown-arrow2.svg?react";
+import ToggleSwitch from "../../../component/toggle/ToggleSwitch";
+import type { BaseProductForm } from "../../../types/product/form";
+import type { SelectOption } from "../../../types/shared/select";
+import MasterInputSelect from "../../../component/masterData/MasterInputSelect";
 
 type Props = {
   value: BaseProductForm;
   onChange: (patch: Partial<BaseProductForm>) => void;
   itemTypeOptions: SelectOption[];
   metalOptions: SelectOption[];
+  readonly: boolean;
 };
 
 function Label({
@@ -20,39 +23,6 @@ function Label({
     <label className="block text-base font-normal text-black">
       {children} {required ? <span className="text-red-500">*</span> : null}
     </label>
-  );
-}
-
-function SelectField({
-  value,
-  onChange,
-  options,
-  icon,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: SelectOption[];
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 pr-10 text-sm text-[#545454] font-light outline-none appearance-none"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      {icon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          {icon}
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -96,7 +66,7 @@ function UnitInput({
   );
 }
 
-const SemimountInfoCard: React.FC<Props> = ({
+const ProductInfoSection: React.FC<Props> = ({
   value,
   onChange,
   itemTypeOptions,
@@ -104,6 +74,18 @@ const SemimountInfoCard: React.FC<Props> = ({
 }) => {
   return (
     <div className="h-full min-h-0 w-full rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+      {/* HEADER : Toggle */}
+      <div className="flex items-center gap-3 mb-4">
+        <ToggleSwitch
+          checked={value.active}
+          onChange={(checked) => onChange({ active: checked })}
+        />
+        <span className="text-sm text-[#1F2937]">
+          {value.active ? "Active" : "Inactive"}
+        </span>
+      </div>
+
+      {/* FORM GRID */}
       <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-10">
         {/* LEFT */}
         <div className="flex flex-col gap-y-4">
@@ -140,21 +122,21 @@ const SemimountInfoCard: React.FC<Props> = ({
         <div className="flex flex-col gap-y-4">
           <div>
             <Label required>Item Type</Label>
-            <SelectField
+            <MasterInputSelect
               value={value.itemType}
               onChange={(v) => onChange({ itemType: v })}
               options={itemTypeOptions}
-              icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+              placeholder="Select"
             />
           </div>
 
           <div>
             <Label required>Metal</Label>
-            <SelectField
+            <MasterInputSelect
               value={value.metal}
               onChange={(v) => onChange({ metal: v })}
               options={metalOptions}
-              icon={<DropdownArrowIcon className="w-3 h-3 text-black" />}
+              placeholder="Select"
             />
           </div>
 
@@ -200,4 +182,4 @@ const SemimountInfoCard: React.FC<Props> = ({
   );
 };
 
-export default SemimountInfoCard;
+export default ProductInfoSection;

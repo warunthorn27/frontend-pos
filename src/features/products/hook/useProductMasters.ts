@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchMasterOptions } from "../../../services/master";
-import type { SelectOption } from "../../../types/product";
+import type { SelectOption } from "../../../types/shared/select";
 
 export function useProductMasters() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ export function useProductMasters() {
   const [itemTypeOptions, setItemTypeOptions] = useState<SelectOption[]>([]);
   const [metalOptions, setMetalOptions] = useState<SelectOption[]>([]);
   const [accessoriesOptions, setAccessoriesOptions] = useState<SelectOption[]>(
-    []
+    [],
   );
 
   const loadMasters = async () => {

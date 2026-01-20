@@ -5,9 +5,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import UploadImage from "../../../../assets/svg/upload-image.svg?react";
-import ZoomoutIcon from "../../../../assets/svg/zoom-out.svg?react";
-import TrashIcon from "../../../../assets/svg/trash.svg?react";
+import UploadImage from "../../../assets/svg/upload-image.svg?react";
+import ZoomoutIcon from "../../../assets/svg/zoom-out.svg?react";
+import TrashIcon from "../../../assets/svg/trash.svg?react";
 
 type Props = {
   max?: number;
@@ -123,7 +123,7 @@ export default function ProductImagesCard({
 
   const remaining = useMemo(
     () => Math.max(0, max - value.length),
-    [max, value.length]
+    [max, value.length],
   );
   const canAddMore = remaining > 0;
 
@@ -157,7 +157,7 @@ export default function ProductImagesCard({
       valueRef.current = next;
       onChange(next);
     },
-    [max, onChange]
+    [max, onChange],
   );
 
   const onInputChange = useCallback(
@@ -167,7 +167,7 @@ export default function ProductImagesCard({
       addFiles(files);
       e.target.value = "";
     },
-    [addFiles]
+    [addFiles],
   );
 
   const onDrop = useCallback(
@@ -177,7 +177,7 @@ export default function ProductImagesCard({
       if (!e.dataTransfer.files) return;
       addFiles(e.dataTransfer.files);
     },
-    [addFiles]
+    [addFiles],
   );
 
   const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -189,7 +189,7 @@ export default function ProductImagesCard({
   const [viewingKey, setViewingKey] = useState<string | null>(null);
   const viewing = useMemo(
     () => previews.find((p) => p.key === viewingKey) ?? null,
-    [previews, viewingKey]
+    [previews, viewingKey],
   );
   const closeView = useCallback(() => setViewingKey(null), []);
 
@@ -216,7 +216,7 @@ export default function ProductImagesCard({
       valueRef.current = next; // sync ref immediately
       onChange(next);
     },
-    [closeView, onChange, value]
+    [closeView, onChange, value],
   );
 
   return (
@@ -262,7 +262,7 @@ export default function ProductImagesCard({
       <div className="mt-3 flex items-center justify-between text-xs">
         <span className="text-[#545454]">{`Max (${Math.min(
           value.length,
-          max
+          max,
         )}/${max})`}</span>
 
         <button

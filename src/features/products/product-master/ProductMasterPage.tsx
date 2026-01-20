@@ -1,28 +1,25 @@
-import React, { useMemo, useState } from "react";
-
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useProductMasters } from "../hook/useProductMasters";
+import { ApiError } from "../../../services/apiClient";
+import {
+  createMasterProduct,
+  getProductById,
+  updateProduct,
+} from "../../../services/product";
 import type {
-  BaseProductForm,
-  SelectOption,
-  PrimaryStoneForm,
-  AdditionalStoneForm,
   AccessoriesForm,
-} from "../../../types/product";
+  AdditionalStoneForm,
+  BaseProductForm,
+  PrimaryStoneForm,
+} from "../../../types/product/form";
+import type {
+  BackendAccessory,
+  BackendAdditionalStone,
+} from "../../../types/product/response";
+import ProductFormTemplate from "../../../component/template/ProductFormTemplate";
 
-import ProductImagesCard from "../../products/product-master/components/ProductImagesCard";
-import ProductInfoCard from "../../products/product-master/components/ProductInfoCard";
-import PrimaryStoneCard from "../../products/product-master/components/PrimaryStoneCard";
-import AccessoriesCard from "../../products/product-master/components/AccessoriesCard";
-
-const itemTypeOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const metalOptions: SelectOption[] = [{ label: "Select", value: "" }];
-
-const stoneNameOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const shapeOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const cuttingOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const qualityOptions: SelectOption[] = [{ label: "Select", value: "" }];
-const clarityOptions: SelectOption[] = [{ label: "Select", value: "" }];
-
-const accessoriesOptions: SelectOption[] = [{ label: "Select", value: "" }];
+/* ---------- empty factories ---------- */
 
 const emptyAccessories = (): AccessoriesForm => ({
   active: true,
@@ -32,15 +29,15 @@ const emptyAccessories = (): AccessoriesForm => ({
   productSize: "",
   metal: "",
   description: "",
-  weightUnit: "cts",
+  weightUnit: "g",
 });
 
 const emptyPrimaryStone = (): PrimaryStoneForm => ({
   stoneName: "",
   shape: "",
   size: "",
-  weightCts: "",
-  weightUnit: "cts",
+  weight: "",
+  unit: "g",
   color: "",
   cutting: "",
   quality: "",
@@ -68,9 +65,163 @@ const emptyForm: BaseProductForm = {
   additionalStones: [],
 };
 
+/* ---------- page ---------- */
+
 const ProductMasterPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
   const [form, setForm] = useState<BaseProductForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
+
+  const {
+    stoneNameOptions,
+    shapeOptions,
+    cuttingOptions,
+    qualityOptions,
+    clarityOptions,
+    itemTypeOptions,
+    metalOptions,
+    accessoriesOptions,
+  } = useProductMasters();
+
+  /* ---------- loadProduct ---------- */
+
+  useEffect(() => {
+    if (!isEdit || !id) return;
+
+    const loadProduct = async () => {
+      try {
+        const res = await getProductById(id);
+        const p = res.data;
+
+        setForm({
+          active: p.is_active,
+          productName: p.product_name,
+          code: p.product_code,
+          itemType: p.product_item_type,
+          productSize: p.product_detail_id.size ?? "",
+          metal: p.attributes?.metal?.name ?? "",
+          metalColor: p.attributes?.metal_color?.name ?? "",
+          description: p.product_detail_id.description ?? "",
+          gwt: String(p.product_detail_id.gross_weight ?? "0"),
+          nwt: String(p.product_detail_id.net_weight ?? "0"),
+
+          accessories: (() => {
+            const acc = p.product_detail_id.related_accessories?.[0];
+            if (!acc) return emptyAccessories();
+
+            const a = acc as BackendAccessory;
+
+            return {
+              active: true,
+              code: a.product_id?._id ?? "",
+              productName: a.product_id?.product_name ?? "",
+              weight: String(a.weight ?? ""),
+              productSize: a.size ?? "",
+              metal: a.metal ?? "",
+              description: a.description ?? "",
+              weightUnit: "g",
+            };
+          })(),
+
+          primaryStone: {
+            stoneName: p.product_detail_id.primary_stone?.stone_name ?? "",
+            shape: p.product_detail_id.primary_stone?.shape ?? "",
+            size: p.product_detail_id.primary_stone?.size ?? "",
+            weight: String(p.product_detail_id.primary_stone?.weight ?? ""),
+            unit: "g",
+            color: p.product_detail_id.primary_stone?.color ?? "",
+            cutting: p.product_detail_id.primary_stone?.cutting ?? "",
+            quality: p.product_detail_id.primary_stone?.quality ?? "",
+            clarity: p.product_detail_id.primary_stone?.clarity ?? "",
+          },
+
+          additionalStones:
+            p.product_detail_id.additional_stones?.map(
+              (s: BackendAdditionalStone): AdditionalStoneForm => ({
+                stoneName: s.stone_name ?? "",
+                shape: s.shape ?? "",
+                size: s.size ?? "",
+                weight: String(s.weight ?? ""),
+                unit: "g",
+                color: s.color ?? "",
+                cutting: s.cutting ?? "",
+                quality: s.quality ?? "",
+                clarity: s.clarity ?? "",
+              }),
+            ) ?? [],
+        });
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 401) {
+          alert("Session หมดอายุ กรุณา login ใหม่");
+          return;
+        }
+
+        if (e instanceof Error) {
+          alert(e.message);
+          return;
+        }
+
+        alert("ไม่สามารถโหลดข้อมูลสินค้าได้");
+      }
+    };
+
+    loadProduct();
+  }, [id, isEdit]);
+
+  /* ---------- helpers ---------- */
+
+  const patchForm = (patch: Partial<BaseProductForm>) => {
+    setForm((s) => ({ ...s, ...patch }));
+  };
+
+  const patchPrimaryStone = (patch: Partial<PrimaryStoneForm>) => {
+    setForm((s) => ({
+      ...s,
+      primaryStone: { ...s.primaryStone, ...patch },
+    }));
+  };
+
+  const addAdditionalStone = () => {
+    setForm((s) => ({
+      ...s,
+      additionalStones: [
+        ...s.additionalStones,
+        {
+          stoneName: "",
+          shape: "",
+          size: "",
+          weight: "",
+          unit: "g",
+          color: "",
+          cutting: "",
+          quality: "",
+          clarity: "",
+        },
+      ],
+    }));
+  };
+
+  const updateAdditionalStone = (
+    index: number,
+    patch: Partial<AdditionalStoneForm>,
+  ) => {
+    setForm((s) => ({
+      ...s,
+      additionalStones: s.additionalStones.map((st, i) =>
+        i === index ? { ...st, ...patch } : st,
+      ),
+    }));
+  };
+
+  const removeAdditionalStone = (index: number) => {
+    setForm((s) => ({
+      ...s,
+      additionalStones: s.additionalStones.filter((_, i) => i !== index),
+    }));
+  };
+
+  /* ---------- validation ---------- */
 
   const canSave = useMemo(() => {
     return (
@@ -84,153 +235,118 @@ const ProductMasterPage: React.FC = () => {
     );
   }, [form]);
 
-  // const addAdditionalStone = () => {
-  //   setForm((s) => ({
-  //     ...s,
-  //     additionalStones: [...s.additionalStones, emptyAdditionalStone()],
-  //   }));
-  // };
+  /* ---------- handle Save ---------- */
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
 
-  const updateAdditionalStone = (
-    index: number,
-    patch: Partial<AdditionalStoneForm>
-  ) => {
-    setForm((s) => ({
-      ...s,
-      additionalStones: s.additionalStones.map((st, i) =>
-        i === index ? { ...st, ...patch } : st
-      ),
-    }));
-  };
+      formData.append("product_name", form.productName.trim());
+      formData.append("code", form.code.trim());
+      formData.append("category", "productmaster");
+      formData.append("item_type", form.itemType);
+      formData.append("product_size", form.productSize);
+      formData.append("metal", form.metal);
 
-  const removeAdditionalStone = (index: number) => {
-    setForm((s) => ({
-      ...s,
-      additionalStones: s.additionalStones.filter((_, i) => i !== index),
-    }));
-  };
+      if (form.metalColor) formData.append("metal_color", form.metalColor);
 
-  const patchForm = (patch: Partial<BaseProductForm>) => {
-    setForm((s) => ({ ...s, ...patch }));
-  };
+      if (form.description) formData.append("description", form.description);
 
-  const patchPrimaryStone = (patch: Partial<PrimaryStoneForm>) => {
-    setForm((s) => ({
-      ...s,
-      primaryStone: { ...s.primaryStone, ...patch },
-    }));
+      formData.append("gross_weight", form.gwt);
+      formData.append("net_weight", form.nwt);
+      formData.append("unit", "g");
+
+      if (form.primaryStone.stoneName) {
+        formData.append("stone_name", form.primaryStone.stoneName);
+        formData.append("shape", form.primaryStone.shape);
+        formData.append("size", form.primaryStone.size);
+        formData.append("color", form.primaryStone.color);
+        formData.append("cutting", form.primaryStone.cutting);
+        formData.append("quality", form.primaryStone.quality);
+        formData.append("clarity", form.primaryStone.clarity);
+        formData.append("weight", form.primaryStone.weight);
+      }
+
+      if (form.additionalStones.length > 0) {
+        formData.append(
+          "stones",
+          JSON.stringify(
+            form.additionalStones.map((s) => ({
+              stone_name: s.stoneName,
+              shape: s.shape,
+              size: s.size,
+              color: s.color,
+              cutting: s.cutting,
+              quality: s.quality,
+              clarity: s.clarity,
+              weight: Number(s.weight || 0),
+            })),
+          ),
+        );
+      }
+
+      if (form.accessories.code) {
+        const accessoriesPayload = [
+          {
+            product_id: form.accessories.code, // ต้องเป็น ObjectId
+            weight: Number(form.accessories.weight || 0),
+            size: form.accessories.productSize || "",
+            metal: form.accessories.metal || "",
+            description: form.accessories.description || "",
+          },
+        ];
+
+        formData.append(
+          "related_accessories",
+          JSON.stringify(accessoriesPayload),
+        );
+      }
+
+      images.forEach((img) => formData.append("files", img));
+
+      if (isEdit && id) {
+        await updateProduct(id, formData);
+      } else {
+        await createMasterProduct(formData);
+      }
+
+      // reset form
+      setForm(emptyForm);
+      setImages([]);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert("Save failed");
+      }
+    }
   };
 
   return (
-    <div className="w-full h-full flex flex-col min-h-0">
-      <div className="w-full max-w-[1690px] mx-auto flex flex-col min-h-0">
-        <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
-          Product Master
-        </h2>
-
-        {/* MAIN CANVAS */}
-        <div className="flex-1 min-h-0 rounded-md bg-[#FAFAFA] shadow-md flex flex-col overflow-hidden">
-          {/* CONTENT */}
-          {/* <div className="flex-1 overflow-hidden px-10 py-8">
-            <div className="grid h-full grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start overflow-y-auto hide-scrollbar"> */}
-          <div className="flex-1 overflow-y-auto px-10 py-8 hide-scrollbar">
-            <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
-              {/* LEFT : Image */}
-              <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-                <ProductImagesCard
-                  max={9}
-                  value={images}
-                  onChange={setImages}
-                />
-              </div>
-
-              {/* RIGHT : Form (scroll) */}
-              <div className="h-full min-h-0">
-                <div className="flex flex-col gap-6">
-                  <ProductInfoCard
-                    value={form}
-                    onChange={patchForm}
-                    itemTypeOptions={itemTypeOptions}
-                    metalOptions={metalOptions}
-                  />
-
-                  {/* <div className="grid grid-cols-[minmax(0,2fr),minmax(0,1.2fr)] gap-6"> */}
-                  <PrimaryStoneCard
-                    value={form.primaryStone}
-                    additionalStones={form.additionalStones}
-                    onChangePrimary={patchPrimaryStone}
-                    onAddStone={() =>
-                      setForm((s) => ({
-                        ...s,
-                        additionalStones: [
-                          ...s.additionalStones,
-                          {
-                            stoneName: "",
-                            shape: "",
-                            size: "",
-                            weightCts: "",
-                            weightUnit: "cts",
-                            color: "",
-                            cutting: "",
-                            quality: "",
-                            clarity: "",
-                            qty: "",
-                          },
-                        ],
-                      }))
-                    }
-                    onChangeStone={updateAdditionalStone}
-                    onRemoveStone={removeAdditionalStone}
-                    stoneNameOptions={stoneNameOptions}
-                    shapeOptions={shapeOptions}
-                    cuttingOptions={cuttingOptions}
-                    qualityOptions={qualityOptions}
-                    clarityOptions={clarityOptions}
-                  />
-
-                  <AccessoriesCard
-                    value={form.accessories}
-                    onChange={(patch) =>
-                      patchForm({
-                        accessories: { ...form.accessories, ...patch },
-                      })
-                    }
-                    options={accessoriesOptions}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* FOOTER */}
-          <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
-            <button
-              type="button"
-              className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
-              onClick={() => {
-                setForm(emptyForm);
-                setImages([]);
-              }}
-            >
-              Cancel
-            </button>
-
-            <button
-              type="button"
-              disabled={!canSave}
-              className={[
-                "px-8 py-2 rounded-md text-[13px] font-normal",
-                canSave
-                  ? "bg-[#34C759] hover:bg-[#24913F] text-white"
-                  : "bg-[#CFCFCF] text-white cursor-not-allowed",
-              ].join(" ")}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ProductFormTemplate
+      title="Product Master"
+      form={form}
+      images={images}
+      onChangeForm={patchForm}
+      onChangePrimaryStone={patchPrimaryStone}
+      onAddAdditionalStone={addAdditionalStone}
+      onChangeAdditionalStone={updateAdditionalStone}
+      onRemoveAdditionalStone={removeAdditionalStone}
+      onChangeImages={setImages}
+      itemTypeOptions={itemTypeOptions}
+      metalOptions={metalOptions}
+      stoneNameOptions={stoneNameOptions}
+      shapeOptions={shapeOptions}
+      cuttingOptions={cuttingOptions}
+      qualityOptions={qualityOptions}
+      clarityOptions={clarityOptions}
+      accessoriesOptions={accessoriesOptions}
+      canSave={canSave}
+      onCancel={() => {
+        setForm(emptyForm);
+        setImages([]);
+      }}
+      onSave={handleSave}
+    />
   );
 };
 
