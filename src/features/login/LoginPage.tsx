@@ -4,7 +4,6 @@ import ForgotPassword from "./ForgotPassword";
 import { loginApi } from "../../services/auth";
 import { saveAuth } from "../../utils/authStorage";
 import type { LoginResponse } from "../../types/auth";
-import warningIcon from "../../assets/svg/warning-icon.svg";
 import EyeIcon from "../../assets/svg/eye.svg?react";
 import EyeOffIcon from "../../assets/svg/eye-slash.svg?react";
 
@@ -37,8 +36,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   const validateForm = (): boolean => {
     const next: FieldErrors = {};
-    if (!identifier.trim()) next.identifier = "Please enter email or username.";
-    if (!password.trim()) next.password = "Please enter your password.";
+    if (!identifier.trim()) next.identifier = "Invalid email !";
+    if (!password.trim()) next.password = "Invalid password !";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -71,12 +70,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="w-full max-w-md bg-white backdrop-blur rounded-xl shadow-lg px-8 py-10">
-        <h1 className="text-4xl text-center font-regular text-[#084072] mb-8">
+      <div className="w-[500px] h-[600px] bg-white backdrop-blur rounded-xl shadow-lg px-10 py-10">
+        <h1 className="text-5xl text-center font-normal text-[#084072] mt-[65.5px] mb-7">
           Login
         </h1>
 
-        <p className="text-sm text-center text-[#9D9D9D] font-regular mb-6">
+        <p className="text-base text-center text-[#9D9D9D] font-normal mb-7">
           Enter your email and password to log in
         </p>
 
@@ -86,7 +85,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-[20px]">
           {/* Email / Username */}
           <div className="space-y-2">
             <div className="relative">
@@ -95,7 +94,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 type="text"
                 placeholder="Email or Username"
                 className={`
-                  w-full rounded-lg px-4 py-3 pr-10 text-sm text-gray-900 font-light
+                  w-full rounded-lg px-4 py-4 pr-10 text-sm text-black font-light placeholder-[#545454]
                   outline-none transition bg-white
                   ${
                     hasIdentifierError
@@ -112,15 +111,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 }}
               />
 
-              {hasIdentifierError && (
-                <span className="absolute inset-y-0 right-3 flex items-center">
-                  <img src={warningIcon} alt="" className="w-5 h-5" />
-                </span>
-              )}
+              {hasIdentifierError}
             </div>
 
             {errors.identifier && (
-              <p className="text-red-500 text-xs">{errors.identifier}</p>
+              <p className="text-[#FF383C] text-sm">{errors.identifier}</p>
             )}
           </div>
 
@@ -132,7 +127,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className={`
-                  w-full rounded-lg px-4 py-3 pr-12 text-sm text-gray-900 font-light
+                  w-full rounded-lg px-4 py-4 pr-12 text-sm text-black font-light placeholder-[#545454]
                   outline-none transition bg-white
                   ${
                     hasPasswordError
@@ -156,15 +151,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <EyeIcon className="h-5 w-6 text-gray-500" />
+                  <EyeOffIcon className="h-6 w-6 text-gray-500" />
                 ) : (
-                  <EyeOffIcon className="h-5 w-6 text-gray-500" />
+                  <EyeIcon className="h-6 w-6 text-gray-500" />
                 )}
               </button>
             </div>
 
             {errors.password && (
-              <p className="text-red-500 text-xs">{errors.password}</p>
+              <p className="text-[#FF383C] text-sm">{errors.password}</p>
             )}
           </div>
 
@@ -172,7 +167,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-xs font-regular text-[#545454] hover:text-blue-600 hover:underline"
+              className="text-base font-normal text-[#545454] hover:underline" //hover:text-blue-600
               onClick={() => setShowForgot(true)}
             >
               Forgot Password ?
@@ -184,9 +179,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-8 w-28 bg-[#0088FF] hover:bg-[#037be4] text-white py-2 rounded-md mb-2 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+              className="mt-7 w-24 bg-[#0088FF] hover:bg-[#037be4] text-white py-2.5 rounded-md disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
             >
-              {isSubmitting ? "Signing in..." : "Login"}
+              {isSubmitting ? "Loading..." : "Login"}
             </button>
           </div>
         </form>
