@@ -13,9 +13,9 @@ type Props = {
   max?: number;
   value: File[];
   onChange: (files: File[]) => void;
-
   /** key => progress (0-100) */
   uploadProgress?: Record<string, number>;
+  readonly?: boolean;
 };
 
 type PreviewItem = {
@@ -47,27 +47,23 @@ export default function ProductImagesCard({
   value,
   onChange,
   uploadProgress,
+  readonly,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const isReadonly = readonly === true;
 
-  // keep latest value in ref to avoid stale closure in addFiles (rapid drops/changes)
   const valueRef = useRef<File[]>(value);
   useEffect(() => {
     valueRef.current = value;
   }, [value]);
 
-  // render-friendly state
   const [urlByKey, setUrlByKey] = useState<Record<string, string>>({});
-  // ref for cleanup + computing next map (don't read in render)
   const urlByKeyRef = useRef<Record<string, string>>({});
 
-  // keep ref in sync (outside render)
   useEffect(() => {
     urlByKeyRef.current = urlByKey;
   }, [urlByKey]);
 
-  // create/revoke objectURLs when `value` changes
-  // and avoid "setState synchronously in effect" warning by scheduling setState
   useEffect(() => {
     const prev = urlByKeyRef.current;
     const next: Record<string, string> = { ...prev };
@@ -92,7 +88,6 @@ export default function ProductImagesCard({
     // update ref first
     urlByKeyRef.current = next;
 
-    // schedule state update (avoid synchronous setState in effect body)
     const t = window.setTimeout(() => {
       setUrlByKey(next);
     }, 0);
@@ -127,7 +122,6 @@ export default function ProductImagesCard({
   );
   const canAddMore = remaining > 0;
 
-  // defensive clamp: if parent passes more than max for any reason, cut down once
   useEffect(() => {
     if (value.length > max) {
       const next = value.slice(0, max);
@@ -137,14 +131,16 @@ export default function ProductImagesCard({
   }, [max, onChange, value]);
 
   const pickFiles = useCallback(() => {
+    if (isReadonly) return;
     inputRef.current?.click();
-  }, []);
+  }, [isReadonly]);
 
   const addFiles = useCallback(
     (files: FileList | File[]) => {
+      if (isReadonly) return;
       const current = valueRef.current;
 
-      // ถ้าเต็มแล้ว ไม่ต้องทำอะไร
+      // ถ้าครบแล้ว ไม่ต้องทำอะไร
       const remainingNow = Math.max(0, max - current.length);
       if (remainingNow <= 0) return;
 
@@ -153,11 +149,10 @@ export default function ProductImagesCard({
 
       const next = [...current, ...arr].slice(0, max);
 
-      // sync ref immediately to avoid race when user drops/selects again quickly
       valueRef.current = next;
       onChange(next);
     },
-    [max, onChange],
+    [isReadonly, max, onChange],
   );
 
   const onInputChange = useCallback(
@@ -172,20 +167,24 @@ export default function ProductImagesCard({
 
   const onDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
+      if (isReadonly) return;
       e.preventDefault();
       e.stopPropagation();
       if (!e.dataTransfer.files) return;
       addFiles(e.dataTransfer.files);
     },
-    [addFiles],
+    [isReadonly, addFiles],
   );
 
-  const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
+  const onDragOver = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      if (isReadonly) return;
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    [isReadonly],
+  );
 
-  // viewing key (safe)
   const [viewingKey, setViewingKey] = useState<string | null>(null);
   const viewing = useMemo(
     () => previews.find((p) => p.key === viewingKey) ?? null,
@@ -204,19 +203,21 @@ export default function ProductImagesCard({
   }, [closeView, viewing]);
 
   const removeAll = useCallback(() => {
+    if (isReadonly) return;
     closeView();
     valueRef.current = []; // sync ref immediately
     onChange([]);
-  }, [closeView, onChange]);
+  }, [isReadonly, closeView, onChange]);
 
   const removeAt = useCallback(
     (index: number) => {
+      if (isReadonly) return;
       closeView();
       const next = value.filter((_, i) => i !== index);
       valueRef.current = next; // sync ref immediately
       onChange(next);
     },
-    [closeView, onChange, value],
+    [isReadonly, closeView, onChange, value],
   );
 
   return (
@@ -231,15 +232,17 @@ export default function ProductImagesCard({
         <UploadImage className="w-[34px] h-[34px] mb-[10px]" />
 
         <p className="text-xs text-center leading-6">
-          <span
-            className="text-[#2DA9FF] cursor-pointer"
-            role="button"
-            tabIndex={0}
-            onClick={pickFiles}
-            onKeyDown={(e) => (e.key === "Enter" ? pickFiles() : undefined)}
-          >
-            Click to upload
-          </span>{" "}
+          {!isReadonly && (
+            <span
+              className="text-[#2DA9FF] cursor-pointer"
+              role="button"
+              tabIndex={0}
+              onClick={pickFiles}
+              onKeyDown={(e) => (e.key === "Enter" ? pickFiles() : undefined)}
+            >
+              Click to upload
+            </span>
+          )}
           <span className="text-[#525252]">or drag and drop</span>
           <br />
           <span className="text-[#545454] font-l">
@@ -254,7 +257,7 @@ export default function ProductImagesCard({
           multiple
           onChange={onInputChange}
           className="hidden"
-          disabled={!canAddMore}
+          disabled={!canAddMore || isReadonly}
         />
       </div>
 
@@ -265,14 +268,16 @@ export default function ProductImagesCard({
           max,
         )}/${max})`}</span>
 
-        <button
-          type="button"
-          onClick={removeAll}
-          className="text-[#FF383C] cursor-pointer"
-          disabled={value.length === 0}
-        >
-          Remove all
-        </button>
+        {!isReadonly && (
+          <button
+            type="button"
+            onClick={removeAll}
+            className="text-[#FF383C] cursor-pointer"
+            disabled={value.length === 0}
+          >
+            Remove all
+          </button>
+        )}
       </div>
 
       {/* Preview grid 3x3 */}
@@ -341,24 +346,26 @@ export default function ProductImagesCard({
                       <button
                         type="button"
                         onClick={() => setViewingKey(p.key)}
-                        className="w-9 h-9 rounded-md bg-white
+                        className="w-7 h-7 rounded-md bg-white
                                    flex items-center justify-center shadow
                                    transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
                         aria-label={`View ${p.file.name}`}
                       >
-                        <ZoomoutIcon className="w-[30px] h-[30px]" />
+                        <ZoomoutIcon className="w-6 h-6" />
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => removeAt(index)}
-                        className="w-9 h-9 rounded-md bg-white
+                      {!isReadonly && (
+                        <button
+                          type="button"
+                          onClick={() => removeAt(index)}
+                          className="w-7 h-7 rounded-md bg-white
                                    flex items-center justify-center shadow 
                                    transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
-                        aria-label={`Delete ${p.file.name}`}
-                      >
-                        <TrashIcon className="w-[30px] h-[30px]" />
-                      </button>
+                          aria-label={`Delete ${p.file.name}`}
+                        >
+                          <TrashIcon className="w-6 h-6" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
