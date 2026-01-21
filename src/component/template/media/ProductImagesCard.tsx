@@ -234,7 +234,7 @@ export default function ProductImagesCard({
         <p className="text-xs text-center leading-6">
           {!isReadonly && (
             <span
-              className="text-[#2DA9FF] cursor-pointer"
+              className="text-[#2DA9FF] cursor-pointer underline font-normal"
               role="button"
               tabIndex={0}
               onClick={pickFiles}
@@ -243,10 +243,10 @@ export default function ProductImagesCard({
               Click to upload
             </span>
           )}
-          <span className="text-[#525252]">or drag and drop</span>
+          <span className="text-[#525252] font-normal">&nbsp; or drag and drop</span>
           <br />
-          <span className="text-[#545454] font-l">
-            JPG, JPEG, PNG, WEBP (Max 1200x1200 px)
+          <span className="text-[#545454] font-light">
+            JPG, JPEG, PNG, WEBP (Max 10MB)
           </span>
         </p>
 
