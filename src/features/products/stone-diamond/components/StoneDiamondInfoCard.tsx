@@ -9,6 +9,7 @@ import MasterInputSelect from "../../../../component/masterData/MasterInputSelec
 type Props = {
   value: StoneDiamondForm;
   onChange: (patch: Partial<StoneDiamondForm>) => void;
+  readonly?: boolean;
   stoneNameOptions: SelectOption[];
   shapeOptions: SelectOption[];
   cuttingOptions: SelectOption[];
@@ -24,7 +25,7 @@ function Label({
   required?: boolean;
 }) {
   return (
-    <label className="block text-base font-normal text-black">
+    <label className="block text-base font-normal text-black mb-2">
       {children} {required ? <span className="text-red-500">*</span> : null}
     </label>
   );
@@ -33,14 +34,17 @@ function Label({
 function Input({
   value,
   onChange,
+  readonly,
 }: {
   value: string;
   onChange: (v: string) => void;
+  readonly?: boolean;
 }) {
   return (
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      disabled={readonly}
       className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
     />
   );
@@ -49,6 +53,7 @@ function Input({
 const StoneDiamondInfoCard: React.FC<Props> = ({
   value,
   onChange,
+  readonly,
   stoneNameOptions,
   shapeOptions,
   cuttingOptions,
@@ -76,6 +81,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
               <Input
                 value={value.productName}
                 onChange={(v) => onChange({ productName: v })}
+                readonly={readonly}
               />
             </div>
 
@@ -84,6 +90,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
               <Input
                 value={value.code}
                 onChange={(v) => onChange({ code: v })}
+                readonly={readonly}
               />
             </div>
 
@@ -120,6 +127,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                 <Input
                   value={value.size}
                   onChange={(v) => onChange({ size: v })}
+                  readonly={readonly}
                 />
               </div>
 
@@ -128,6 +136,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                 <Input
                   value={value.color}
                   onChange={(v) => onChange({ color: v })}
+                  readonly={readonly}
                 />
               </div>
 

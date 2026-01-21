@@ -67,7 +67,7 @@ export default function ProductFilters({
       </div>
 
       {/* right icons */}
-      <div className="ml-auto flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-4">
         <button
           type="button"
           onClick={onPrint}
@@ -88,7 +88,7 @@ export default function ProductFilters({
 
         <button
           onClick={onExportExcel}
-          className="px-[10px] py-[6px] gap-2 rounded-md bg-[#43A047] text-base font-normal text-white hover:bg-[#39813C] flex items-center"
+          className="px-[10px] py-[6px] gap-2 rounded-md bg-[#34C759] text-base font-normal text-white hover:bg-[#39813C] flex items-center"
         >
           <ExportIcon className="w-6 h-6" />
           Export

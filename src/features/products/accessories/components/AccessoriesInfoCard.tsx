@@ -21,7 +21,7 @@ function Label({
   required?: boolean;
 }) {
   return (
-    <label className="block text-base font-normal text-black">
+    <label className="block text-base font-normal text-black mb-2">
       {children} {required ? <span className="text-red-500">*</span> : null}
     </label>
   );

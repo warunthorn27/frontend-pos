@@ -7,6 +7,7 @@ import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
 type Props = {
   value: OthersForm;
   onChange: (patch: Partial<OthersForm>) => void;
+  readonly?: boolean;
 };
 
 function Label({
@@ -17,7 +18,7 @@ function Label({
   required?: boolean;
 }) {
   return (
-    <label className="block text-base font-normal text-black">
+    <label className="block text-base font-normal text-black mb-2">
       {children} {required ? <span className="text-red-500">*</span> : null}
     </label>
   );
@@ -26,20 +27,23 @@ function Label({
 function Input({
   value,
   onChange,
+  readonly,
 }: {
   value: string;
   onChange: (v: string) => void;
+  readonly?: boolean;
 }) {
   return (
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      disabled={readonly}
       className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
     />
   );
 }
 
-const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
+const OthersInfoCard: React.FC<Props> = ({ value, onChange, readonly }) => {
   return (
     <div className="w-full rounded-2xl border bg-white">
       <div className="px-6 py-5">
@@ -61,6 +65,7 @@ const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
               <Input
                 value={value.productName}
                 onChange={(v) => onChange({ productName: v })}
+                readonly={readonly}
               />
             </div>
 
@@ -69,6 +74,7 @@ const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
               <Input
                 value={value.code}
                 onChange={(v) => onChange({ code: v })}
+                readonly={readonly}
               />
             </div>
           </div>
@@ -80,6 +86,7 @@ const OthersInfoCard: React.FC<Props> = ({ value, onChange }) => {
                 <Input
                   value={value.productSize}
                   onChange={(v) => onChange({ productSize: v })}
+                  readonly={readonly}
                 />
               </div>
             </div>

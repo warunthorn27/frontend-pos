@@ -348,7 +348,7 @@ export default function ProductImagesCard({
                         onClick={() => setViewingKey(p.key)}
                         className="w-8 h-8 rounded-md bg-white
                                    flex items-center justify-center shadow
-                                   transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
+                                   transition-transform duration-150 ease-out hover:scale-110"
                         aria-label={`View ${p.file.name}`}
                       >
                         <ZoomoutIcon className="w-6 h-6" />
@@ -360,10 +360,10 @@ export default function ProductImagesCard({
                           onClick={() => removeAt(index)}
                           className="w-8 h-8 rounded-md bg-white
                                    flex items-center justify-center shadow 
-                                   transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
+                                   transition-transform duration-150 ease-out hover:scale-110"
                           aria-label={`Delete ${p.file.name}`}
                         >
-                          <TrashIcon className="w-6 h-6" />
+                          <TrashIcon className="w-6 h-6 text-[#E71010]" />
                         </button>
                       )}
                     </div>

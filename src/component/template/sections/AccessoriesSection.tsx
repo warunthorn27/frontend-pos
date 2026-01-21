@@ -13,7 +13,7 @@ type Props = {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-base font-normal text-black">{children}</label>
+    <label className="block text-base font-normal text-black mb-2">{children}</label>
   );
 }
 
