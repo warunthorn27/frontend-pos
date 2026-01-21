@@ -1,32 +1,45 @@
-export interface CustomerListItem {
-  id: string;
-  customerId: string;
-  businessType: string;
-  companyName: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: "active" | "inactive";
+export type BusinessType = "corporation" | "individual";
+
+export interface Address {
+  address: string;
+  country: string;
+  province: string;
+  district: string;
+  subDistrict: string;
+  zipcode: string;
 }
 
-export interface CustomerFormInput {
-  customerId: string;
-  businessType: string;
+export interface TaxInvoiceAddress extends Address {
   companyName: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: "active" | "inactive";
+  taxId: string;
 }
 
-export interface CustomerModel {
-  _id: string;
-  customer_id: string;
-  business_type: string;
-  company_name: string;
-  name: string;
-  email: string;
+export interface BaseCustomer {
+  customerId: string;
   phone: string;
-  status: boolean;
-  comp_id?: string;
+  email?: string;
+  note?: string;
+  address: Address;
 }
+
+export interface CorporationCustomer extends BaseCustomer {
+  businessType: "corporation";
+  companyName: string;
+  contactPerson: string;
+}
+
+export interface IndividualCustomer extends BaseCustomer {
+  businessType: "individual";
+  firstName: string;
+  lastName: string;
+  gender: string;
+  birthday: string;
+}
+
+export type CustomerFormInput =
+  | (IndividualCustomer & {
+      taxInvoiceAddress?: TaxInvoiceAddress | null;
+    })
+  | (CorporationCustomer & {
+      taxInvoiceAddress?: TaxInvoiceAddress | null;
+    });
