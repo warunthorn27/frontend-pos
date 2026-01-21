@@ -55,7 +55,7 @@ const MasterSelect: React.FC<Props> = ({
         type="button"
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-items-start h-[38px]
+        className="flex w-full items-center justify-between h-[38px]
           rounded-md border border-[#CFCFCF] bg-white px-3 text-sm"
       >
         {/* LEFT */}
@@ -65,7 +65,7 @@ const MasterSelect: React.FC<Props> = ({
           {count > 0 && (
             <span
               className="flex h-[22px] w-[25px] items-center justify-center
-              rounded bg-[#EFF7FF] text-[#0690F1] text-sm font-normal mx-3"
+              rounded bg-[#EFF7FF] text-[#0690F1] text-sm font-normal"
             >
               {count}
             </span>
@@ -73,19 +73,33 @@ const MasterSelect: React.FC<Props> = ({
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center px-11">
+        <div className="flex items-center justify-end gap-1">
           <DropdownArrowIcon className="w-3 h-3" />
 
           {count > 0 && (
             <button
               type="button"
               onClick={clearAll}
-              className=" hover:bg-gray-100 rounded-xl mx-1"
+              className=" hover:bg-gray-100 rounded-xl"
             >
               <CloseIcon className="w-6 h-6" />
             </button>
           )}
         </div>
+
+        {/* <div className="flex items-center justify-end gap-1 min-w-[44px]">
+          {count > 0 && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="hover:bg-gray-100 rounded"
+            >
+              <CloseIcon className="w-5 h-5" />
+            </button>
+          )}
+
+          <DropdownArrowIcon className="w-3 h-3" />
+        </div> */}
       </button>
 
       {/* DROPDOWN */}
