@@ -26,7 +26,7 @@ type PreviewItem = {
 };
 
 function isAllowedImage(file: File) {
-  const okTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const okTypes = ["image/png", "image/jpeg", "image/webp"];
   return okTypes.includes(file.type);
 }
 
@@ -246,14 +246,14 @@ export default function ProductImagesCard({
           <span className="text-[#525252]">or drag and drop</span>
           <br />
           <span className="text-[#545454] font-l">
-            JPG, JPEG, PNG (Max 1200x1200 px)
+            JPG, JPEG, PNG, WEBP (Max 1200x1200 px)
           </span>
         </p>
 
         <input
           ref={inputRef}
           type="file"
-          accept="image/png,image/jpeg,image/jpg"
+          accept="image/png,image/jpeg,image/webp"
           multiple
           onChange={onInputChange}
           className="hidden"
@@ -346,7 +346,7 @@ export default function ProductImagesCard({
                       <button
                         type="button"
                         onClick={() => setViewingKey(p.key)}
-                        className="w-7 h-7 rounded-md bg-white
+                        className="w-8 h-8 rounded-md bg-white
                                    flex items-center justify-center shadow
                                    transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
                         aria-label={`View ${p.file.name}`}
@@ -358,7 +358,7 @@ export default function ProductImagesCard({
                         <button
                           type="button"
                           onClick={() => removeAt(index)}
-                          className="w-7 h-7 rounded-md bg-white
+                          className="w-8 h-8 rounded-md bg-white
                                    flex items-center justify-center shadow 
                                    transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
                           aria-label={`Delete ${p.file.name}`}

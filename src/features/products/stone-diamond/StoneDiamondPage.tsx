@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
 import type { StoneDiamondForm } from "../../../types/product/form";
 import StoneDiamondInfoCard from "./components/StoneDiamondInfoCard";
-import StoneDiamondImagesCard from "./components/StoneDiamondImagesCard";
 import { useParams } from "react-router-dom";
 import { useProductMasters } from "../hook/useProductMasters";
 import {
   createStoneDiamond,
   updateStoneDiamond,
 } from "../../../services/product";
+import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
 
 const emptyStoneDiamondForm: StoneDiamondForm = {
   active: true,
@@ -110,7 +110,7 @@ const StoneDiamondPage: React.FC = () => {
             <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
               {/* LEFT : Image */}
               <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-                <StoneDiamondImagesCard
+                <ProductImagesCard
                   max={9}
                   value={images}
                   onChange={setImages}

@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
 import AccessoriesInfoCard from "./components/AccessoriesInfoCard";
-import AccessoriesImagesCard from "./components/AccessoriesImagesCard";
 import { useProductMasters } from "../hook/useProductMasters";
 import { createAccessory, updateAccessory } from "../../../services/product";
 import { useParams } from "react-router-dom";
 import type { AccessoriesForm } from "../../../types/product/form";
+import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
 
 const emptyForm: AccessoriesForm = {
   active: true,
@@ -88,7 +88,7 @@ const AccessoriesPage: React.FC = () => {
             <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
               {/* LEFT : Image */}
               <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
-                <AccessoriesImagesCard
+                <ProductImagesCard
                   max={9}
                   value={images}
                   onChange={setImages}

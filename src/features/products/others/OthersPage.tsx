@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import ProductImagesCard from "./components/OthersImagesCard";
+import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
 import OthersInfoCard from "./components/OthersInfoCard";
 import { useParams } from "react-router-dom";
 import { createOthers, updateOthers } from "../../../services/product";
