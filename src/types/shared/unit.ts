@@ -1,4 +1,4 @@
-export type WeightUnit = "g" | "cts" | "pcs" | "pair";
+export type WeightUnit = "g" | "cts";
 
 export const WEIGHT_UNIT_OPTIONS: ReadonlyArray<{
   label: string;
@@ -6,6 +6,4 @@ export const WEIGHT_UNIT_OPTIONS: ReadonlyArray<{
 }> = [
   { value: "g", label: "g" },
   { value: "cts", label: "cts" },
-  { value: "pcs", label: "pcs" },
-  { value: "pair", label: "pair" },
 ];
