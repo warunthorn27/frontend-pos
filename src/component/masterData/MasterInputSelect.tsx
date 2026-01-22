@@ -20,6 +20,18 @@ const MasterInputSelect: React.FC<Props> = ({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [openUpward, setOpenUpward] = useState(false);
+
+  const calculateDropdownPosition = () => {
+    if (!inputRef.current) return;
+
+    const rect = inputRef.current.getBoundingClientRect();
+    const dropdownHeight = 270; // max-h-52 ≈ 13rem ≈ 208px
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    setOpenUpward(spaceBelow < dropdownHeight && spaceAbove > dropdownHeight);
+  };
 
   /* หา option จาก value (_id) */
   const selectedOption = useMemo(() => {
@@ -43,7 +55,8 @@ const MasterInputSelect: React.FC<Props> = ({
   /* open dropdown */
   const openDropdown = () => {
     if (!inputRef.current) return;
-    setQuery(displayValue); // sync ก่อนพิมพ์
+    setQuery(displayValue);
+    calculateDropdownPosition();
     setOpen(true);
   };
 
@@ -90,7 +103,10 @@ const MasterInputSelect: React.FC<Props> = ({
       <button
         type="button"
         tabIndex={-1}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          calculateDropdownPosition();
+          setOpen((o) => !o);
+        }}
         className="absolute right-3 top-1/2 -translate-y-1/2"
       >
         <DropdownArrowIcon className="w-3 h-3" />
@@ -98,13 +114,12 @@ const MasterInputSelect: React.FC<Props> = ({
 
       {open && filteredOptions.length > 0 && (
         <ul
-          className="
-            absolute left-0 top-full z-50
-            mt-1 w-full
+          className={`absolute left-0 z-50 w-full
             max-h-52 overflow-auto
             rounded-md border border-[#CFCFCF]
             bg-white text-sm shadow-md
-          "
+            ${openUpward ? "bottom-full mb-1" : "top-full mt-1"}
+          `}
         >
           {filteredOptions.map((o) => (
             <li
