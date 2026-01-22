@@ -1,5 +1,5 @@
 import React from "react";
-import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
+import ToggleSwitch from "../../../../component/ui/ToggleSwitch";
 import WeightInput from "../../../../component/input/WeightInput";
 import type { OthersForm } from "../../../../types/product/form";
 import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";

@@ -56,7 +56,7 @@ const MasterSelect: React.FC<Props> = ({
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between h-[38px]
-          rounded-md border border-[#CFCFCF] bg-white px-3 text-sm"
+          rounded-md border border-[#CFCFCF] bg-white px-4 text-sm"
       >
         {/* LEFT */}
         <div className="flex items-center gap-2">
@@ -86,20 +86,6 @@ const MasterSelect: React.FC<Props> = ({
             </button>
           )}
         </div>
-
-        {/* <div className="flex items-center justify-end gap-1 min-w-[44px]">
-          {count > 0 && (
-            <button
-              type="button"
-              onClick={clearAll}
-              className="hover:bg-gray-100 rounded"
-            >
-              <CloseIcon className="w-5 h-5" />
-            </button>
-          )}
-
-          <DropdownArrowIcon className="w-3 h-3" />
-        </div> */}
       </button>
 
       {/* DROPDOWN */}
@@ -114,12 +100,12 @@ const MasterSelect: React.FC<Props> = ({
               <li
                 key={o.value}
                 onMouseDown={() => toggleValue(o.value)}
-                className="flex items-center justify-between px-3 py-2
+                className="flex items-center justify-between px-4 py-2
                 hover:bg-[#F3F4F6] cursor-pointer font-light"
               >
                 <span className={active ? "font-medium" : ""}>{o.label}</span>
 
-                {active && <CheckFilterIcon />}
+                {active && <CheckFilterIcon className="text-[#0690F1]"/>}
               </li>
             );
           })}

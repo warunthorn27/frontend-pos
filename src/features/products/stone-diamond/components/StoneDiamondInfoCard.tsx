@@ -1,5 +1,5 @@
 import React from "react";
-import ToggleSwitch from "../../../../component/toggle/ToggleSwitch";
+import ToggleSwitch from "../../../../component/ui/ToggleSwitch";
 import WeightInput from "../../../../component/input/WeightInput";
 import type { StoneDiamondForm } from "../../../../types/product/form";
 import type { SelectOption } from "../../../../types/shared/select";
