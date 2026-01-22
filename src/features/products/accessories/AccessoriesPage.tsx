@@ -76,34 +76,35 @@ const AccessoriesPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col min-h-0">
-      <div className="w-full max-w-[1690px] mx-auto flex flex-col min-h-0">
+      <div className="w-full h-full flex flex-col">
         <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
           Accessories
         </h2>
 
         {/* MAIN CANVAS */}
-        <div className="flex-1 min-h-0 rounded-md bg-[#FAFAFA] shadow-md flex flex-col overflow-hidden">
+        <div className="flex-1 rounded-md bg-[#FAFAFA] shadow-md flex flex-col">
           {/* CONTENT */}
-          <div className="flex-1 overflow-y-auto px-10 py-8 hide-scrollbar">
-            <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
+          <div className="flex-1 px-10 py-8 flex gap-6">
+            <div className="w-[30%] min-w-[320px]">
               {/* LEFT : Image */}
-              <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+              <div className="rounded-2xl border bg-white px-6 py-5">
                 <ProductImagesCard
                   max={9}
                   value={images}
                   onChange={setImages}
                 />
               </div>
+            </div>
 
-              <div className="w-full h-full flex flex-col min-h-0">
-                <AccessoriesInfoCard
-                  value={form}
-                  onChange={patchForm}
-                  metalOptions={metalOptions}
-                />
-              </div>
+            <div className="flex-1">
+              <AccessoriesInfoCard
+                value={form}
+                onChange={patchForm}
+                metalOptions={metalOptions}
+              />
             </div>
           </div>
+          
           {/* Footer */}
           <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
             <button

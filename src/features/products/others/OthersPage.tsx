@@ -71,27 +71,29 @@ const OthersPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col min-h-0">
-      <div className="w-full max-w-[1690px] mx-auto flex flex-col min-h-0">
+      <div className="w-full h-full flex flex-col">
         <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
           Others
         </h2>
 
-        {/* MAIN CANVAS */}
-        <div className="flex-1 min-h-0 rounded-md bg-[#FAFAFA] shadow-md flex flex-col overflow-hidden">
+        {/* การ์ดสีเทา ต้องกินพื้นที่ที่เหลือ */}
+        <div className="flex-1 rounded-md bg-[#FAFAFA] shadow-md flex flex-col">
           {/* CONTENT */}
-          <div className="flex-1 overflow-y-auto px-10 py-8 hide-scrollbar">
-            <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
-              {/* LEFT : Image */}
-              <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+          <div className="flex-1 px-10 py-8 flex gap-6">
+            {/* LEFT: IMAGE (สูงตาม content) */}
+            <div className="w-[30%] min-w-[320px]">
+              <div className="rounded-2xl border bg-white px-6 py-5">
                 <ProductImagesCard
                   max={9}
                   value={images}
                   onChange={setImages}
                 />
               </div>
-              <div className="w-full h-full flex flex-col min-h-0">
-                <OthersInfoCard value={form} onChange={patchForm} />
-              </div>
+            </div>
+
+            {/* RIGHT: การ์ดขาว (สูงเต็มการ์ดเทา) */}
+            <div className="flex-1">
+              <OthersInfoCard value={form} onChange={patchForm} />
             </div>
           </div>
 
