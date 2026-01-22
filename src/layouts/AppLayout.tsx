@@ -24,13 +24,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden">
       {/* Topbar */}
       <TopBar onLogout={onLogout} />
 
       {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
+      <div className="grid grid-cols-[auto_1fr] overflow-hidden">
         <SideBar
           tabs={tabs}
           activeTab={activeTab}
@@ -41,8 +40,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           companyLogo={companyLogo}
         />
 
-        {/* Content */}
-        <main className="flex-1 overflow-hidden p-10 bg-white">{children}</main>
+        {/* CONTENT AREA = พื้นที่ที่เหลือของจอ */}
+        <main className="overflow-hidden bg-white p-8">{children}</main>
       </div>
     </div>
   );
