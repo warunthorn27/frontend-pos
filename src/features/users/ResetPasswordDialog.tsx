@@ -72,7 +72,7 @@ interface ResetPasswordDialogProps {
   onResetPassword: (
     userId: string,
     newPassword: string,
-    sendEmail: boolean
+    sendEmail: boolean,
   ) => Promise<unknown>;
 }
 
@@ -97,8 +97,15 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
   });
   const toastTimerRef = useRef<number | null>(null);
 
+  // const canSendEmail = useMemo(() => {
+  //   const e = user?.email?.trim() ?? "";
+  //   return e.length > 0;
+  // }, [user]);
+
   const canSendEmail = useMemo(() => {
-    const e = user?.email?.trim() ?? "";
+    if (!user) return false;
+    if (user.status !== "active") return false; // inactive ห้ามส่ง
+    const e = user.email?.trim() ?? "";
     return e.length > 0;
   }, [user]);
 
@@ -305,14 +312,14 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                     {emailSent
                       ? "Sent"
                       : sendingEmail
-                      ? "Sending..."
-                      : "Send Email"}
+                        ? "Sending..."
+                        : "Send Email"}
                   </button>
                 </div>
 
                 {!canSendEmail && (
                   <p className="text-xs text-gray-500 mt-2">
-                    This user has no email. Cannot send email.
+                    This user cannot receive emails.
                   </p>
                 )}
               </div>

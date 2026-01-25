@@ -86,7 +86,7 @@ const UserForm: React.FC<Props> = ({
 
   /* ---------- checkbox ---------- */
 
-  const isDisabled = !email.trim();
+  const isDisabled = !email.trim() || !active; // inactive → disable
   const isChecked = sendPasswordEmail && !isDisabled;
 
   const handleTogglePermission = (
