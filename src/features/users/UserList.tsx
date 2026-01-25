@@ -1,48 +1,41 @@
 import React from "react";
 import type { UserListItem } from "../../types/user";
-import plusIcon from "../../assets/svg/plus.svg";
+import PlusIcon from "../../assets/svg/plus.svg?react";
 import EditIcon from "../../assets/svg/edit.svg?react";
 import ResetIcon from "../../assets/svg/reset.svg?react";
-
-// เพิ่ม helper แปลง +66xxxxxxxxx -> 0xxxxxxxxx
-function digitsOnly(s: string) {
-  return (s || "").replace(/\D/g, "");
-}
-
-function formatThaiPhoneForDisplay(phone?: string) {
-  const d = digitsOnly(phone ?? "");
-  if (!d) return "-";
-
-  // ถ้าเป็น 66xxxxxxxxx -> 0xxxxxxxxx
-  if (d.startsWith("66")) return "0" + d.slice(2);
-
-  // ถ้าเป็น local อยู่แล้ว (0xxxxxxxxx) หรือเลขอื่น ๆ
-  return d;
-}
+import { formatPhoneForDisplay } from "../../utils/phone";
+import SearchIcon from "../../assets/svg/search.svg?react";
 
 interface Props {
   users: UserListItem[];
   onCreateUser: () => void;
+  onViewUser: (user: UserListItem) => void;
   onEditUser: (user: UserListItem) => void;
   onResetPassword: (user: UserListItem) => void;
   onToggleStatus: (u: UserListItem, isActive: boolean) => void;
   maxUsers?: number;
+  search: string;
+  onChangeSearch: (v: string) => void;
 }
 
 const UserList: React.FC<Props> = ({
   users,
   onCreateUser,
+  onViewUser,
   onEditUser,
   onResetPassword,
   maxUsers = 3,
+  search,
+  onChangeSearch,
 }) => {
   const activeUsers = users.filter((u) => u.status === "active").length;
   const canCreateUser = activeUsers < maxUsers;
 
   return (
-    <div className=" bg-gray mx-6">
-      <div className="flex items-center justify-between mb-[33px]">
-        <div className="flex items-center gap-[20px]">
+    <div className="w-full">
+      <div className="mb-4">
+        {/* Title */}
+        <div className="flex items-center gap-3">
           <h2 className="text-2xl font-regular text-[#06284B]">
             User &amp; Permission
           </h2>
@@ -51,24 +44,43 @@ const UserList: React.FC<Props> = ({
           </span>
         </div>
 
-        <span className="text-sm"></span>
-        <button
-          onClick={onCreateUser}
-          disabled={!canCreateUser}
-          className={`flex items-center w-[123px] h-[44px] gap-[6px] px-[10px] py-[10px] rounded-md text-base font-regular text-white ${
-            canCreateUser
-              ? "bg-[#0088FF] hover:bg-[#0574D6]"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-        >
-          <img src={plusIcon} alt="" className="w-[24px]" />
-          Add User
-        </button>
+        {/* Search (ซ้าย) + Add (ขวา) */}
+        <div className="flex items-center justify-between mt-[30px]">
+          {/* Search */}
+          <div className="relative">
+            <input
+              value={search}
+              onChange={(e) => onChangeSearch(e.target.value)}
+              placeholder="Search"
+              className="w-[400px] h-[40px] rounded-[10px] border border-[#CFCFCF]
+              bg-white px-[20px] text-sm text-black font-light
+              placeholder:text-[#BABABA] outline-none"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B94A3]">
+              <SearchIcon className="w-6 h-6" />
+            </span>
+          </div>
+
+          {/* Add User */}
+          <button
+            onClick={onCreateUser}
+            disabled={!canCreateUser}
+            className={`flex items-center w-[123px] h-[44px] gap-[6px] px-[10px] py-[10px]
+            rounded-md text-base font-regular text-white ${
+              canCreateUser
+                ? "bg-[#0088FF] hover:bg-[#0574D6]"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+          >
+            <PlusIcon className="w-[24px] h-[24px]" />
+            Add User
+          </button>
+        </div>
       </div>
 
       {/* ตาราง */}
-      <div className="border shadow-sm rounded-md overflow-hidden">
-        <div className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-lg font-regular border-b bg-[#F7F7F7] text-black items-center px-6 py-3">
+      <div className="rounded-lg border border-[#E5E7EB] bg-white">
+        <div className="grid grid-cols-[2fr,3fr,2fr,2fr,1fr] text-lg font-regular border-b bg-[#F7F7F7] text-black items-center px-6 py-3">
           <div>Name</div>
           <div>Email</div>
           <div>Phone</div>
@@ -79,34 +91,39 @@ const UserList: React.FC<Props> = ({
         {users.map((u) => (
           <div
             key={u.id}
-            className="grid grid-cols-[1fr,1fr,1fr,1fr,1fr] text-base bg-white text-black items-center border-b px-6 py-3"
+            onClick={() => onViewUser(u)}
+            className="grid grid-cols-[2fr,3fr,2fr,2fr,1fr] text-base bg-white hover:bg-[#FAFBFE]
+             text-black items-center border-b px-6 py-3"
           >
             <div>{u.name}</div>
             <div className="px-1.5">{u.email?.trim() ? u.email : "-"}</div>
 
-            <div className="px-3">{formatThaiPhoneForDisplay(u.phone)}</div>
+            <div>{formatPhoneForDisplay(u.phone)}</div>
 
             <div>
               <div
                 className={`inline-flex items-center px-3 py-1 rounded-full border text-sm select-none ${
                   u.status === "active"
                     ? "border-green-500 text-black"
-                    : "border-gray-400 text-gray-500"
+                    : "border-gray-900 text-gray-900"
                 }`}
               >
                 <span
                   className={`w-2 h-2 rounded-full mr-1 text-sm ${
-                    u.status === "active" ? "bg-green-500" : "bg-gray-400"
+                    u.status === "active" ? "bg-green-500" : "bg-gray-900"
                   }`}
                 />
                 {u.status === "active" ? "Active" : "Inactive"}
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pr-14">
+            <div className="flex justify-start gap-3">
               <button
                 className="group px-2 py-1 rounded-md bg-[#FDFCDB] hover:bg-[#FFCC00]"
-                onClick={() => onEditUser(u)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditUser(u);
+                }}
               >
                 <EditIcon
                   width={20}
@@ -117,7 +134,10 @@ const UserList: React.FC<Props> = ({
               </button>
               <button
                 className="group px-2 py-1 rounded-md bg-[#FFDFDF] hover:bg-[#E71010]"
-                onClick={() => onResetPassword?.(u)}
+                onClick={(e) => {
+                  onResetPassword?.(u);
+                  e.stopPropagation();
+                }}
               >
                 <ResetIcon className="w-[18px] h-[18px] text-[#FF383C] group-hover:text-white" />
               </button>

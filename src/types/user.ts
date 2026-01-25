@@ -4,34 +4,49 @@ export interface UserListItem {
   email: string;
   phone: string;
   status: "active" | "inactive";
-}
-
-export interface UserFormInput {
-  username: string;
+  permissions: string[]; // เก็บเป็น permission ids เสมอ
   password: string;
-  email: string;
-  phone: string;
-  status: "active" | "inactive";
-  sendPasswordEmail: boolean;
-  permissionInventory: {
-    all: boolean;
-    view: boolean;
-    add: boolean;
-    edit: boolean;
-    delete: boolean;
-    print: boolean;
-    export: boolean;
-  };
 }
 
-// DB model จาก backend
+export type UserFormInput = {
+  username: string;
+  password?: string;
+  email?: string;
+  phone?: string;
+  status: "active" | "inactive";
+  permissions: string[];
+  sendPasswordEmail?: boolean;
+};
+
+export type CreateUserInput = {
+  username: string;
+  password: string; // REQUIRED
+  email?: string;
+  phone?: string;
+  status: "active" | "inactive";
+  permissions: string[];
+  sendPasswordEmail?: boolean;
+};
+
+export type UpdateUserInput = {
+  username: string;
+  password?: string; // OPTIONAL
+  email?: string;
+  phone?: string;
+  status: "active" | "inactive";
+  permissions: string[];
+  sendPasswordEmail?: boolean;
+};
+
+export type PermissionRef = string | { _id: string };
+
 export interface UserModel {
   _id: string;
   user_name: string;
   user_email?: string;
   user_phone?: string;
   status: boolean;
-  permissions?: unknown[];
+  permissions?: PermissionRef[];
   comp_id?: unknown;
   user_role?: string;
 }
@@ -41,7 +56,7 @@ export type CreateUserRequest = {
   user_name: string;
   user_password: string;
   user_role: "User";
-  permissions: unknown[];
+  permissions: string[];
   status: boolean;
   user_email?: string;
   user_phone?: string;
@@ -50,7 +65,7 @@ export type CreateUserRequest = {
 export type UpdateUserRequest = {
   user_name: string;
   user_role: "User";
-  permissions: unknown[];
+  permissions: string[];
   status: boolean;
   user_email?: string;
   user_phone?: string;
