@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import PlusIcon from "../../assets/svg/plus.svg?react";
+import SearchIcon from "../../assets/svg/search.svg?react"
+import PrintIcon from "../../assets/svg/print.svg?react"
+import ExportIcon from "../../assets/svg/file-x.svg?react"
+import DropdownArrowIcon from "../../assets/svg/dropdown-arrow2.svg?react";
 import type { CustomerFormInput } from "../../types/customer";
 import AddCustomer from "./components/AddCustomer";
 
@@ -15,7 +19,6 @@ const CustomerListPage: React.FC = () => {
   };
 
   const handleConfirm = (values: CustomerFormInput) => {
-    // TODO: Implement customer creation logic
     console.log("Creating customer:", values);
     setMode("list");
   };
@@ -29,23 +32,60 @@ const CustomerListPage: React.FC = () => {
       <h2 className="text-2xl font-regular text-[#06284B] mb-4">
         Customer List
       </h2>
+      <div className="flex items-center justify-between mb-4">
+  {/* Left */}
+  <div className="flex gap-3">
+    {/* Search */}
+    <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[40px] w-[400px]">
+      <input
+        className="flex-1 bg-transparent text-sm outline-none"
+        placeholder="Search"
+      />
+      <SearchIcon className="w-4 h-4 text-gray-400" />
+    </div>
 
-      {/* filter + search + table header */}
-      <div className="flex gap-4 mb-4">
-        <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[44px]">
-          <input
-            className="flex-1 bg-transparent text-xs outline-none"
-            placeholder="Search"
-          />
-        </div>
-        <button
-          onClick={handleAddCustomerClick}
-          className="flex items-center w-[170px] h-[44px] justify-between gap-2 px-3 py-2 rounded-md text-base font-regular text-white bg-[#0088FF] hover:bg-[#0574D6]"
-        >
-          <PlusIcon className="w-6 h-6 text-white" />
-          Add Customer
-        </button>
-      </div>
+    {/* Business Type */}
+    <div className="relative w-[180px]">
+  <select
+    className="
+      h-[40px] w-full
+      appearance-none
+      rounded-md border border-[#CFCFCF]
+      bg-white
+      px-3 pr-9
+      text-sm
+      outline-none
+      focus:border-[#2F80ED]
+      
+    "
+  >
+    <option>Business Type</option>
+    <option>Individual</option>
+    <option>Corporation</option>
+  </select>
+
+  {/* Custom Arrow */}
+  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+    <DropdownArrowIcon className="w-3 h-3 text-gray-500" />
+  </div>
+</div>
+  </div>
+
+  {/* Right */}
+  <div className="flex items-center gap-3">
+    <PrintIcon className="w-7 h-6 text-gray-600 cursor-pointer" />
+    <ExportIcon className="w-7 h-6 text-gray-600 cursor-pointer" />
+
+    <button
+      onClick={handleAddCustomerClick}
+      className="flex items-center gap-2 px-4 h-[40px] rounded-md text-sm font-medium text-white bg-[#0088FF] hover:bg-[#0574D6]"
+    >
+      <PlusIcon className="w-5 h-5" />
+      Add Customer
+    </button>
+  </div>
+</div>
+
 
       <div className="border shadow-sm rounded-md overflow-hidden text-sm">
         <span className="text-[#9D9D9D]"></span>
