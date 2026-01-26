@@ -17,6 +17,7 @@ export function getAuthHeaders(extra?: Record<string, string>) {
           authtoken: token,
         }
       : {}),
+    "Content-Type": "application/json",
     ...extra,
   };
 }
@@ -48,7 +49,7 @@ export class UnauthorizedError extends ApiError {
 
 export async function fetchWithAuth<T>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   const res = await fetch(url, {
     ...options,
