@@ -1,5 +1,6 @@
 import React from "react";
 import type { IndividualCustomer } from "../../../types/customer";
+import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
 
 interface Props {
   value: IndividualCustomer;
@@ -20,7 +21,7 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
   return (
     <div className="space-y-4">
       {/* First Name / Last Name */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 ">
         <div>
           <label className="block text-base mb-1">
             First Name <span className="text-red-500">*</span>
@@ -50,15 +51,21 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
           <label className="block text-base mb-1">
             Gender <span className="text-red-500">*</span>
           </label>
+          <div className="relative">
           <select
-            className="input"
+            className="input appearance-none pr-10"
             value={value.gender}
             onChange={(e) => update("gender", e.target.value)}
           >
+                      
             <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
+           <DropdownArrowIcon
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-[#6B7280]"
+      />
+      </div>
         </div>
 
         <div>
