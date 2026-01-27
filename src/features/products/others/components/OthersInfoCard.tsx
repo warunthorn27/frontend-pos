@@ -45,7 +45,7 @@ function Input({
 
 const OthersInfoCard: React.FC<Props> = ({ value, onChange, readonly }) => {
   return (
-    <div className="w-full h-full rounded-2xl border bg-white flex flex-col min-h-0">
+    <div className="w-full h-full rounded-md border bg-white flex flex-col min-h-0">
       <div className="px-6 py-5">
         {/* HEADER : Toggle */}
         <div className="flex items-center gap-3 mb-4">

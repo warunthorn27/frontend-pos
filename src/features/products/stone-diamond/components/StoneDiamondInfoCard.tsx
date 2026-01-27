@@ -61,7 +61,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
   clarityOptions,
 }) => {
   return (
-    <div className="w-full rounded-2xl border bg-white">
+    <div className="w-full rounded-md border bg-white">
       <div className="px-6 py-5">
         {/* HEADER : Toggle */}
         <div className="flex items-center gap-3 mb-4">

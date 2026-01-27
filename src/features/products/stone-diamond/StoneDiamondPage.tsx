@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import type { StoneDiamondForm } from "../../../types/product/form";
 import StoneDiamondInfoCard from "./components/StoneDiamondInfoCard";
 import { useParams } from "react-router-dom";
-import { useProductMasters } from "../hook/useProductMasters";
+import { useProductMasters } from "../hooks/useProductMasters";
 import {
   createStoneDiamond,
   updateStoneDiamond,
