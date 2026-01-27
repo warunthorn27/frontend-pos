@@ -3,10 +3,6 @@ import { getToken } from "../utils/authStorage";
 export const API_BASE =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api";
 
-/**
- * ใช้กับ fetch / axios
- * Backend รองรับทั้ง Authorization และ authtoken
- */
 export function getAuthHeaders(extra?: Record<string, string>) {
   const token = getToken();
 
@@ -17,7 +13,7 @@ export function getAuthHeaders(extra?: Record<string, string>) {
           authtoken: token,
         }
       : {}),
-    "Content-Type": "application/json",
+    // "Content-Type": "application/json",
     ...extra,
   };
 }
