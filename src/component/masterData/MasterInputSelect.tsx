@@ -3,7 +3,7 @@ import DropdownArrowIcon from "../../assets/svg/dropdown-arrow2.svg?react";
 import type { SelectOption } from "../../types/shared/select";
 
 type Props = {
-  value: string; // id หรือ free text
+  value: string;
   options: SelectOption[];
   onChange: (value: string) => void;
   placeholder?: string;
@@ -18,7 +18,7 @@ const MasterInputSelect: React.FC<Props> = ({
   disabled = false,
 }) => {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [openUpward, setOpenUpward] = useState(false);
 
@@ -38,24 +38,43 @@ const MasterInputSelect: React.FC<Props> = ({
     return options.find((o) => o.value === value) ?? null;
   }, [options, value]);
 
+  // const filteredOptions = useMemo(() => {
+  //   const q = (query ?? "").trim().toLowerCase();
+
+  //   if (!q) return options;
+  //   return options.filter((o) => o.label.toLowerCase().includes(q));
+  // }, [options, query]);
+
   /* filter options ด้วย query */
   const filteredOptions = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return options;
-    return options.filter((o) => o.label.toLowerCase().includes(q));
+    const q = (query ?? "").toLowerCase();
+
+    return options.filter((o) => (o.label ?? "").toLowerCase().includes(q));
   }, [options, query]);
 
-  /* display value */
-  const displayValue = useMemo(() => {
-    if (open) return query;
-    if (selectedOption) return selectedOption.label;
-    return value ?? ""; // free text
-  }, [open, query, selectedOption, value]);
+  // const displayValue = useMemo(() => {
+  //   if (open) return query;
+  //   if (selectedOption) return selectedOption.label;
+  //   return value || "";
+  // }, [open, query, selectedOption, value]);
 
-  /* open dropdown */
+  const displayValue = useMemo(() => {
+    if (open) return query ?? "";
+    if (selectedOption) return selectedOption.label ?? "";
+    return "";
+  }, [open, query, selectedOption]);
+
+  // const openDropdown = () => {
+  //   if (!inputRef.current) return;
+  //   setQuery(displayValue || "");
+  //   calculateDropdownPosition();
+  //   setOpen(true);
+  // };
+
   const openDropdown = () => {
     if (!inputRef.current) return;
-    setQuery(displayValue);
+
+    setQuery(selectedOption?.label ?? "");
     calculateDropdownPosition();
     setOpen(true);
   };
@@ -84,12 +103,12 @@ const MasterInputSelect: React.FC<Props> = ({
         onChange={(e) => {
           const val = e.target.value;
           setQuery(val);
-          {
-            /* ใช้ val ที่ user พิมพ์ */
-          }
           setOpen(true);
 
-          onChange(val);
+          // ถ้าลบจนว่าง = clear
+          if (val === "") {
+            onChange(""); // clear state
+          }
         }}
         className="
           w-full h-[38px]
