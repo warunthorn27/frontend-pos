@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useProductMasters } from "../hook/useProductMasters";
+import { useProductMasters } from "../hooks/useProductMasters";
 import { ApiError } from "../../../services/apiClient";
 import {
   createMasterProduct,

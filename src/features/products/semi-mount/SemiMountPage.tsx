@@ -6,7 +6,7 @@ import {
   updateSemiMount,
 } from "../../../services/product";
 import { ApiError } from "../../../services/apiClient";
-import { useProductMasters } from "../hook/useProductMasters";
+import { useProductMasters } from "../hooks/useProductMasters";
 import type {
   AccessoriesForm,
   AdditionalStoneForm,
