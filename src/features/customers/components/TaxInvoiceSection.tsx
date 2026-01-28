@@ -1,5 +1,6 @@
 import React from "react";
-import DeleteIcon from "../../../assets/svg/trash.svg?react"; // ตรวจสอบ path ให้ถูกต้อง
+import DeleteIcon from "../../../assets/svg/trash.svg?react";
+import PlusIcon from "../../../assets/svg/plus.svg?react";
 import AddressForm from "./AddressForm";
 import type { Address } from "../../../types/customer";
 import type { SelectOption } from "./AddressForm";
@@ -45,7 +46,7 @@ const TaxInvoiceSection: React.FC<TaxInvoiceProps> = ({
         onClick={onAdd}
         className="mt-3 text-xs text-[#2F80ED] flex items-center gap-1 hover:underline"
       >
-        <span className="text-lg">+</span> Tax Invoice Address
+        <span className="text-lg"><PlusIcon className="w-3 h-3 fill-current" /></span> Tax Invoice Address
       </button>
     );
   }
@@ -58,7 +59,7 @@ const TaxInvoiceSection: React.FC<TaxInvoiceProps> = ({
           <h2 className="text-lg font-normal text-[#084072]">
             Tax Invoice Address
           </h2>
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none ">
             <input
               type="checkbox"
               className="w-4 h-4 rounded border-gray-300 text-[#084072] focus:ring-[#084072]"

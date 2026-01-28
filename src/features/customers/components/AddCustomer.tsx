@@ -258,13 +258,13 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
         <div className="py-4 border-[#E6E6E6] flex justify-center gap-4 bg-[#FAFAFA]  rounded-b-lg">
           <button
             onClick={onCancel}
-            className="px-6 py-2 rounded-md bg-[#FF4D4F] text-white text-lg hover:bg-red-600 transition-colors"
+            className="w-full md:w-[81px] h-[40px] md:h-[36px] rounded-md border border-[#D9D9D9] bg-[#FFFFFF] text-[#333333] text-sm flex items-center justify-center hover:bg-[#F1F1F1] transition-colors order-2 md:order-1"
           >
             Cancel
           </button>
           <button
             onClick={() => onConfirm(form)}
-            className="px-6 py-2 rounded-md bg-[#C9C9C9] text-white text-lg hover:bg-gray-400 transition-colors"
+            className="w-full md:w-[81px] h-[40px] md:h-[36px] rounded-md border border-transparent bg-[#005AA7] text-white text-sm flex items-center justify-center hover:bg-[#084072] transition-colors order-1 md:order-2"
           >
             Save
           </button>

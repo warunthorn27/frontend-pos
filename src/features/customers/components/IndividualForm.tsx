@@ -1,6 +1,9 @@
 import React from "react";
 import type { IndividualCustomer } from "../../../types/customer";
 import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
+import CustomDatePicker from "../../../component/ui/datepicker"; 
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 interface Props {
   value: IndividualCustomer;
@@ -19,6 +22,7 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
   };
 
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
     <div className="space-y-4">
       {/* First Name / Last Name */}
       <div className="grid grid-cols-2 gap-4 ">
@@ -68,17 +72,14 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
       </div>
         </div>
 
-        <div>
-          <label className="block text-base mb-1">Birthday</label>
-          <input
-            type="date"
-            className="input"
+        <CustomDatePicker
+            label="Birthday"
             value={value.birthday}
-            onChange={(e) => update("birthday", e.target.value)}
+            onChange={(val) => update("birthday", val)}
           />
-        </div>
       </div>
     </div>
+    </LocalizationProvider>
   );
 };
 

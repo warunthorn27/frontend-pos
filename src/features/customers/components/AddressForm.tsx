@@ -25,7 +25,7 @@ const AddressForm: React.FC<Props> = ({
   subDistrictOptions = [],
 }) => {
   const inputStyle =
-    "w-full h-[38px] rounded-md border border-[#E0E0E0] bg-white px-3 text-sm text-[#333] outline-none focus:border-[#2F80ED] focus:ring-1 focus:ring-[#2F80ED]/20 placeholder:text-gray-400 disabled:bg-[#F5F5F5]";
+    "w-full h-[38px] rounded-md border border-[#E0E0E0] px-3 text-base input";
 
   const labelStyle = "block text-sm mb-1.5 text-[#000000]";
 
