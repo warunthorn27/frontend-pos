@@ -36,6 +36,7 @@ const TAB_TO_PATH: Record<string, string> = {
   "product:list": "/dashboard/product/product-list",
 
   customer: "/dashboard/customer",
+  purchase: "/dashboard/purchase",
 };
 
 function getTabIdFromPath(pathname: string): string {
@@ -54,6 +55,7 @@ function getTitleFromTab(tabId: string): string {
   if (tabId === "company") return "Company Profile";
   if (tabId === "user") return "User Management";
   if (tabId === "customer") return "Customer";
+  if (tabId === "purchase") return "Purchase";
   if (tabId.startsWith("product:")) return "Product";
   return "Dashboard";
 }
@@ -98,7 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const activeTab = useMemo(
     () => getTabIdFromPath(location.pathname),
-    [location.pathname]
+    [location.pathname],
   );
 
   const title = useMemo(() => getTitleFromTab(activeTab), [activeTab]);
@@ -128,6 +130,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         children: productChildren,
       },
       { id: "customer", label: "Customer", disabled: lock },
+      { id: "purchase", label: "Purchase", disabled: lock },
     ];
   }, [mustCreateCompany]);
 

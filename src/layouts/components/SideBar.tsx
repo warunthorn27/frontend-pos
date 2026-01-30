@@ -5,6 +5,7 @@ import UserIcon from "../../assets/svg/user.svg?react";
 import ProductIcon from "../../assets/svg/product.svg?react";
 import DropdownArrowIcon from "../../assets/svg/dropdown-arrow.svg?react";
 import CustomerIcon from "../../assets/svg/customer-report.svg?react";
+import PurchaseIcon from "../../assets/svg/purchase-box.svg?react";
 
 interface SideBarProps {
   tabs: TabItem[];
@@ -34,7 +35,7 @@ const SideBar: React.FC<SideBarProps> = ({
   }, [currentUserRole, activeTab]);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(
-    initialDropdown
+    initialDropdown,
   );
 
   const visibleTabs = useMemo(() => {
@@ -103,13 +104,14 @@ const SideBar: React.FC<SideBarProps> = ({
                   isActive
                     ? "bg-[#E5F3FF] text-[#0088FF]"
                     : tabDisabled
-                    ? "text-gray-400 cursor-not-allowed opacity-60"
-                    : "text-black hover:text-[#0088FF]"
+                      ? "text-gray-400 cursor-not-allowed opacity-60"
+                      : "text-black hover:text-[#0088FF]"
                 }`}
               >
                 {tab.id === "company" && <CompanyIcon />}
                 {tab.id === "user" && <UserIcon />}
                 {tab.id === "customer" && <CustomerIcon />}
+                {tab.id === "purchase" && <PurchaseIcon />}
                 {tab.label}
               </button>
             );
@@ -129,8 +131,8 @@ const SideBar: React.FC<SideBarProps> = ({
                     isOpen
                       ? "bg-[#E5F3FF] text-[#0088FF]"
                       : tabDisabled
-                      ? "text-gray-400 cursor-not-allowed opacity-60"
-                      : "text-black hover:text-[#0088FF]"
+                        ? "text-gray-400 cursor-not-allowed opacity-60"
+                        : "text-black hover:text-[#0088FF]"
                   }
                 `}
               >
@@ -166,8 +168,8 @@ const SideBar: React.FC<SideBarProps> = ({
                             active
                               ? "text-[#0088FF]"
                               : childDisabled
-                              ? "text-gray-400 cursor-not-allowed opacity-60"
-                              : "text-[#76C5FF] hover:text-[#0088FF]"
+                                ? "text-gray-400 cursor-not-allowed opacity-60"
+                                : "text-[#76C5FF] hover:text-[#0088FF]"
                           }
                         `}
                       >

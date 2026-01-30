@@ -25,6 +25,7 @@ import {
   setForceChangePassword,
   clearAuth,
 } from "./utils/authStorage";
+import PurchasePage from "./features/purchase/PurchasePage";
 
 function CompanyPageRoute() {
   const { currentUser, onCompanyCreated } =
@@ -159,6 +160,9 @@ export default function App() {
 
           {/* Customer */}
           <Route path="customer" element={<CustomerListPage />} />
+
+          {/* Purchase */}
+          <Route path="purchase" element={<PurchasePage />} />
         </Route>
       </Route>
 
