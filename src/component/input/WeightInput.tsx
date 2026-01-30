@@ -25,7 +25,7 @@ const WeightInput: React.FC<Props> = ({
         value={value}
         inputMode="decimal"
         onChange={(e) => onChangeValue(e.target.value)}
-        className="w-full h-[38px] rounded-md border pl-3 pr-[90px]"
+        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
       />
 
       <div className="absolute right-0 top-0 h-full pr-1">

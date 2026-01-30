@@ -40,10 +40,23 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           "--Switch-thumbWidth": "20px",
         },
 
+        // active, edit
+
         [`&.${switchClasses.checked}`]: {
           "--Switch-trackBackground": "rgb(48 209 88)",
           "&:hover": {
             "--Switch-trackBackground": "rgb(48 209 88)",
+          },
+        },
+
+        // disabled switch color
+        [`&.${switchClasses.disabled}`]: {
+          "--Switch-trackBackground": "#D1D5DB",
+          opacity: 1,
+          cursor: "not-allowed",
+
+          [`& .${switchClasses.thumb}`]: {
+            backgroundColor: "#FFFFFF",
           },
         },
       })}
