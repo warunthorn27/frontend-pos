@@ -1,4 +1,9 @@
-import type { MasterItem, MasterType } from "../types/master";
+import type {
+  CreateMasterResponse,
+  MasterItem,
+  MasterType,
+} from "../types/master";
+import type { BackendAccessoryMaster } from "../types/product/response";
 import type { SelectOption } from "../types/shared/select";
 import { API_BASE, getAuthHeaders, readJson } from "./apiClient";
 
@@ -8,6 +13,31 @@ type MastersResponse = {
   data?: MasterItem[];
   message?: string;
 };
+
+export async function createMaster(
+  type: string,
+  name: string,
+): Promise<CreateMasterResponse> {
+  const res = await fetch(`${API_BASE}/create-masters`, {
+    method: "POST",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      master_type: type,
+      master_name: name,
+    }),
+  });
+
+  const json = await readJson<CreateMasterResponse>(res);
+
+  if (!json.success) {
+    throw new Error(json.message || "Create master failed");
+  }
+
+  return json;
+}
 
 export async function fetchMasterOptions(
   type: MasterType,
@@ -43,4 +73,23 @@ export async function fetchMasterOptions(
     console.error(err);
     return [];
   }
+}
+
+export async function fetchAccessoryMaster(): Promise<
+  BackendAccessoryMaster[]
+> {
+  const res = await fetch(`${API_BASE}/product/all?category=accessory`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) return [];
+
+  const json = await readJson<{
+    success: boolean;
+    data?: BackendAccessoryMaster[];
+  }>(res);
+
+  if (!json.success || !Array.isArray(json.data)) return [];
+
+  return json.data;
 }

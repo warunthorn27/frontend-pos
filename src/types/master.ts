@@ -31,3 +31,22 @@ export type MastersListResponse = {
   count: number;
   data: MasterResponse[];
 };
+
+export type CreateMasterResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    master_name: string;
+    master_type: string;
+    master_color?: string;
+  };
+};
+
+export type BackendMaster = {
+  _id: string;
+  name: string;
+  code?: string;
+  master_name?: string;
+  master_type?: string;
+};
