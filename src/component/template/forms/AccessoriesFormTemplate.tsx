@@ -6,7 +6,8 @@ type Props = {
   value: AccessoriesForm;
   onChange: (patch: Partial<AccessoriesForm>) => void;
   metalOptions: SelectOption[];
-  mode: "view" | "edit";
+  mode: "create" | "edit" | "view";
+
 };
 
 export default function AccessoriesFormTemplate({

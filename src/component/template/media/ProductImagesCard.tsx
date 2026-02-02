@@ -224,7 +224,7 @@ export default function ProductImagesCard({
     <div className="w-full">
       {/* Dropzone */}
       <div
-        className="w-full h-[142px] rounded-[10px] border-2 border-dashed border-[#B6DEFF] bg-[#F7FBFF]
+        className="w-full h-[142px] rounded-lg border-2 border-dashed border-[#B6DEFF] bg-[#F7FBFF]
                    flex flex-col items-center justify-center text-[#525252]"
         onDrop={onDrop}
         onDragOver={onDragOver}

@@ -13,7 +13,7 @@ type Props = {
   value: AccessoriesForm;
   options: AccessoriesOption[];
   onChange: (patch: Partial<AccessoriesForm>) => void;
-  mode: "view" | "edit";
+  mode: "create" | "edit" | "view";
   metalOptions: SelectOption[];
 };
 

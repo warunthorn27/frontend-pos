@@ -101,7 +101,7 @@ const AccessoriesPage: React.FC = () => {
           <div className="flex-1 px-10 py-8 flex gap-6">
             <div className="w-[30%] min-w-[320px]">
               {/* LEFT : Image */}
-              <div className="rounded-2xl border bg-white px-6 py-5">
+              <div className="rounded-md border bg-white px-6 py-5">
                 <ProductImagesCard
                   max={9}
                   value={images}
@@ -114,7 +114,7 @@ const AccessoriesPage: React.FC = () => {
               <AccessoriesInfoCard
                 value={form}
                 onChange={patchForm}
-                mode={isEdit ? "edit" : "view"}
+                mode={isEdit ? "edit" : "create"}
                 metalOptions={metalOptions}
               />
             </div>

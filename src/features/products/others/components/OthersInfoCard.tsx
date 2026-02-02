@@ -9,7 +9,7 @@ type Props = {
   value: OthersForm;
   onChange: (patch: Partial<OthersForm>) => void;
   readonly?: boolean;
-  mode: "view" | "edit";
+  mode: "create" | "edit" | "view";
 };
 
 function Label({

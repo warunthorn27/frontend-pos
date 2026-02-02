@@ -4,7 +4,7 @@ import type { OthersForm } from "../../../types/product/form";
 type Props = {
   value: OthersForm;
   onChange: (patch: Partial<OthersForm>) => void;
-  mode: "view" | "edit";
+  mode: "create" | "edit" | "view";
 };
 
 export default function OthersFormTemplate({ value, onChange, mode }: Props) {
