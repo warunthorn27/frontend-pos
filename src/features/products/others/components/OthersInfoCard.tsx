@@ -56,6 +56,7 @@ const OthersInfoCard: React.FC<Props> = ({ value, onChange, mode }) => {
           <ToggleSwitch
             checked={value.active}
             onChange={(checked) => onChange({ active: checked })}
+            disabled={isView}
           />
           <span className="text-sm text-[#1F2937]">
             {value.active ? "Active" : "Inactive"}
