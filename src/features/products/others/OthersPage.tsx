@@ -11,7 +11,7 @@ const emptyForm: OthersForm = {
   code: "",
   productSize: "",
   weight: "0.00",
-  weightUnit: "g",
+  unit: "g",
   description: "",
 };
 
@@ -47,7 +47,7 @@ const OthersPage: React.FC = () => {
 
       if (form.description) formData.append("description", form.description);
 
-      formData.append("unit", form.weightUnit);
+      formData.append("unit", form.unit);
 
       images.forEach((img) => formData.append("files", img));
 
@@ -93,7 +93,11 @@ const OthersPage: React.FC = () => {
 
             {/* RIGHT: การ์ดขาว (สูงเต็มการ์ดเทา) */}
             <div className="flex-1">
-              <OthersInfoCard value={form} onChange={patchForm} />
+              <OthersInfoCard
+                value={form}
+                onChange={patchForm}
+                mode={isEdit ? "edit" : "view"}
+              />
             </div>
           </div>
 
