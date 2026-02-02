@@ -1,19 +1,22 @@
 import React, { useMemo, useState } from "react";
 import AccessoriesInfoCard from "./components/AccessoriesInfoCard";
-import { useProductMasters } from "../hook/useProductMasters";
+import { useProductMasters } from "../hooks/useProductMasters";
 import { createAccessory, updateAccessory } from "../../../services/product";
 import { useParams } from "react-router-dom";
 import type { AccessoriesForm } from "../../../types/product/form";
 import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
+import { isObjectId } from "../../../utils/isObjectId";
+import { createMaster } from "../../../services/master";
 
 const emptyForm: AccessoriesForm = {
   active: true,
+  productId: "",
   productName: "",
   code: "",
   productSize: "",
   weight: "",
   metal: "",
-  weightUnit: "g",
+  unit: "g",
   description: "",
 };
 
@@ -47,12 +50,23 @@ const AccessoriesPage: React.FC = () => {
       formData.append("code", form.code.trim());
       formData.append("category", "accessory");
       formData.append("product_size", form.productSize);
-      formData.append("metal", form.metal);
+      let metalId = form.metal;
+
+      if (!isObjectId(form.metal)) {
+        const name = form.metal.trim();
+        if (name) {
+          const res = await createMaster("metal", name);
+          metalId = res.data._id;
+        }
+      }
+
+      formData.append("metal", metalId);
+
       formData.append("weight", form.weight);
 
       if (form.description) formData.append("description", form.description);
 
-      formData.append("unit", form.weightUnit);
+      formData.append("unit", form.unit);
 
       images.forEach((img) => formData.append("files", img));
 
@@ -100,11 +114,12 @@ const AccessoriesPage: React.FC = () => {
               <AccessoriesInfoCard
                 value={form}
                 onChange={patchForm}
+                mode={isEdit ? "edit" : "view"}
                 metalOptions={metalOptions}
               />
             </div>
           </div>
-          
+
           {/* Footer */}
           <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
             <button

@@ -3,14 +3,15 @@ import ToggleSwitch from "../../../../component/ui/ToggleSwitch";
 import WeightInput from "../../../../component/input/WeightInput";
 import type { AccessoriesForm } from "../../../../types/product/form";
 import type { SelectOption } from "../../../../types/shared/select";
-import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
 import MasterInputSelect from "../../../../component/masterData/MasterInputSelect";
+import ReadonlyField from "../../../../component/ui/ReadonlyField";
+import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
 
 type Props = {
   value: AccessoriesForm;
   onChange: (patch: Partial<AccessoriesForm>) => void;
   metalOptions: SelectOption[];
-  readonly?: boolean;
+  mode: "view" | "edit";
 };
 
 function Label({
@@ -50,16 +51,19 @@ const AccessoriesInfoCard: React.FC<Props> = ({
   value,
   onChange,
   metalOptions,
-  readonly,
+  mode,
 }) => {
+  const isView = mode === "view";
+
   return (
-    <div className="w-full h-full rounded-2xl border bg-white flex flex-col min-h-0">
+    <div className="w-full h-full rounded-md border bg-white flex flex-col min-h-0">
       <div className="px-6 py-5">
         {/* HEADER : Toggle */}
         <div className="flex items-center gap-3 mb-4">
           <ToggleSwitch
             checked={value.active}
             onChange={(checked) => onChange({ active: checked })}
+            disabled={isView}
           />
           <span className="text-sm text-[#1F2937]">
             {value.active ? "Active" : "Inactive"}
@@ -70,20 +74,26 @@ const AccessoriesInfoCard: React.FC<Props> = ({
           <div className="flex flex-col gap-y-4">
             <div>
               <Label required>Product Name</Label>
-              <Input
-                value={value.productName}
-                onChange={(v) => onChange({ productName: v })}
-                readonly={readonly}
-              />
+              {isView ? (
+                <ReadonlyField value={value.productName} />
+              ) : (
+                <Input
+                  value={value.productName}
+                  onChange={(v) => onChange({ productName: v })}
+                />
+              )}
             </div>
 
             <div>
               <Label required>Code</Label>
-              <Input
-                value={value.code}
-                onChange={(v) => onChange({ code: v })}
-                readonly={readonly}
-              />
+              {isView ? (
+                <ReadonlyField value={value.code} />
+              ) : (
+                <Input
+                  value={value.code}
+                  onChange={(v) => onChange({ code: v })}
+                />
+              )}
             </div>
           </div>
 
@@ -91,50 +101,78 @@ const AccessoriesInfoCard: React.FC<Props> = ({
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Product Size</Label>
-                <Input
-                  value={value.productSize}
-                  onChange={(v) => onChange({ productSize: v })}
-                  readonly={readonly}
-                />
+                {isView ? (
+                  <ReadonlyField value={value.productSize} />
+                ) : (
+                  <Input
+                    value={value.productSize}
+                    onChange={(v) => onChange({ productSize: v })}
+                  />
+                )}
               </div>
 
               <div>
-                <Label required>Metal</Label>
-                <MasterInputSelect
-                  value={value.metal}
-                  onChange={(v) => onChange({ metal: v })}
-                  options={metalOptions}
-                />
+                <div>
+                  <Label required>Metal</Label>
+                  {isView ? (
+                    <ReadonlyField
+                      value={
+                        metalOptions.find((o) => o.value === value.metal)?.label
+                      }
+                    />
+                  ) : (
+                    <MasterInputSelect
+                      value={value.metal}
+                      options={metalOptions}
+                      onChange={(v) => onChange({ metal: v })}
+                      allowCreate
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Weight</Label>
-                <WeightInput
-                  value={value.weight}
-                  unit={value.weightUnit}
-                  unitOptions={WEIGHT_UNIT_OPTIONS}
-                  onChangeValue={(v) => onChange({ weight: v })}
-                  onChangeUnit={(u) => onChange({ weightUnit: u })}
-                />
+                {isView ? (
+                  <ReadonlyField value={`${value.weight} ${value.unit}`} />
+                ) : (
+                  <WeightInput
+                    value={value.weight}
+                    unit={value.unit}
+                    unitOptions={WEIGHT_UNIT_OPTIONS}
+                    onChangeValue={(v) => onChange({ weight: v })}
+                    onChangeUnit={(u) => onChange({ unit: u })}
+                  />
+                )}
               </div>
             </div>
           </div>
 
           <div>
-            <Label>Description</Label>
-            <textarea
-              value={value.description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                onChange({ description: e.target.value })
-              }
-              maxLength={300}
-              className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
-            />
-            <p className="text-xs text-[#7A7A7A]">
-              *Description should not exceed 300 letters
-            </p>
+            <div>
+              <Label>Description</Label>
+              {isView ? (
+                <ReadonlyField
+                  value={value.description}
+                  multiline
+                  height={120}
+                />
+              ) : (
+                <>
+                  <textarea
+                    value={value.description}
+                    onChange={(e) => onChange({ description: e.target.value })}
+                    maxLength={300}
+                    className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
+                  />
+                  <p className="text-xs text-[#7A7A7A]">
+                    *Description should not exceed 300 letters
+                  </p>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
