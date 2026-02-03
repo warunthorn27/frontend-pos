@@ -16,8 +16,11 @@
   scrollbar-width: none;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
+  overflow: hidden;
 }
 
 .input {
@@ -32,9 +35,4 @@ html, body, #root {
 
 .input::placeholder {
   color: #9CA3AF;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #3B82F6;
 }
