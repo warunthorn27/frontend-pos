@@ -63,19 +63,21 @@ const StoneDiamondPage: React.FC = () => {
       formData.append("product_name", form.productName.trim());
       formData.append("code", form.code.trim());
       formData.append("category", "stone");
-
-      // stone schema required fields
       formData.append("stone_name", form.stoneName);
       formData.append("shape", form.shape);
       formData.append("size", form.size);
-      formData.append("net_weight", form.weight);
+
+      if (form.color) formData.append("color", form.color);
+      if (form.cutting) formData.append("cutting", form.cutting);
+      if (form.quality) formData.append("quality", form.quality);
+      if (form.clarity) formData.append("clarity", form.clarity);
 
       if (form.description) {
         formData.append("description", form.description);
       }
 
+      formData.append("weight", form.weight);
       formData.append("unit", form.unit);
-
       images.forEach((img) => formData.append("files", img));
 
       if (isEdit && id) {
@@ -109,7 +111,7 @@ const StoneDiamondPage: React.FC = () => {
           <div className="flex-1 overflow-y-auto px-10 py-8 hide-scrollbar">
             <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
               {/* LEFT : Image */}
-              <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+              <div className="rounded-md border border-[#E6E6E6] bg-white px-6 py-5">
                 <ProductImagesCard
                   max={9}
                   value={images}
@@ -120,6 +122,7 @@ const StoneDiamondPage: React.FC = () => {
               <div className="w-full h-full flex flex-col min-h-0">
                 <StoneDiamondInfoCard
                   value={form}
+                  mode={isEdit ? "edit" : "create"}
                   onChange={patchForm}
                   stoneNameOptions={stoneNameOptions}
                   qualityOptions={qualityOptions}

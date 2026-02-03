@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { fetchMasterOptions } from "../../../services/master";
-import type { SelectOption } from "../../../types/shared/select";
+import {
+  fetchAccessoryMaster,
+  fetchMasterOptions,
+} from "../../../services/master";
+import type {
+  AccessoriesOption,
+  SelectOption,
+} from "../../../types/shared/select";
 import { MASTER_TYPES } from "../../../types/master";
 
 export function useProductMasters() {
   const [loading, setLoading] = useState(true);
-
   const [stoneNameOptions, setStoneNameOptions] = useState<SelectOption[]>([]);
   const [shapeOptions, setShapeOptions] = useState<SelectOption[]>([]);
   const [cuttingOptions, setCuttingOptions] = useState<SelectOption[]>([]);
@@ -13,9 +18,9 @@ export function useProductMasters() {
   const [clarityOptions, setClarityOptions] = useState<SelectOption[]>([]);
   const [itemTypeOptions, setItemTypeOptions] = useState<SelectOption[]>([]);
   const [metalOptions, setMetalOptions] = useState<SelectOption[]>([]);
-  const [accessoriesOptions, setAccessoriesOptions] = useState<SelectOption[]>(
-    [],
-  );
+  const [accessoriesOptions, setAccessoriesOptions] = useState<
+    AccessoriesOption[]
+  >([]);
 
   const loadMasters = async () => {
     setLoading(true);
@@ -29,7 +34,7 @@ export function useProductMasters() {
         clarities,
         itemTypes,
         metals,
-        accessories,
+        accessoriesRaw,
       ] = await Promise.all([
         fetchMasterOptions(MASTER_TYPES.stoneName),
         fetchMasterOptions(MASTER_TYPES.shape),
@@ -38,7 +43,7 @@ export function useProductMasters() {
         fetchMasterOptions(MASTER_TYPES.clarity),
         fetchMasterOptions(MASTER_TYPES.itemType),
         fetchMasterOptions(MASTER_TYPES.metal),
-        fetchMasterOptions(MASTER_TYPES.accessory),
+        fetchAccessoryMaster(),
       ]);
 
       setStoneNameOptions(stoneNames);
@@ -48,6 +53,17 @@ export function useProductMasters() {
       setClarityOptions(clarities);
       setItemTypeOptions(itemTypes);
       setMetalOptions(metals);
+
+      const accessories: AccessoriesOption[] = accessoriesRaw.map((a) => ({
+        value: a._id, // id
+        label: a.product_name, // ใช้โชว์ใน dropdown
+        productCode: a.product_code,
+        productName: a.product_name,
+        productSize: a.size ?? "",
+        metal: a.metal ?? "",
+        defaultWeight: a.weight != null ? String(a.weight) : "",
+      }));
+
       setAccessoriesOptions(accessories);
     } catch (error) {
       console.error("Failed to load master options:", error);
@@ -73,7 +89,7 @@ export function useProductMasters() {
     itemTypeOptions,
     metalOptions,
     accessoriesOptions,
-
+    setMetalOptions,
     reloadMasters: loadMasters,
   };
 }

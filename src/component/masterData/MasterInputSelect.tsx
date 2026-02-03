@@ -8,6 +8,7 @@ type Props = {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  allowCreate?: boolean;
 };
 
 const MasterInputSelect: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const MasterInputSelect: React.FC<Props> = ({
   onChange,
   placeholder = "Select",
   disabled = false,
+  allowCreate = true,
 }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState<string>("");
@@ -38,13 +40,6 @@ const MasterInputSelect: React.FC<Props> = ({
     return options.find((o) => o.value === value) ?? null;
   }, [options, value]);
 
-  // const filteredOptions = useMemo(() => {
-  //   const q = (query ?? "").trim().toLowerCase();
-
-  //   if (!q) return options;
-  //   return options.filter((o) => o.label.toLowerCase().includes(q));
-  // }, [options, query]);
-
   /* filter options ด้วย query */
   const filteredOptions = useMemo(() => {
     const q = (query ?? "").toLowerCase();
@@ -52,24 +47,19 @@ const MasterInputSelect: React.FC<Props> = ({
     return options.filter((o) => (o.label ?? "").toLowerCase().includes(q));
   }, [options, query]);
 
-  // const displayValue = useMemo(() => {
-  //   if (open) return query;
-  //   if (selectedOption) return selectedOption.label;
-  //   return value || "";
-  // }, [open, query, selectedOption, value]);
+  const hasExactMatch = useMemo(() => {
+    const q = (query ?? "").trim().toLowerCase();
+    if (!q) return true;
+
+    return options.some((o) => (o.label ?? "").toLowerCase() === q);
+  }, [options, query]);
 
   const displayValue = useMemo(() => {
     if (open) return query ?? "";
     if (selectedOption) return selectedOption.label ?? "";
+    if (allowCreate) return value ?? "";
     return "";
-  }, [open, query, selectedOption]);
-
-  // const openDropdown = () => {
-  //   if (!inputRef.current) return;
-  //   setQuery(displayValue || "");
-  //   calculateDropdownPosition();
-  //   setOpen(true);
-  // };
+  }, [open, query, selectedOption, value, allowCreate]);
 
   const openDropdown = () => {
     if (!inputRef.current) return;
@@ -105,16 +95,15 @@ const MasterInputSelect: React.FC<Props> = ({
           setQuery(val);
           setOpen(true);
 
-          // ถ้าลบจนว่าง = clear
-          if (val === "") {
-            onChange(""); // clear state
+          if (allowCreate) {
+            onChange(val);
           }
         }}
         className="
           w-full h-[38px]
           rounded-md border border-[#CFCFCF]
           bg-white px-3 pr-10
-          text-sm text-[#545454]
+          text-sm text-black
           outline-none
         "
       />
@@ -153,6 +142,19 @@ const MasterInputSelect: React.FC<Props> = ({
               {o.label}
             </li>
           ))}
+
+          {/* CREATE NEW OPTION */}
+          {allowCreate && query && !hasExactMatch && (
+            <li
+              onMouseDown={() => {
+                onChange(query);
+                setOpen(false);
+              }}
+              className="cursor-pointer px-3 py-2 text-blue-600 hover:bg-[#F3F4F6]"
+            >
+              + Create "{query}"
+            </li>
+          )}
         </ul>
       )}
     </div>

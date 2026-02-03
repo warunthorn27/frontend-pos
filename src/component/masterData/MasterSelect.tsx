@@ -51,12 +51,12 @@ const MasterSelect: React.FC<Props> = ({
   return (
     <div ref={ref} className="relative w-[220px]">
       {/* HEADER */}
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setOpen((o) => !o)}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => !disabled && setOpen((o) => !o)}
         className="flex w-full items-center justify-between h-[38px]
-          rounded-md border border-[#CFCFCF] bg-white px-4 text-sm"
+        rounded-md border border-[#CFCFCF] bg-white px-4 text-sm cursor-pointer"
       >
         {/* LEFT */}
         <div className="flex items-center gap-2">
@@ -74,19 +74,19 @@ const MasterSelect: React.FC<Props> = ({
 
         {/* RIGHT */}
         <div className="flex items-center justify-end gap-1">
-          <DropdownArrowIcon className="w-3 h-3" />
-
           {count > 0 && (
             <button
               type="button"
               onClick={clearAll}
-              className=" hover:bg-gray-100 rounded-xl"
+              className="hover:bg-gray-100 rounded-xl"
             >
               <CloseIcon className="w-6 h-6" />
             </button>
           )}
+
+          <DropdownArrowIcon className="w-3 h-3" />
         </div>
-      </button>
+      </div>
 
       {/* DROPDOWN */}
       {open && (
@@ -105,7 +105,7 @@ const MasterSelect: React.FC<Props> = ({
               >
                 <span className={active ? "font-medium" : ""}>{o.label}</span>
 
-                {active && <CheckFilterIcon className="text-[#0690F1]"/>}
+                {active && <CheckFilterIcon className="text-[#0690F1]" />}
               </li>
             );
           })}

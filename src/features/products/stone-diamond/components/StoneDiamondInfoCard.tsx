@@ -5,11 +5,13 @@ import type { StoneDiamondForm } from "../../../../types/product/form";
 import type { SelectOption } from "../../../../types/shared/select";
 import { WEIGHT_UNIT_OPTIONS } from "../../../../types/shared/unit";
 import MasterInputSelect from "../../../../component/masterData/MasterInputSelect";
+import ReadonlyField from "../../../../component/ui/ReadonlyField";
 
 type Props = {
   value: StoneDiamondForm;
   onChange: (patch: Partial<StoneDiamondForm>) => void;
   readonly?: boolean;
+  mode: "create" | "edit" | "view";
   stoneNameOptions: SelectOption[];
   shapeOptions: SelectOption[];
   cuttingOptions: SelectOption[];
@@ -53,13 +55,15 @@ function Input({
 const StoneDiamondInfoCard: React.FC<Props> = ({
   value,
   onChange,
-  readonly,
+  mode,
   stoneNameOptions,
   shapeOptions,
   cuttingOptions,
   qualityOptions,
   clarityOptions,
 }) => {
+  const isView = mode === "view";
+
   return (
     <div className="w-full rounded-md border bg-white">
       <div className="px-6 py-5">
@@ -68,6 +72,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
           <ToggleSwitch
             checked={value.active}
             onChange={(checked) => onChange({ active: checked })}
+            disabled={isView}
           />
           <span className="text-sm text-[#1F2937]">
             {value.active ? "Active" : "Inactive"}
@@ -78,35 +83,49 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
           <div className="flex flex-col gap-y-4">
             <div>
               <Label required>Product Name</Label>
-              <Input
-                value={value.productName}
-                onChange={(v) => onChange({ productName: v })}
-                readonly={readonly}
-              />
+              {isView ? (
+                <ReadonlyField value={value.productName} />
+              ) : (
+                <Input
+                  value={value.productName}
+                  onChange={(v) => onChange({ productName: v })}
+                />
+              )}
             </div>
 
             <div>
               <Label required>Code</Label>
-              <Input
-                value={value.code}
-                onChange={(v) => onChange({ code: v })}
-                readonly={readonly}
-              />
+              {isView ? (
+                <ReadonlyField value={value.code} />
+              ) : (
+                <Input
+                  value={value.code}
+                  onChange={(v) => onChange({ code: v })}
+                />
+              )}
             </div>
 
             <div>
               <Label>Description</Label>
-              <textarea
-                value={value.description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  onChange({ description: e.target.value })
-                }
-                maxLength={300}
-                className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
-              />
-              <p className="text-xs text-[#7A7A7A]">
-                *Description should not exceed 300 letters
-              </p>
+              {isView ? (
+                <ReadonlyField
+                  value={value.description}
+                  multiline
+                  height={120}
+                />
+              ) : (
+                <>
+                  <textarea
+                    value={value.description}
+                    onChange={(e) => onChange({ description: e.target.value })}
+                    maxLength={300}
+                    className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
+                  />
+                  <p className="text-xs text-[#7A7A7A]">
+                    *Description should not exceed 300 letters
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
@@ -115,38 +134,64 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Stone Name</Label>
-                <MasterInputSelect
-                  value={value.stoneName}
-                  onChange={(v) => onChange({ stoneName: v })}
-                  options={stoneNameOptions}
-                />
+                {isView ? (
+                  <ReadonlyField
+                    value={
+                      stoneNameOptions.find((o) => o.value === value.stoneName)
+                        ?.label
+                    }
+                  />
+                ) : (
+                  <MasterInputSelect
+                    value={value.stoneName}
+                    options={stoneNameOptions}
+                    onChange={(v) => onChange({ stoneName: v })}
+                    allowCreate
+                  />
+                )}
               </div>
 
               <div>
                 <Label required>Size</Label>
-                <Input
-                  value={value.size}
-                  onChange={(v) => onChange({ size: v })}
-                  readonly={readonly}
-                />
+                {isView ? (
+                  <ReadonlyField value={value.size} />
+                ) : (
+                  <Input
+                    value={value.size}
+                    onChange={(v) => onChange({ size: v })}
+                  />
+                )}
               </div>
 
               <div>
                 <Label>Color</Label>
-                <Input
-                  value={value.color}
-                  onChange={(v) => onChange({ color: v })}
-                  readonly={readonly}
-                />
+                {isView ? (
+                  <ReadonlyField value={value.color} />
+                ) : (
+                  <Input
+                    value={value.color}
+                    onChange={(v) => onChange({ color: v })}
+                  />
+                )}
               </div>
 
               <div>
                 <Label>Quality</Label>
-                <MasterInputSelect
-                  value={value.quality}
-                  onChange={(v) => onChange({ quality: v })}
-                  options={qualityOptions}
-                />
+                {isView ? (
+                  <ReadonlyField
+                    value={
+                      qualityOptions.find((o) => o.value === value.quality)
+                        ?.label
+                    }
+                  />
+                ) : (
+                  <MasterInputSelect
+                    value={value.quality}
+                    options={qualityOptions}
+                    onChange={(v) => onChange({ quality: v })}
+                    allowCreate
+                  />
+                )}
               </div>
             </div>
 
@@ -154,40 +199,73 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
             <div className="flex flex-col gap-y-4 mt-4">
               <div>
                 <Label required>Shape</Label>
-                <MasterInputSelect
-                  value={value.shape}
-                  onChange={(v) => onChange({ shape: v })}
-                  options={shapeOptions}
-                />
+                {isView ? (
+                  <ReadonlyField
+                    value={
+                      shapeOptions.find((o) => o.value === value.shape)?.label
+                    }
+                  />
+                ) : (
+                  <MasterInputSelect
+                    value={value.shape}
+                    options={shapeOptions}
+                    onChange={(v) => onChange({ shape: v })}
+                    allowCreate
+                  />
+                )}
               </div>
 
               <div>
                 <Label required>S. Weight</Label>
-                <WeightInput
-                  value={value.weight}
-                  unit={value.unit}
-                  unitOptions={WEIGHT_UNIT_OPTIONS}
-                  onChangeValue={(v) => onChange({ weight: v })}
-                  onChangeUnit={(u) => onChange({ unit: u })}
-                />
+                {isView ? (
+                  <ReadonlyField value={`${value.weight} ${value.unit}`} />
+                ) : (
+                  <WeightInput
+                    value={value.weight}
+                    unit={value.unit}
+                    unitOptions={WEIGHT_UNIT_OPTIONS}
+                    onChangeValue={(v) => onChange({ weight: v })}
+                    onChangeUnit={(u) => onChange({ unit: u })}
+                  />
+                )}
               </div>
 
               <div>
                 <Label>Cutting</Label>
-                <MasterInputSelect
-                  value={value.cutting}
-                  onChange={(v) => onChange({ cutting: v })}
-                  options={cuttingOptions}
-                />
+                {isView ? (
+                  <ReadonlyField
+                    value={
+                      cuttingOptions.find((o) => o.value === value.cutting)
+                        ?.label
+                    }
+                  />
+                ) : (
+                  <MasterInputSelect
+                    value={value.cutting}
+                    options={cuttingOptions}
+                    onChange={(v) => onChange({ cutting: v })}
+                    allowCreate
+                  />
+                )}
               </div>
 
               <div>
                 <Label>Clarity</Label>
-                <MasterInputSelect
-                  value={value.clarity}
-                  onChange={(v) => onChange({ clarity: v })}
-                  options={clarityOptions}
-                />
+                {isView ? (
+                  <ReadonlyField
+                    value={
+                      clarityOptions.find((o) => o.value === value.clarity)
+                        ?.label
+                    }
+                  />
+                ) : (
+                  <MasterInputSelect
+                    value={value.clarity}
+                    options={clarityOptions}
+                    onChange={(v) => onChange({ clarity: v })}
+                    allowCreate
+                  />
+                )}
               </div>
             </div>
           </div>

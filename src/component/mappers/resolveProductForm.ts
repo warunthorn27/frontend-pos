@@ -101,11 +101,17 @@ export function mapFormToUpdatePayload(
       const f = form as StoneDiamondForm;
       return {
         product_name: f.productName,
+        code: f.code,
         stone_name: f.stoneName,
         shape: f.shape,
+        size: f.size,
+        color: f.color,
         cutting: f.cutting,
+        quality: f.quality,
         clarity: f.clarity,
-        weight: f.weight,
+        weight: Number(f.weight),
+        unit: f.unit,
+        description: f.description,
       };
     }
 
