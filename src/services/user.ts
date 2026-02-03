@@ -52,7 +52,10 @@ export async function fetchUsers(): Promise<UserListItem[]> {
     `${API_BASE}/user?comp_id=${comp_id}&user_role=User`,
     {
       method: "GET",
-      headers: getAuthHeaders(),
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
     },
   );
 
@@ -70,7 +73,10 @@ export async function fetchUsers(): Promise<UserListItem[]> {
 export async function fetchUserById(id: string): Promise<UserListItem> {
   const res = await fetch(`${API_BASE}/getone-user/${id}`, {
     method: "GET",
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
   });
 
   const json = await readJson<UserModel>(res);
@@ -115,7 +121,10 @@ export async function createUser(
 
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
 
@@ -149,7 +158,10 @@ export async function updateUserByAdmin(
 
   const res = await fetch(`${API_BASE}/update-user-byadmin/${id}`, {
     method: "PUT",
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
 
@@ -170,7 +182,10 @@ export async function changeUserStatus(
 ): Promise<UserListItem> {
   const res = await fetch(`${API_BASE}/changestatus-user/${id}`, {
     method: "PUT",
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ status: isActive }),
   });
 
@@ -200,7 +215,10 @@ export async function resetPasswordByAdmin(
 
   const res = await fetch(endpoint, {
     method: "PUT",
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ user_password: newPassword }),
   });
 
