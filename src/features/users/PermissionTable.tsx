@@ -4,7 +4,9 @@ import type {
   PermissionAction,
 } from "../../types/permission";
 import DropdownArrowIcon from "../../assets/svg/dropdown-arrow.svg?react";
+import Checkbox from "../../component/ui/Checkbox";
 
+//  1. TYPES & PROPS
 type Props = {
   menus?: string[];
   checksByMenu: PermissionChecksByMenu;
@@ -14,6 +16,7 @@ type Props = {
     checked: boolean,
   ) => void;
   disabled?: boolean;
+  mode?: "create" | "view" | "edit";
 };
 
 type PermissionRowProps = {
@@ -27,20 +30,9 @@ type PermissionRowProps = {
   onToggleExpand?: () => void;
   onParentToggle?: (action: PermissionAction | "all", checked: boolean) => void;
   disabled?: boolean;
+  getChecked?: (action: PermissionAction | "all") => boolean;
+  getIndeterminate?: (action: PermissionAction | "all") => boolean;
 };
-
-//PRODUCT MENU MAPPING
-
-const PRODUCT_MENU_MAPPING = [
-  { key: "Product Master", label: "Product Master" },
-  { key: "Stone", label: "Stone / Diamond" },
-  { key: "Semi-Mount", label: "Semi - Mount" },
-  { key: "Accessories", label: "Accessories" },
-  { key: "Others", label: "Others" },
-  { key: "Product List", label: "Product List" },
-];
-
-// TYPE
 
 type MenuNode =
   | {
@@ -53,13 +45,23 @@ type MenuNode =
       menu: string;
     };
 
+//  2. CONSTANTS (STATIC DATA)
+const PRODUCT_MENU_MAPPING = [
+  { key: "Product Master", label: "Product Master" },
+  { key: "Stone", label: "Stone / Diamond" },
+  { key: "Semi-Mount", label: "Semi - Mount" },
+  { key: "Accessories", label: "Accessories" },
+  { key: "Others", label: "Others" },
+  { key: "Product List", label: "Product List" },
+];
+
+//   3. HELPERS / DATA BUILDERS - ทำหน้าที่แปลงข้อมูล
 function buildMenuTree(menus: string[]): MenuNode[] {
   const productChildren = PRODUCT_MENU_MAPPING.filter((m) =>
     menus.includes(m.key),
   );
 
   const productKeys = productChildren.map((m) => m.key);
-
   const otherMenus = menus.filter((m) => !productKeys.includes(m));
 
   const result: MenuNode[] = [];
@@ -82,57 +84,65 @@ function buildMenuTree(menus: string[]): MenuNode[] {
   return result;
 }
 
-//ROW
-
-const checkboxClass =
-  "w-4 h-4 rounded border border-gray-300 checked:border-black checked:bg-white";
-
+/* 
+   4. SUB COMPONENT
+   - 1 แถวของ permission table
+   - ใช้ได้ทั้ง parent / child
+ */
 function PermissionRow({
   menu,
   label,
   checksByMenu,
   onToggle,
   isParent,
-  isChild,
   isExpanded,
   onToggleExpand,
   onParentToggle,
   disabled,
+  getChecked,
+  getIndeterminate,
 }: PermissionRowProps) {
   const c = checksByMenu[menu];
 
   return (
-    <tr className="border-t border-gray-100">
+    <tr className="bg-white border-b">
+      {/* MENU CELL */}
       <td className="px-6 py-4">
         <div
-          className={`flex items-center ${
+          className={`flex items-center gap-2 ${
             isParent ? "cursor-pointer select-none" : ""
           }`}
           onClick={isParent ? onToggleExpand : undefined}
         >
+          <span className="font-light text-base text-[#06284B]">{label}</span>
+
           {isParent && (
-            <span className="mr-2 text-xs">{isExpanded ? "⌄" : "›"}</span>
+            <DropdownArrowIcon
+              className={`w-5 h-5 transition-transform duration-200 ${
+                isExpanded ? "rotate-90" : "rotate-0"
+              }`}
+            />
           )}
-          <span className={isChild ? "" : ""}>{label}</span>
         </div>
       </td>
 
+      {/* PERMISSION CELLS */}
       {(["all", "view", "add", "update", "delete", "print"] as const).map(
         (action) => (
           <td key={action} className="px-6 py-4 text-center">
-            <input
-              type="checkbox"
-              className={`${checkboxClass} ${
-                disabled ? "opacity-40 cursor-not-allowed" : ""
-              }`}
-              checked={c?.[action] ?? false}
+            <Checkbox
+              checked={getChecked ? getChecked(action) : (c?.[action] ?? false)}
+              indeterminate={
+                getIndeterminate ? getIndeterminate(action) : false
+              }
               disabled={disabled}
-              onChange={(e) => {
+              onChange={(checked) => {
                 if (disabled) return;
+
                 if (isParent && onParentToggle) {
-                  onParentToggle(action, e.target.checked);
+                  onParentToggle(action, checked);
                 } else if (onToggle) {
-                  onToggle(menu, action, e.target.checked);
+                  onToggle(menu, action, checked);
                 }
               }}
             />
@@ -143,21 +153,26 @@ function PermissionRow({
   );
 }
 
-// MAIN TABLE
-
+/* 
+   5. MAIN COMPONENT
+   - คุม state
+   - render table
+ */
 export default function PermissionTable({
   menus = [],
   checksByMenu,
   onToggle,
   disabled = false,
+  mode = "edit",
 }: Props) {
-  // console.log("MENUS FROM API:", menus);
-
   const tree = buildMenuTree(menus);
 
+  /* STATE */
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {},
   );
+
+  /* HANDLERS */
 
   const toggleGroup = (parent: string) => {
     setExpandedGroups((prev) => ({
@@ -190,115 +205,94 @@ export default function PermissionTable({
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="w-full h-full flex flex-col min-h-0">
       <h2 className="text-lg font-normal text-[#06284B] mb-6">
-        Select permission for this user.
+        {mode === "view" ? "Permission" : "Select permission for this user."}
       </h2>
-      <table className="w-full text-lg border-[#F0F0F2]">
-        <thead className="bg-[#F7F7F7]">
-          <tr>
-            <th className="px-6 py-4 text-left font-normal">Menu</th>
-            {["All", "View", "Add", "Edit", "Delete", "Print"].map((h) => (
-              <th key={h} className="px-6 py-4 text-center font-normal">
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
 
-        <tbody>
-          {tree.map((node) => {
-            if (node.type === "group") {
-              const expanded = expandedGroups[node.parent];
+      {/* TABLE + SCROLL */}
+      <div className="relative min-h-0 border border-[#E5E7EB] rounded-md bg-[#F9FAFB] shadow-sm">
+        <div className="h-full overflow-y-auto hide-scrollbar">
+          <table className="w-full text-left table-auto">
+            {/* HEADER */}
+            <thead className="sticky top-0 z-10 bg-[#F1F1F1]">
+              <tr>
+                <th className="px-6 py-4 font-normal text-base w-64">Menu</th>
+                {["All", "View", "Add", "Edit", "Delete", "Print"].map((h) => (
+                  <th
+                    key={h}
+                    className="px-6 py-4 font-normal text-left text-base"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-              return (
-                <React.Fragment key={node.parent}>
-                  {/* Product */}
-                  <tr className="border-t border-gray-100">
-                    <td className="px-6 py-4">
-                      <div
-                        className="flex items-center gap-2 cursor-pointer select-none"
-                        onClick={() => toggleGroup(node.parent)}
-                      >
-                        <span>Product</span>
+            {/* BODY */}
+            <tbody>
+              {/* 1. GROUP MENU (Product) */}
+              {tree
+                .filter((n) => n.type === "group")
+                .map((node) => {
+                  const expanded = expandedGroups[node.parent];
 
-                        <DropdownArrowIcon
-                          className={`transition-transform duration-200 ${
-                            expanded ? "rotate-90" : "rotate-0"
-                          }`}
-                        />
-                      </div>
-                    </td>
-
-                    {(
-                      [
-                        "all",
-                        "view",
-                        "add",
-                        "update",
-                        "delete",
-                        "print",
-                      ] as const
-                    ).map((action) => (
-                      <td key={action} className="px-6 py-4 text-center">
-                        <input
-                          type="checkbox"
-                          className={`${checkboxClass} ${
-                            disabled ? "opacity-40 cursor-not-allowed" : ""
-                          }`}
-                          checked={isGroupChecked(node.children, action)}
-                          disabled={disabled}
-                          ref={(el) => {
-                            if (el) {
-                              el.indeterminate = isGroupIndeterminate(
-                                node.children,
-                                action,
-                              );
-                            }
-                          }}
-                          onChange={(e) => {
-                            if (disabled) return;
-                            toggleGroupPermission(
-                              node.children,
-                              action,
-                              e.target.checked,
-                            );
-                          }}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Children */}
-                  {expanded &&
-                    node.children.map((child) => (
+                  return (
+                    <React.Fragment key={node.parent}>
+                      {/* PARENT ROW */}
                       <PermissionRow
-                        key={child.key}
-                        menu={child.key}
-                        label={child.label}
+                        menu={node.parent}
+                        label={node.parent}
                         checksByMenu={checksByMenu}
-                        onToggle={onToggle}
-                        isChild
+                        isParent
+                        isExpanded={expanded}
+                        onToggleExpand={() => toggleGroup(node.parent)}
+                        onParentToggle={(action, checked) =>
+                          toggleGroupPermission(node.children, action, checked)
+                        }
+                        getChecked={(action) =>
+                          isGroupChecked(node.children, action)
+                        }
+                        getIndeterminate={(action) =>
+                          isGroupIndeterminate(node.children, action)
+                        }
                         disabled={disabled}
                       />
-                    ))}
-                </React.Fragment>
-              );
-            }
 
-            return (
-              <PermissionRow
-                key={node.menu}
-                menu={node.menu}
-                label={node.menu}
-                checksByMenu={checksByMenu}
-                onToggle={onToggle}
-                disabled={disabled}
-              />
-            );
-          })}
-        </tbody>
-      </table>
+                      {/* CHILD ROWS */}
+                      {expanded &&
+                        node.children.map((child) => (
+                          <PermissionRow
+                            key={child.key}
+                            menu={child.key}
+                            label={child.label}
+                            checksByMenu={checksByMenu}
+                            onToggle={onToggle}
+                            isChild
+                            disabled={disabled}
+                          />
+                        ))}
+                    </React.Fragment>
+                  );
+                })}
+
+              {/* 2. SINGLE MENU (เช่น Customer) — ต้องอยู่ท้ายเสมอ */}
+              {tree
+                .filter((n) => n.type === "single")
+                .map((node) => (
+                  <PermissionRow
+                    key={node.menu}
+                    menu={node.menu}
+                    label={node.menu}
+                    checksByMenu={checksByMenu}
+                    onToggle={onToggle}
+                    disabled={disabled}
+                  />
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

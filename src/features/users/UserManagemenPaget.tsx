@@ -4,8 +4,7 @@ import UserForm from "./UserForm";
 import ResetPasswordDialog from "./ResetPasswordDialog";
 import useUsers from "./hook/useUsers";
 import type { UserFormInput, UserListItem } from "../../types/user";
-import { buildChecksByMenu } from "../../utils/permission";
-import CloseModal from "../../assets/svg/close.svg?react";
+import UserModal from "./UserModal";
 
 const UserManagementPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -58,6 +57,8 @@ const UserManagementPage: React.FC = () => {
           maxUsers={3}
           search={search}
           onChangeSearch={setSearch}
+          onPrint={() => console.log("print")}
+          onExportExcel={() => console.log("export")}
         />
       )}
 
@@ -74,72 +75,34 @@ const UserManagementPage: React.FC = () => {
       )}
 
       {/* edit modal */}
-      {editOpen && editingUser && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
-          <div className="w-[1200px] max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-lg p-6">
-            {/* HEADER + EDIT BUTTON */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-normal text-[#06284B]">
-                User & Permission
-              </h2>
+      <UserModal
+        open={editOpen}
+        user={editingUser!}
+        mode={formMode}
+        menus={permissionMenus}
+        permissionCatalog={permissionCatalog}
+        onEdit={() => setFormMode("edit")}
+        onClose={() => {
+          setEditOpen(false);
+          setEditingUser(null);
+          setFormMode("view");
+        }}
+        onSubmit={async (values) => {
+          await updateUser(editingUser!.id, values);
 
-              <div className="flex items-center gap-2">
-                {formMode === "view" && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setFormMode("edit")}
-                      className="px-4 py-2 bg-[#0088FF] text-white rounded-md"
-                    >
-                      Edit
-                    </button>
+          if (values.password?.trim()) {
+            await resetPassword(
+              editingUser!.id,
+              values.password,
+              values.sendPasswordEmail ?? false,
+            );
+          }
 
-                    <button
-                      onClick={() => {
-                        setEditOpen(false);
-                        setEditingUser(null);
-                        setFormMode("view");
-                      }}
-                      className="w-9 h-9 flex items-center justify-center text-gray-600"
-                      aria-label="Close modal"
-                    >
-                      <CloseModal className="w-12 h-12" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <UserForm
-              mode={formMode}
-              menus={permissionMenus}
-              permissionCatalog={permissionCatalog}
-              initialValues={{
-                username: editingUser.name,
-                email: editingUser.email,
-                phone: editingUser.phone,
-                active: editingUser.status === "active",
-                permissions: buildChecksByMenu(permissionMenus),
-              }}
-              onCancel={() => {
-                setEditOpen(false);
-                setEditingUser(null);
-              }}
-              onSubmit={async (values) => {
-                await updateUser(editingUser.id, values);
-                if (values.password?.trim()) {
-                  await resetPassword(
-                    editingUser.id,
-                    values.password,
-                    values.sendPasswordEmail ?? false,
-                  );
-                }
-                setEditOpen(false);
-                setEditingUser(null);
-              }}
-            />
-          </div>
-        </div>
-      )}
+          setEditOpen(false);
+          setEditingUser(null);
+          setFormMode("view");
+        }}
+      />
 
       <ResetPasswordDialog
         open={resetOpen}

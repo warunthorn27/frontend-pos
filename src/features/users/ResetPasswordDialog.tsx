@@ -307,7 +307,9 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                     onClick={handleSendEmail}
                     disabled={!canSendEmail || sendingEmail || emailSent}
                     className="w-[130px] h-[38px] rounded-md bg-[#0088FF] text-white hover:bg-[#0574D6] disabled:opacity-50 disabled:cursor-not-allowed"
-                    title={!canSendEmail ? "This user has no email" : ""}
+                    title={
+                      !canSendEmail ? "This user cannot receive emails." : ""
+                    }
                   >
                     {emailSent
                       ? "Sent"
