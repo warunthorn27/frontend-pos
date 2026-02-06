@@ -147,6 +147,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                     options={stoneNameOptions}
                     onChange={(v) => onChange({ stoneName: v })}
                     allowCreate
+                    required
                   />
                 )}
               </div>
@@ -181,7 +182,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                   <ReadonlyField
                     value={
                       qualityOptions.find((o) => o.value === value.quality)
-                        ?.label
+                        ?.label ?? "-"
                     }
                   />
                 ) : (
@@ -211,6 +212,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                     options={shapeOptions}
                     onChange={(v) => onChange({ shape: v })}
                     allowCreate
+                    required
                   />
                 )}
               </div>
@@ -236,7 +238,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                   <ReadonlyField
                     value={
                       cuttingOptions.find((o) => o.value === value.cutting)
-                        ?.label
+                        ?.label ?? "-"
                     }
                   />
                 ) : (
@@ -255,7 +257,7 @@ const StoneDiamondInfoCard: React.FC<Props> = ({
                   <ReadonlyField
                     value={
                       clarityOptions.find((o) => o.value === value.clarity)
-                        ?.label
+                        ?.label ?? "-"
                     }
                   />
                 ) : (
