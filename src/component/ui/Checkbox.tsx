@@ -47,7 +47,7 @@ const Checkbox: FC<CheckboxProps> = ({
           ${
             checked || indeterminate
               ? "bg-[#2DA9FF]"
-              : "bg-white border-2 border-[#CFCFCF]"
+              : "bg-white border-[1px] border-[#CFCFCF]"
           }
           ${disabled ? "opacity-50" : ""}
         `}
