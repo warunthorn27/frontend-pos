@@ -29,18 +29,15 @@ function Input({
   value,
   onChange,
   disabled = false,
-  readonly,
 }: {
   value: string;
   onChange: (v: string) => void;
   disabled?: boolean;
-  readonly?: boolean;
 }) {
   return (
     <input
       value={value}
       disabled={disabled}
-      readOnly={readonly}
       onChange={(e) => onChange(e.target.value)}
       className="
         w-full h-[38px]
@@ -58,13 +55,6 @@ const AccessoriesSection: React.FC<Props> = ({
   onChange,
   mode,
 }) => {
-  // console.log("accessories options", options);
-  // console.log("FORM productId:", value.productId);
-  // console.log(
-  //   "OPTIONS values:",
-  //   options.map((o) => o.value),
-  // );
-
   const isView = mode === "view";
 
   const selectOptions: SelectOption[] = options.map((o) => ({
@@ -81,47 +71,49 @@ const AccessoriesSection: React.FC<Props> = ({
 
         <div>
           <Label>Product Name</Label>
+
           {isView ? (
             <ReadonlyField value={value.productName} />
           ) : (
-            <MasterInputSelect
-              value={value.productId}
-              options={selectOptions}
-              onChange={(v) => {
-                // clear
-                if (!v) {
+            <div className="flex flex-col gap-2">
+              <MasterInputSelect
+                value={value.productId}
+                options={selectOptions}
+                onChange={(v) => {
+                  // clear
+                  if (!v) {
+                    onChange({
+                      productId: "",
+                      productName: "",
+                      code: "",
+                      productSize: "",
+                      metal: "",
+                      weight: "",
+                      description: "",
+                    });
+                    return;
+                  }
+
+                  const acc = options.find((o) => o.value === v);
+                  if (!acc) return;
+
                   onChange({
-                    productId: "",
-                    code: "",
-                    productName: "",
-                    productSize: "",
-                    metal: "",
-                    weight: "",
-                    description: "",
+                    productId: acc.value,
+                    productName: acc.productName,
+                    code: acc.productCode,
+                    productSize: acc.productSize,
+                    metal: acc.metal,
+                    weight: acc.defaultWeight ?? "",
+                    description: acc.description ?? "",
                   });
-
-                  return;
-                }
-
-                const acc = options.find((o) => o.value === v);
-                if (!acc) return;
-
-                onChange({
-                  productId: acc.value, // id
-                  code: acc.productCode ?? "",
-                  productName: acc.productName,
-                  productSize: acc.productSize,
-                  metal: acc.metal,
-                  weight: acc.defaultWeight ?? "",
-                });
-              }}
-            />
+                }}
+              />
+            </div>
           )}
         </div>
 
         <div>
           <Label>Weight</Label>
-
           {isView ? (
             <ReadonlyField value={`${value.weight} ${value.unit}`} />
           ) : (
@@ -153,18 +145,30 @@ const AccessoriesSection: React.FC<Props> = ({
           {isView ? (
             <ReadonlyField value={value.code} />
           ) : (
-            <Input value={value.code} onChange={() => {}} readonly />
+            <Input value={value.code} onChange={() => {}} disabled={true} />
           )}
         </div>
 
         <div>
           <Label>Product Size</Label>
-          <Input value={value.productSize} onChange={() => {}} />
+          {isView ? (
+            <ReadonlyField value={value.productSize} />
+          ) : (
+            <Input
+              value={value.productSize}
+              onChange={() => {}}
+              disabled={true}
+            />
+          )}
         </div>
 
         <div>
           <Label>Metal</Label>
-          <Input value={value.metal} onChange={() => {}} disabled={true} />
+          {isView ? (
+            <ReadonlyField value={value.metal} />
+          ) : (
+            <Input value={value.metal} onChange={() => {}} disabled={true} />
+          )}
         </div>
       </div>
     </div>

@@ -42,7 +42,7 @@ const OthersPage: React.FC = () => {
       formData.append("product_name", form.productName.trim());
       formData.append("code", form.code.trim());
       formData.append("category", "others");
-      formData.append("product_size", form.productSize);
+      formData.append("size", form.productSize);
       formData.append("weight", form.weight);
 
       if (form.description) formData.append("description", form.description);

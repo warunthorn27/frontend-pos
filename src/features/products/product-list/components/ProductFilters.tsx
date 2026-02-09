@@ -8,13 +8,13 @@ import MasterSelect from "../../../../component/masterData/MasterSelect";
 type Props = {
   categories: string[];
   categoryOptions: SelectOption[];
-
+  openExport: boolean;
   search: string;
+  exportDropdown: React.ReactNode;
   onChangeCategories: (v: string[]) => void;
   onChangeSearch: (v: string) => void;
-
   onPrint: () => void;
-  onExportExcel: () => void;
+  onToggleExport: () => void;
 };
 
 export default function ProductFilters({
@@ -24,16 +24,10 @@ export default function ProductFilters({
   onChangeCategories,
   onChangeSearch,
   onPrint,
-  onExportExcel,
+  openExport,
+  onToggleExport,
+  exportDropdown,
 }: Props) {
-  // const handleCategoryChange = (value: string | null | undefined) => {
-  //   onChangeCategory(value ?? "");
-  // };
-
-  // const handleItemTypeChange = (value: string | null | undefined) => {
-  //   onChangeItemType(value ?? "");
-  // };
-
   return (
     <div className="flex items-center gap-4">
       {/* left filters */}
@@ -54,45 +48,37 @@ export default function ProductFilters({
           values={categories}
           options={categoryOptions}
           onChange={onChangeCategories}
-          placeholder="Category"
         />
-
-        {/* <MasterSelect
-          value={itemType}
-          options={itemTypeOptions}
-          onChange={handleItemTypeChange}
-          placeholder="Item Type"
-          // disabled={!category}
-        /> */}
       </div>
 
       {/* right icons */}
-      <div className="ml-auto flex items-center gap-4">
-        <button
-          type="button"
-          onClick={onPrint}
-          aria-label="Print"
-          title="Print"
-        >
+      <div className="ml-auto flex items-center gap-4 relative">
+        <button type="button" onClick={onPrint}>
           <PrintIcon className="w-7 h-7" />
         </button>
 
-        <button
-          type="button"
-          onClick={onExportExcel}
-          aria-label="Export Excel"
-          title="Export Excel"
-        >
+        <button type="button">
           <FileExcel className="w-7 h-7" />
         </button>
 
-        <button
-          onClick={onExportExcel}
-          className="px-[10px] py-[6px] gap-2 rounded-md bg-[#34C759] text-base font-normal text-white hover:bg-[#39813C] flex items-center"
-        >
-          <ExportIcon className="w-6 h-6" />
-          Export
-        </button>
+        {/* Export Button */}
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleExport();
+            }}
+            className="px-[10px] py-[6px] gap-2 rounded-md bg-[#34C759] hover:bg-[#2EB450] text-base text-white flex items-center"
+          >
+            <ExportIcon className="w-6 h-6" />
+            Export
+          </button>
+
+          {/* Dropdown */}
+          {openExport && (
+            <div className="absolute right-0 mt-2 z-50">{exportDropdown}</div>
+          )}
+        </div>
       </div>
     </div>
   );

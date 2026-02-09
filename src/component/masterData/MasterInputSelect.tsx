@@ -9,6 +9,7 @@ type Props = {
   placeholder?: string;
   disabled?: boolean;
   allowCreate?: boolean;
+  required?: boolean;
 };
 
 const MasterInputSelect: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const MasterInputSelect: React.FC<Props> = ({
   placeholder = "Select",
   disabled = false,
   allowCreate = true,
+  required = false,
 }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState<string>("");
@@ -69,18 +71,27 @@ const MasterInputSelect: React.FC<Props> = ({
     setOpen(true);
   };
 
+  const handleCloseDropdown = React.useCallback(() => {
+    setOpen(false);
+
+    if (required && !value && selectedOption) {
+      onChange(selectedOption.value);
+      setQuery(selectedOption.label ?? "");
+    }
+  }, [required, value, selectedOption, onChange]);
+
   /* close on outside click */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       const container = inputRef.current?.parentElement;
       if (container && !container.contains(e.target as Node)) {
-        setOpen(false);
+        handleCloseDropdown();
       }
     };
 
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [handleCloseDropdown]);
 
   return (
     <div className="relative">
@@ -95,6 +106,15 @@ const MasterInputSelect: React.FC<Props> = ({
           setQuery(val);
           setOpen(true);
 
+          // required field !!
+          if (required) {
+            // ห้ามว่าง และห้าม "-"
+            if (val.trim() === "" || val.trim() === "-") {
+              return;
+            }
+          }
+
+          // optional field ให้เป็น "", "-" ได้
           if (allowCreate) {
             onChange(val);
           }
@@ -133,6 +153,8 @@ const MasterInputSelect: React.FC<Props> = ({
             <li
               key={o.value}
               onMouseDown={() => {
+                if (required && !o.value) return;
+
                 onChange(o.value);
                 setQuery(o.label);
                 setOpen(false);

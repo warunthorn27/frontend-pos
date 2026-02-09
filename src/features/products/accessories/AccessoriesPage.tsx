@@ -49,7 +49,7 @@ const AccessoriesPage: React.FC = () => {
       formData.append("product_name", form.productName.trim());
       formData.append("code", form.code.trim());
       formData.append("category", "accessory");
-      formData.append("product_size", form.productSize);
+      formData.append("size", form.productSize);
       let metalId = form.metal;
 
       if (!isObjectId(form.metal)) {
