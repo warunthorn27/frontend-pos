@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { UserListItem } from "../../types/user";
+import LockIcon from "../../assets/svg/lock.svg?react";
+import CloseIcon from "../../assets/svg/close.svg?react";
+import CheckIcon from "../../assets/svg/check.svg?react";
+import CopyIcon from "../../assets/svg/copy.svg?react";
 
 type Step = "confirm" | "success";
 
@@ -29,7 +33,7 @@ function SuccessToast({
   message: string;
 }) {
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[10050] pointer-events-none">
+    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10050] pointer-events-none">
       <div
         className={[
           "flex items-start gap-3",
@@ -96,11 +100,6 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
     message: "",
   });
   const toastTimerRef = useRef<number | null>(null);
-
-  // const canSendEmail = useMemo(() => {
-  //   const e = user?.email?.trim() ?? "";
-  //   return e.length > 0;
-  // }, [user]);
 
   const canSendEmail = useMemo(() => {
     if (!user) return false;
@@ -193,6 +192,17 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
     }
   };
 
+  const handleCopyPassword = async () => {
+    if (!password) return;
+
+    try {
+      await navigator.clipboard.writeText(password);
+      // showToast("Copied", "Password copied to clipboard");
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
   return (
     <>
       <SuccessToast
@@ -204,45 +214,29 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
       {/* Modal */}
       {open && user && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
-          <div className="relative w-[520px] max-w-[92vw] rounded-xl bg-white shadow-lg px-8 py-8">
+          <div className="relative w-[500px] rounded-xl bg-white shadow-lg px-8 py-8">
             {/* Close */}
             <button
               type="button"
               onClick={closeAll}
-              className="absolute right-4 top-4 text-gray-500 hover:text-black"
+              className="absolute right-4 top-4"
               aria-label="Close"
             >
-              ✕
+              <CloseIcon className="w-7 h-7" />
             </button>
 
             {step === "confirm" && (
-              <div className="flex flex-col items-center text-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center">
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="w-20 h-20 rounded-full bg-[#E5F3FF] flex items-center justify-center">
                   {/* lock icon */}
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M7 10V8a5 5 0 0 1 10 0v2"
-                      stroke="#3B82F6"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      x="5"
-                      y="10"
-                      width="14"
-                      height="11"
-                      rx="2"
-                      stroke="#3B82F6"
-                      strokeWidth="2"
-                    />
-                  </svg>
+                  <LockIcon className="w-[60px] h-[60px] text-[#0088FF]" />
                 </div>
 
-                <h3 className="text-xl font-medium">
+                <h3 className="text-lg font-normal mt-2">
                   Reset password for this User
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  This will automatically generate a password
+                <p className="text-[#545454] text-base font-light">
+                  This will Automatically generate a password
                 </p>
 
                 {error && (
@@ -255,7 +249,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                   type="button"
                   onClick={handleReset}
                   disabled={loading}
-                  className="mt-3 w-[140px] h-[40px] rounded-md bg-[#0088FF] text-white hover:bg-[#0574D6] disabled:opacity-50"
+                  className="mt-6 px-8 py-2 rounded-md bg-[#0690F1] text-white font-normal text-base hover:bg-[#0071CE] disabled:opacity-50"
                 >
                   {loading ? "Resetting..." : "Reset"}
                 </button>
@@ -263,29 +257,32 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
             )}
 
             {step === "success" && (
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-[#DFF9E5] flex items-center justify-center">
                   {/* check icon */}
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      stroke="#22C55E"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <CheckIcon className="w-[60px] h-[60px]" />
                 </div>
 
-                <h3 className="text-xl font-medium">
+                <h3 className="text-lg font-normal">
                   Reset password Successful !
                 </h3>
 
-                <input
-                  value={password}
-                  readOnly
-                  className="mt-2 w-[260px] h-[38px] rounded-md border border-gray-300 px-3 text-center"
-                />
+                <div className="relative mb-2 w-[260px]">
+                  <input
+                    value={password}
+                    readOnly
+                    className="w-full py-2 rounded-md border border-gray-300 px-3 text-left text-sm font-light"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={handleCopyPassword}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
+                    title="Copy password"
+                  >
+                    <CopyIcon className="w-5 h-5" />
+                  </button>
+                </div>
 
                 {error && (
                   <p className="text-sm text-red-600 mt-1 whitespace-pre-wrap">
@@ -293,11 +290,11 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                   </p>
                 )}
 
-                <div className="mt-4 flex items-center gap-3">
+                <div className=" flex items-center gap-3 mb-2">
                   <button
                     type="button"
                     onClick={closeAll}
-                    className="w-[110px] h-[38px] rounded-md bg-[#FF383C] text-white hover:bg-[#E71010]"
+                    className="w-[120px] px-4 py-1.5 bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
                   >
                     Close
                   </button>
@@ -306,7 +303,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                     type="button"
                     onClick={handleSendEmail}
                     disabled={!canSendEmail || sendingEmail || emailSent}
-                    className="w-[130px] h-[38px] rounded-md bg-[#0088FF] text-white hover:bg-[#0574D6] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-[120px] px-4 py-1.5 rounded-md bg-[#0088FF] text-white hover:bg-[#0574D6] disabled:opacity-50 disabled:cursor-not-allowed"
                     title={
                       !canSendEmail ? "This user cannot receive emails." : ""
                     }

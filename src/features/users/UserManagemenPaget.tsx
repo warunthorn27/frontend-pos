@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import UserList from "./UserList";
 import UserForm from "./UserForm";
-import ResetPasswordDialog from "./ResetPasswordDialog";
 import useUsers from "./hook/useUsers";
 import type { UserFormInput, UserListItem } from "../../types/user";
 import UserModal from "./UserModal";
+import ResetPasswordDialog from "../../features/users/ResetPasswordDialog";
 
 const UserManagementPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
