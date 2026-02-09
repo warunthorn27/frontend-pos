@@ -119,17 +119,27 @@ const UserForm: React.FC<Props> = ({
   const [active, setActive] = useState(initialValues?.active ?? true);
   const [password, setPassword] = useState("");
   const [passwordGenerated, setPasswordGenerated] = useState(false);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
 
   /* ---------- password generator ---------- */
 
-  const generatePassword = () => {
+  function createRandomPassword(length = 8): string {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+
     let result = "";
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    setPassword(result);
+
+    return result;
+  }
+
+  const generatePassword = (): void => {
+    const newPassword = createRandomPassword(8);
+
+    setPassword(newPassword);
     setPasswordGenerated(true);
+    markAsChanged();
   };
 
   /* ---------- permissions ---------- */
@@ -182,6 +192,7 @@ const UserForm: React.FC<Props> = ({
 
       return { ...prev, [menu]: next };
     });
+    markAsChanged();
   };
 
   /* ---------- validation ---------- */
@@ -196,7 +207,10 @@ const UserForm: React.FC<Props> = ({
     (isCreate ? password.trim().length > 0 : true);
 
   const disableSave =
-    isSubmitting || (isCreate && !isValidRequired) || Boolean(phoneError);
+    isSubmitting ||
+    !hasChanges ||
+    (isCreate && !isValidRequired) ||
+    Boolean(phoneError);
 
   /* ---------- submit ---------- */
 
@@ -237,6 +251,16 @@ const UserForm: React.FC<Props> = ({
     onSubmit(payload);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>): void => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
+  const markAsChanged = (): void => {
+    setHasChanges(true);
+  };
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="w-full max-w-[1690px] mx-auto flex flex-col flex-1 min-h-0">
@@ -250,6 +274,7 @@ const UserForm: React.FC<Props> = ({
           <form
             id="user-form"
             onSubmit={handleSubmit}
+            onKeyDown={handleKeyDown}
             className="flex flex-col h-full min-h-0"
           >
             <div className="flex-1 px-10 py-6 min-h-0 flex flex-col">
@@ -258,7 +283,10 @@ const UserForm: React.FC<Props> = ({
                 <ToggleSwitch
                   checked={active}
                   disabled={isView}
-                  onChange={(checked) => setActive(checked)}
+                  onChange={(checked) => {
+                    setActive(checked);
+                    markAsChanged();
+                  }}
                 />
                 <span className="text-sm">
                   {active ? "Active" : "Inactive"}
@@ -272,7 +300,13 @@ const UserForm: React.FC<Props> = ({
                     {isView ? (
                       <ReadonlyField value={username} />
                     ) : (
-                      <Input value={username} onChange={setUsername} />
+                      <Input
+                        value={username}
+                        onChange={(v) => {
+                          setUsername(v);
+                          markAsChanged();
+                        }}
+                      />
                     )}
                   </FormField>
                 </div>
@@ -315,7 +349,13 @@ const UserForm: React.FC<Props> = ({
                     {isView ? (
                       <ReadonlyField value={email} />
                     ) : (
-                      <Input value={email} onChange={setEmail} />
+                      <Input
+                        value={email}
+                        onChange={(v) => {
+                          setEmail(v);
+                          markAsChanged();
+                        }}
+                      />
                     )}
                   </FormField>
                 </div>
@@ -326,7 +366,13 @@ const UserForm: React.FC<Props> = ({
                       <ReadonlyField value={phone} />
                     ) : (
                       <>
-                        <Input value={phone} onChange={setPhone} />
+                        <Input
+                          value={phone}
+                          onChange={(v) => {
+                            setPhone(v);
+                            markAsChanged();
+                          }}
+                        />
                         {phoneError && (
                           <div className="text-xs text-red-500 mt-1">
                             {phoneError}
@@ -335,12 +381,6 @@ const UserForm: React.FC<Props> = ({
                       </>
                     )}
                   </FormField>
-
-                  {phoneError && (
-                    <div className="text-xs text-red-500 mt-1">
-                      {phoneError}
-                    </div>
-                  )}
                 </div>
               </div>
 
