@@ -1,6 +1,6 @@
 import Modal from "@mui/material/Modal";
-import TrashIcon from "../../assets/svg/trash.svg?react";
 import CloseIcon from "../../assets/svg/close.svg?react";
+import WarningIcon from "../../assets/svg/warning-icon2.svg?react";
 
 type Props = {
   open: boolean;
@@ -23,30 +23,29 @@ export default function ConfirmDeleteDialog({
           </button>
 
           {/* Icon */}
-          <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-[#FFDFDF] flex items-center justify-center">
-            <TrashIcon className="w-[60px] h-[60px] text-[#E71010]" />
+          <div className="mx-auto mb-4 flex items-center justify-center">
+            <WarningIcon className="w-20 h-20" />
           </div>
 
           {/* Text */}
-          <h2 className="text-lg font-normal mb-2">Delete</h2>
+          <h2 className="text-lg font-normal mb-2">Discard changes</h2>
           <p className="text-[#545454] mb-8 font-light">
-            Are you sure you want to{" "}
-            <span className="text-[#C80C0C]">Delete</span> ?
+            Changes won't be saved. Continue?
           </p>
 
           {/* Actions */}
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-4">
             <button
-              className="w-[96px] px-4 py-1.5 border rounded-md text-black bg-white border-[#CFCFCF] hover:bg-[#F1F1F1]"
+              className="w-[140px] px-6 py-2 border rounded-md text-black bg-white border-[#CFCFCF] hover:bg-[#F1F1F1]"
               onClick={onClose}
             >
-              Close
+              Keep editing
             </button>
             <button
-              className="w-[96px] px-4 py-1.5 bg-[#E71010] text-white rounded-md hover:bg-[#C80C0C]"
+              className="w-[100px] px-6 py-2 bg-[#E71010] text-white rounded-md hover:bg-[#C80C0C]"
               onClick={onConfirm}
             >
-              Delete
+              Discard
             </button>
           </div>
         </div>
