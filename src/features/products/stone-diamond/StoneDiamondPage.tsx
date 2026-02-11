@@ -11,6 +11,7 @@ import ProductImagesCard from "../../../component/template/media/ProductImagesCa
 
 const emptyStoneDiamondForm: StoneDiamondForm = {
   active: true,
+  productId: "",
   productName: "",
   code: "",
   description: "",

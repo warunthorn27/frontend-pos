@@ -7,6 +7,7 @@ import type { OthersForm } from "../../../types/product/form";
 
 const emptyForm: OthersForm = {
   active: true,
+  productId: "",
   productName: "",
   code: "",
   productSize: "",

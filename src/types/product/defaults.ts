@@ -43,6 +43,7 @@ export const EMPTY_ACCESSORIES: AccessoriesForm = {
 
 export const EMPTY_PRODUCT_FORM: BaseProductForm = {
   active: false,
+  productId: "",
   productName: "",
   code: "",
   description: "",
