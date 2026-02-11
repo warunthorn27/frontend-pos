@@ -13,7 +13,7 @@ export type CreateStonePayload = {
   shape: string;
   size: string;
 
-  net_weight: number;
+  weight: string;
   unit: WeightUnit;
 
   description?: string;

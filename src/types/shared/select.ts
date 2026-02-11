@@ -9,4 +9,5 @@ export type AccessoriesOption = SelectOption & {
   productSize: string;
   metal: string;
   defaultWeight?: string;
+  description?: string;
 };
