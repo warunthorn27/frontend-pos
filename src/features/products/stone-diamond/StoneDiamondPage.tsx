@@ -49,14 +49,9 @@ const StoneDiamondPage: React.FC = () => {
     return (
       form.productName.trim() !== "" &&
       form.code.trim() !== "" &&
-      form.description.trim() !== "" &&
       form.stoneName.trim() !== "" &&
       form.shape.trim() !== "" &&
       form.size.trim() !== "" &&
-      form.color.trim() !== "" &&
-      form.cutting.trim() !== "" &&
-      form.quality.trim() !== "" &&
-      form.clarity.trim() !== "" &&
       form.weight.trim() !== "" &&
       form.unit.trim() !== ""
     );

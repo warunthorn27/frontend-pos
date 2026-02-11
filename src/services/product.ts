@@ -1,8 +1,7 @@
 import type { MasterItem } from "../types/master";
 import type {
   CategoryOption,
-  ProductDetailResponse,
-  ProductGetOneResponse,
+  FormattedProductResponse,
   ProductListResponse,
 } from "../types/product/response";
 import { API_BASE, getAuthHeaders, ApiError } from "./apiClient";
@@ -100,7 +99,7 @@ export function fetchProducts(params?: {
 }
 
 export function getProductById(id: string) {
-  return request<{ data: ProductDetailResponse }>(`/product/${id}`);
+  return request<{ data: FormattedProductResponse }>(`/product/${id}`);
 }
 
 /* ---------- CREATE ---------- */
@@ -140,11 +139,23 @@ export function createOthers(formData: FormData) {
 }
 
 /* ---------- UPDATE ---------- */
-export function updateProduct(id: string, formData: FormData) {
-  return request<{ success: boolean }>(`/update-product/${id}`, {
-    method: "PUT",
-    body: formData,
-  });
+// export function updateProduct(id: string, formData: FormData) {
+//   return request<{ success: boolean }>(`/update-product/${id}`, {
+//     method: "PUT",
+//     body: formData,
+//   });
+// }
+
+export async function updateProduct(id: string, formData: FormData) {
+  const res = await request<{ data: FormattedProductResponse }>(
+    `/update-product/${id}`,
+    {
+      method: "PUT",
+      body: formData,
+    },
+  );
+
+  return res.data;
 }
 
 export function updateStoneDiamond(id: string, formData: FormData) {
@@ -174,13 +185,6 @@ export function updateOthers(id: string, formData: FormData) {
     body: formData,
   });
 }
-
-// export function updateProductStatus(id: string, active: boolean) {
-//   return request<{ success: boolean }>(`/update-product/${id}`, {
-//     method: "PUT",
-//     body: formData,
-//   });
-// }
 
 export function updateProductStatus(
   id: string,
@@ -217,6 +221,5 @@ export function fetchItemTypes() {
 }
 
 export function fetchProductById(id: string) {
-  return request<{ data: ProductGetOneResponse }>(`/product/${id}`);
+  return request<{ data: FormattedProductResponse }>(`/product/${id}`);
 }
-

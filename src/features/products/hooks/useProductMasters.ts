@@ -8,6 +8,7 @@ import type {
   SelectOption,
 } from "../../../types/shared/select";
 import { MASTER_TYPES } from "../../../types/master";
+import type { BackendAccessoryMaster } from "../../../types/product/response";
 
 export function useProductMasters() {
   const [loading, setLoading] = useState(true);
@@ -54,15 +55,21 @@ export function useProductMasters() {
       setItemTypeOptions(itemTypes);
       setMetalOptions(metals);
 
-      const accessories: AccessoriesOption[] = accessoriesRaw.map((a) => ({
-        value: a._id, // id
-        label: a.product_name, // ใช้โชว์ใน dropdown
-        productCode: a.product_code,
-        productName: a.product_name,
+      const accessories: AccessoriesOption[] = (
+        accessoriesRaw as BackendAccessoryMaster[]
+      ).map((a) => ({
+        value: a._id,
+        label: a.product_name ?? "",
+        productCode: a.product_code ?? "",
+        productName: a.product_name ?? "",
         productSize: a.size ?? "",
-        metal: a.metal ?? "",
+        metal: typeof a.metal === "object" ? a.metal._id : (a.metal ?? ""),
         defaultWeight: a.weight != null ? String(a.weight) : "",
+        description: a.description ?? "",
       }));
+
+      console.log("accessoriesRaw:", accessoriesRaw);
+      console.log("accessoriesOptions:", accessories);
 
       setAccessoriesOptions(accessories);
     } catch (error) {
@@ -89,6 +96,11 @@ export function useProductMasters() {
     itemTypeOptions,
     metalOptions,
     accessoriesOptions,
+    setStoneNameOptions,
+    setShapeOptions,
+    setCuttingOptions,
+    setQualityOptions,
+    setClarityOptions,
     setMetalOptions,
     reloadMasters: loadMasters,
   };

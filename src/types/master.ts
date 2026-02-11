@@ -46,7 +46,4 @@ export type CreateMasterResponse = {
 export type BackendMaster = {
   _id: string;
   name: string;
-  code?: string;
-  master_name?: string;
-  master_type?: string;
 };
