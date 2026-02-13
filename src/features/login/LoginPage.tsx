@@ -70,7 +70,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="w-[500px] h-[600px] bg-white backdrop-blur rounded-xl shadow-lg px-10 py-10">
+      <div className="w-[500px] h-auto bg-white backdrop-blur rounded-xl shadow-lg px-10 py-10">
         <h1 className="text-5xl text-center font-normal text-[#084072] mt-[65.5px] mb-7">
           Login
         </h1>

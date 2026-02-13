@@ -53,7 +53,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="bg-white w-[690px] h-[470px] p-10 rounded-xl shadow-lg text-center">
+      <div className="bg-white w-[500px] h-auto p-10 rounded-xl shadow-lg text-center">
         {!sent ? (
           <>
             <div className="flex justify-center mb-1">
@@ -71,9 +71,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <input
                 id="identifier"
                 type="text"
-                placeholder="Email or Username"
+                placeholder="Enter your email"
                 className={`
-                  w-[440px] h-[55px] rounded-lg px-4 py-4 pr-10 text-sm text-black font-light placeholder-[#545454]
+                  w-[400px] h-[55px] rounded-lg px-4 py-4 pr-10 text-sm text-black font-light placeholder-[#545454]
                   outline-none transition bg-white
                   ${
                     hasIdentifierError
