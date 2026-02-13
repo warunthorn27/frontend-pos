@@ -1,15 +1,16 @@
 import React from "react";
-import ToggleSwitch from "../../../component/toggle/ToggleSwitch";
+import ToggleSwitch from "../../ui/ToggleSwitch";
 import type { BaseProductForm } from "../../../types/product/form";
 import type { SelectOption } from "../../../types/shared/select";
 import MasterInputSelect from "../../../component/masterData/MasterInputSelect";
+import ReadonlyField from "../../ui/ReadonlyField";
 
 type Props = {
   value: BaseProductForm;
+  mode: "create" | "edit" | "view";
   onChange: (patch: Partial<BaseProductForm>) => void;
   itemTypeOptions: SelectOption[];
   metalOptions: SelectOption[];
-  readonly: boolean;
 };
 
 function Label({
@@ -46,10 +47,12 @@ function UnitInput({
   value,
   onChange,
   unit,
+  readonly,
 }: {
   value: string;
   onChange: (v: string) => void;
   unit: string;
+  readonly?: boolean;
 }) {
   return (
     <div className="relative">
@@ -57,6 +60,7 @@ function UnitInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         inputMode="decimal"
+        disabled={readonly}
         className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-10 text-sm outline-none"
       />
       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#7A7A7A]">
@@ -68,17 +72,21 @@ function UnitInput({
 
 const ProductInfoSection: React.FC<Props> = ({
   value,
+  mode,
   onChange,
   itemTypeOptions,
   metalOptions,
 }) => {
+  const isView = mode === "view";
+
   return (
-    <div className="h-full min-h-0 w-full rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+    <div className="h-full w-full mb-5 rounded-md border border-[#E6E6E6] bg-white px-6 py-5">
       {/* HEADER : Toggle */}
       <div className="flex items-center gap-3 mb-4">
         <ToggleSwitch
           checked={value.active}
           onChange={(checked) => onChange({ active: checked })}
+          disabled={isView}
         />
         <span className="text-sm text-[#1F2937]">
           {value.active ? "Active" : "Inactive"}
@@ -91,30 +99,45 @@ const ProductInfoSection: React.FC<Props> = ({
         <div className="flex flex-col gap-y-4">
           <div>
             <Label required>Product Name</Label>
-            <Input
-              value={value.productName}
-              onChange={(v) => onChange({ productName: v })}
-            />
+            {isView ? (
+              <ReadonlyField value={value.productName} />
+            ) : (
+              <Input
+                value={value.productName}
+                onChange={(v) => onChange({ productName: v })}
+              />
+            )}
           </div>
 
           <div>
             <Label required>Code</Label>
-            <Input value={value.code} onChange={(v) => onChange({ code: v })} />
+            {isView ? (
+              <ReadonlyField value={value.code} />
+            ) : (
+              <Input
+                value={value.code}
+                onChange={(v) => onChange({ code: v })}
+              />
+            )}
           </div>
 
           <div>
             <Label>Description</Label>
-            <textarea
-              value={value.description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                onChange({ description: e.target.value })
-              }
-              maxLength={300}
-              className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
-            />
-            <p className="text-xs text-[#7A7A7A]">
-              *Description should not exceed 300 letters
-            </p>
+            {isView ? (
+              <ReadonlyField value={value.description} multiline height={120} />
+            ) : (
+              <>
+                <textarea
+                  value={value.description}
+                  onChange={(e) => onChange({ description: e.target.value })}
+                  maxLength={300}
+                  className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
+                />
+                <p className="text-xs text-[#7A7A7A]">
+                  *Description should not exceed 300 letters
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -122,31 +145,49 @@ const ProductInfoSection: React.FC<Props> = ({
         <div className="flex flex-col gap-y-4">
           <div>
             <Label required>Item Type</Label>
-            <MasterInputSelect
-              value={value.itemType}
-              onChange={(v) => onChange({ itemType: v })}
-              options={itemTypeOptions}
-              placeholder="Select"
-            />
+            {isView ? (
+              <ReadonlyField
+                value={
+                  itemTypeOptions.find((o) => o.value === value.itemType)?.label
+                }
+              />
+            ) : (
+              <MasterInputSelect
+                value={value.itemType}
+                onChange={(v) => onChange({ itemType: v })}
+                options={itemTypeOptions}
+                allowCreate
+              />
+            )}
           </div>
 
           <div>
             <Label required>Metal</Label>
-            <MasterInputSelect
-              value={value.metal}
-              onChange={(v) => onChange({ metal: v })}
-              options={metalOptions}
-              placeholder="Select"
-            />
+            {isView ? (
+              <ReadonlyField
+                value={metalOptions.find((o) => o.value === value.metal)?.label}
+              />
+            ) : (
+              <MasterInputSelect
+                value={value.metal}
+                onChange={(v) => onChange({ metal: v })}
+                options={metalOptions}
+                allowCreate
+              />
+            )}
           </div>
 
           <div>
             <Label required>Nwt</Label>
-            <UnitInput
-              value={value.nwt}
-              onChange={(v) => onChange({ nwt: v })}
-              unit="g"
-            />
+            {isView ? (
+              <ReadonlyField value={`${value.nwt} g`} />
+            ) : (
+              <UnitInput
+                value={value.nwt}
+                onChange={(v) => onChange({ nwt: v })}
+                unit="g"
+              />
+            )}
           </div>
         </div>
 
@@ -154,27 +195,39 @@ const ProductInfoSection: React.FC<Props> = ({
         <div className="flex flex-col gap-y-4">
           <div>
             <Label required>Product Size</Label>
-            <Input
-              value={value.productSize}
-              onChange={(v) => onChange({ productSize: v })}
-            />
+            {isView ? (
+              <ReadonlyField value={value.productSize} />
+            ) : (
+              <Input
+                value={value.productSize}
+                onChange={(v) => onChange({ productSize: v })}
+              />
+            )}
           </div>
 
           <div>
             <Label>Metal Color</Label>
-            <Input
-              value={value.metalColor}
-              onChange={(v) => onChange({ metalColor: v })}
-            />
+            {isView ? (
+              <ReadonlyField value={value.metalColor} />
+            ) : (
+              <Input
+                value={value.metalColor}
+                onChange={(v) => onChange({ metalColor: v })}
+              />
+            )}
           </div>
 
           <div>
             <Label required>Gwt</Label>
-            <UnitInput
-              value={value.gwt}
-              onChange={(v) => onChange({ gwt: v })}
-              unit="g"
-            />
+            {isView ? (
+              <ReadonlyField value={`${value.gwt} g`} />
+            ) : (
+              <UnitInput
+                value={value.gwt}
+                onChange={(v) => onChange({ gwt: v })}
+                unit="g"
+              />
+            )}
           </div>
         </div>
       </div>

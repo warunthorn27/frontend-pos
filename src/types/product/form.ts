@@ -6,6 +6,7 @@ import type { WeightUnit } from "../shared/unit";
 
 export type BaseProductForm = {
   active: boolean;
+  productId: string;
   productName: string;
   itemType: string;
   productSize: string;
@@ -15,6 +16,7 @@ export type BaseProductForm = {
   description: string;
   gwt: string;
   nwt: string;
+  unit: WeightUnit;
   accessories: AccessoriesForm;
   primaryStone: PrimaryStoneForm;
   additionalStones: AdditionalStoneForm[];
@@ -42,18 +44,18 @@ export type AdditionalStoneForm = {
   cutting: string;
   quality: string;
   clarity: string;
-  // qty: string;
 };
 
 export type StoneDiamondForm = {
   active: boolean;
+  productId: string;
   productName: string;
   code: string;
   description: string;
   stoneName: string;
   shape: string;
   size: string;
-  weight: string; // string เพราะ input
+  weight: string;
   unit: WeightUnit;
   color: string;
   cutting: string;
@@ -63,21 +65,38 @@ export type StoneDiamondForm = {
 
 export type OthersForm = {
   active: boolean;
+  productId: string;
   productName: string;
   code: string;
   productSize: string;
   weight: string;
-  weightUnit: WeightUnit;
+  unit: WeightUnit;
   description: string;
 };
 
 export type AccessoriesForm = {
   active: boolean;
+  productId: string;
   productName: string;
   code: string;
   productSize: string;
-  weight: string;
   metal: string;
-  weightUnit: WeightUnit;
+  weight: string;
+  unit: WeightUnit;
   description: string;
+};
+
+export type ProductCategory =
+  | "productmaster"
+  | "semimount"
+  | "stone"
+  | "accessory"
+  | "others";
+
+export type FormByCategory = {
+  productmaster: BaseProductForm;
+  semimount: BaseProductForm;
+  stone: StoneDiamondForm;
+  accessory: AccessoriesForm;
+  others: OthersForm;
 };

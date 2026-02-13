@@ -1,3 +1,5 @@
+import type { WeightUnit } from "./unit";
+
 export type SelectOption = {
   label: string;
   value: string;
@@ -9,5 +11,6 @@ export type AccessoriesOption = SelectOption & {
   productSize: string;
   metal: string;
   defaultWeight?: string;
+  unit: WeightUnit;
   description?: string;
 };

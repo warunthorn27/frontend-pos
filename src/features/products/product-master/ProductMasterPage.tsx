@@ -13,23 +13,21 @@ import type {
   BaseProductForm,
   PrimaryStoneForm,
 } from "../../../types/product/form";
-import type {
-  BackendAccessory,
-  BackendAdditionalStone,
-} from "../../../types/product/response";
 import ProductFormPageTemplate from "../../../component/template/ProductFormPageTemplate";
+import type { SelectOption } from "../../../types/shared/select";
 
 /* ---------- empty factories ---------- */
 
 const emptyAccessories = (): AccessoriesForm => ({
   active: true,
+  productId: "",
   code: "",
   productName: "",
   weight: "",
   productSize: "",
   metal: "",
   description: "",
-  weightUnit: "g",
+  unit: "g",
 });
 
 const emptyPrimaryStone = (): PrimaryStoneForm => ({
@@ -44,25 +42,34 @@ const emptyPrimaryStone = (): PrimaryStoneForm => ({
   clarity: "",
 });
 
+const emptyAdditionalStones = (): AdditionalStoneForm => ({
+  stoneName: "",
+  shape: "",
+  size: "",
+  weight: "",
+  unit: "g",
+  color: "",
+  cutting: "",
+  quality: "",
+  clarity: "",
+});
+
 const emptyForm: BaseProductForm = {
   active: true,
+  productId: "",
   productName: "",
   itemType: "",
   productSize: "",
-
   code: "",
   metal: "",
   metalColor: "",
-
   description: "",
-
-  gwt: "0.00",
-  nwt: "0.00",
-
-  accessories: emptyAccessories(),
-
+  gwt: "",
+  nwt: "",
+  unit: "g",
   primaryStone: emptyPrimaryStone(),
   additionalStones: [],
+  accessories: emptyAccessories(),
 };
 
 /* ---------- page ---------- */
@@ -96,58 +103,67 @@ const ProductMasterPage: React.FC = () => {
 
         setForm({
           active: p.is_active,
+          productId: p._id ?? "",
           productName: p.product_name,
-          code: p.product_code,
-          itemType: p.product_item_type,
-          productSize: p.product_detail_id.size ?? "",
-          metal: p.attributes?.metal?.name ?? "",
-          metalColor: p.attributes?.metal_color?.name ?? "",
-          description: p.product_detail_id.description ?? "",
-          gwt: String(p.product_detail_id.gross_weight ?? "0"),
-          nwt: String(p.product_detail_id.net_weight ?? "0"),
+          code: p.code,
+          itemType: p.item_type?._id ?? "",
+          productSize: p.product_size ?? "",
+          description: p.description ?? "",
+
+          metal: p.metal?._id ?? "",
+          metalColor: p.metal_color?.name ?? "",
+          gwt: String(p.gross_weight ?? "0"),
+          nwt: String(p.net_weight ?? "0"),
+          unit: p.unit ?? "g",
 
           accessories: (() => {
-            const acc = p.product_detail_id.related_accessories?.[0];
+            const acc = p.related_accessories?.[0];
             if (!acc) return emptyAccessories();
-
-            const a = acc as BackendAccessory;
 
             return {
               active: true,
-              code: a.product_id?._id ?? "",
-              productName: a.product_id?.product_name ?? "",
-              weight: String(a.weight ?? ""),
-              productSize: a.size ?? "",
-              metal: a.metal ?? "",
-              description: a.description ?? "",
-              weightUnit: "g",
+              productId: acc.product_id?._id ?? "",
+              code: acc.product_id?.product_code ?? "",
+              productName: acc.product_id?.product_name ?? "",
+              weight: String(acc.weight ?? ""),
+              productSize: String(acc.size ?? ""),
+              metal: acc.metal?._id ?? "", // id เท่านั้น
+              description: acc.description ?? "",
+              unit: acc.unit ?? "g",
             };
           })(),
 
           primaryStone: {
-            stoneName: p.product_detail_id.primary_stone?.stone_name ?? "",
-            shape: p.product_detail_id.primary_stone?.shape ?? "",
-            size: p.product_detail_id.primary_stone?.size ?? "",
-            weight: String(p.product_detail_id.primary_stone?.weight ?? ""),
-            unit: "g",
-            color: p.product_detail_id.primary_stone?.color ?? "",
-            cutting: p.product_detail_id.primary_stone?.cutting ?? "",
-            quality: p.product_detail_id.primary_stone?.quality ?? "",
-            clarity: p.product_detail_id.primary_stone?.clarity ?? "",
+            stoneName: p.primary_stone?.stone_name?._id ?? "",
+            shape: p.primary_stone?.shape?._id ?? "",
+            size: p.primary_stone?.size ?? "",
+            weight:
+              p.primary_stone?.weight !== undefined &&
+              p.primary_stone?.weight !== null
+                ? String(p.primary_stone.weight)
+                : "",
+            unit: p.primary_stone?.unit ?? "g",
+            color: p.primary_stone?.color ?? "",
+            cutting: p.primary_stone?.cutting?._id ?? "",
+            quality: p.primary_stone?.quality?._id ?? "",
+            clarity: p.primary_stone?.clarity?._id ?? "",
           },
 
           additionalStones:
-            p.product_detail_id.additional_stones?.map(
-              (s: BackendAdditionalStone): AdditionalStoneForm => ({
-                stoneName: s.stone_name ?? "",
-                shape: s.shape ?? "",
+            p.additional_stones?.map(
+              (s): AdditionalStoneForm => ({
+                stoneName: s.stone_name?._id ?? "",
+                shape: s.shape?._id ?? "",
                 size: s.size ?? "",
-                weight: String(s.weight ?? ""),
-                unit: "g",
+                weight:
+                  s.weight !== undefined && s.weight !== null
+                    ? String(s.weight)
+                    : "",
+                unit: s.unit ?? "g",
                 color: s.color ?? "",
-                cutting: s.cutting ?? "",
-                quality: s.quality ?? "",
-                clarity: s.clarity ?? "",
+                cutting: s.cutting?._id ?? "",
+                quality: s.quality?._id ?? "",
+                clarity: s.clarity?._id ?? "",
               }),
             ) ?? [],
         });
@@ -185,20 +201,7 @@ const ProductMasterPage: React.FC = () => {
   const addAdditionalStone = () => {
     setForm((s) => ({
       ...s,
-      additionalStones: [
-        ...s.additionalStones,
-        {
-          stoneName: "",
-          shape: "",
-          size: "",
-          weight: "",
-          unit: "g",
-          color: "",
-          cutting: "",
-          quality: "",
-          clarity: "",
-        },
-      ],
+      additionalStones: [...s.additionalStones, emptyAdditionalStones()],
     }));
   };
 
@@ -221,6 +224,24 @@ const ProductMasterPage: React.FC = () => {
     }));
   };
 
+  const mergeOption = (
+    options: SelectOption[],
+    value: string,
+    labelFallback?: string,
+  ) => {
+    if (!value) return options;
+    if (options.some((o) => o.value === value)) return options;
+
+    return [{ value, label: labelFallback ?? value }, ...options];
+  };
+
+  const mergedStoneNameOptions = mergeOption(
+    stoneNameOptions,
+    form.primaryStone.stoneName,
+  );
+
+  const mergedShapeOptions = mergeOption(shapeOptions, form.primaryStone.shape);
+
   /* ---------- validation ---------- */
 
   const canSave = useMemo(() => {
@@ -239,36 +260,51 @@ const ProductMasterPage: React.FC = () => {
   const handleSave = async () => {
     try {
       const formData = new FormData();
-
+      // info product
       formData.append("product_name", form.productName.trim());
       formData.append("code", form.code.trim());
       formData.append("category", "productmaster");
       formData.append("item_type", form.itemType);
-      formData.append("product_size", form.productSize);
+      formData.append("size", form.productSize);
       formData.append("metal", form.metal);
 
       if (form.metalColor) formData.append("metal_color", form.metalColor);
-
       if (form.description) formData.append("description", form.description);
 
       formData.append("gross_weight", form.gwt);
       formData.append("net_weight", form.nwt);
-      formData.append("unit", "g");
+      formData.append("unit", form.unit);
 
-      if (form.primaryStone.stoneName) {
-        formData.append("stone_name", form.primaryStone.stoneName);
-        formData.append("shape", form.primaryStone.shape);
-        formData.append("size", form.primaryStone.size);
-        formData.append("color", form.primaryStone.color);
-        formData.append("cutting", form.primaryStone.cutting);
-        formData.append("quality", form.primaryStone.quality);
-        formData.append("clarity", form.primaryStone.clarity);
-        formData.append("weight", form.primaryStone.weight);
+      // primary stone
+      const hasPrimaryStone =
+        form.primaryStone.stoneName ||
+        form.primaryStone.shape ||
+        form.primaryStone.weight;
+
+      if (hasPrimaryStone) {
+        formData.append(
+          "primary_stone",
+          JSON.stringify({
+            stone_name: form.primaryStone.stoneName || undefined,
+            shape: form.primaryStone.shape || undefined,
+            size: form.primaryStone.size || undefined,
+            weight:
+              form.primaryStone.weight === ""
+                ? undefined
+                : Number(form.primaryStone.weight),
+            unit: form.primaryStone.unit,
+            color: form.primaryStone.color || undefined,
+            cutting: form.primaryStone.cutting || undefined,
+            quality: form.primaryStone.quality || undefined,
+            clarity: form.primaryStone.clarity || undefined,
+          }),
+        );
       }
 
+      // additional stone
       if (form.additionalStones.length > 0) {
         formData.append(
-          "stones",
+          "additional_stones",
           JSON.stringify(
             form.additionalStones.map((s) => ({
               stone_name: s.stoneName,
@@ -278,20 +314,26 @@ const ProductMasterPage: React.FC = () => {
               cutting: s.cutting,
               quality: s.quality,
               clarity: s.clarity,
-              weight: Number(s.weight || 0),
+              weight: s.weight === "" ? undefined : Number(s.weight),
+              unit: s.unit,
             })),
           ),
         );
       }
 
+      // accessories
       if (form.accessories.code) {
         const accessoriesPayload = [
           {
-            product_id: form.accessories.code, // ต้องเป็น ObjectId
-            weight: Number(form.accessories.weight || 0),
-            size: form.accessories.productSize || "",
-            metal: form.accessories.metal || "",
-            description: form.accessories.description || "",
+            product_id: form.accessories.productId,
+            weight:
+              form.accessories.weight === ""
+                ? undefined
+                : Number(form.accessories.weight),
+            size: form.accessories.productSize,
+            metal: form.accessories.metal,
+            unit: form.accessories.unit,
+            description: form.accessories.description,
           },
         ];
 
@@ -321,11 +363,42 @@ const ProductMasterPage: React.FC = () => {
     }
   };
 
+  const mergedAccessoriesOptions = useMemo(() => {
+    const acc = form.accessories;
+
+    if (!acc.productId) return accessoriesOptions;
+
+    const exists = accessoriesOptions.some((o) => o.value === acc.productId);
+
+    if (exists) return accessoriesOptions;
+
+    return [
+      {
+        value: acc.productId,
+        label: acc.productName,
+        productCode: acc.code,
+        productName: acc.productName,
+        productSize: acc.productSize,
+        metal: acc.metal,
+        defaultWeight: acc.weight,
+        unit: acc.unit,
+      },
+      ...accessoriesOptions,
+    ];
+  }, [accessoriesOptions, form.accessories]);
+
+  console.log(
+    "mergedAccessoriesOptions:",
+    mergedAccessoriesOptions.map((o) => o.value),
+  );
+  console.log("form.accessories.productId:", form.accessories.productId);
+
   return (
     <ProductFormPageTemplate
       title="Product Master"
       form={form}
       images={images}
+      mode={isEdit ? "edit" : "create"}
       onChangeForm={patchForm}
       onChangePrimaryStone={patchPrimaryStone}
       onAddAdditionalStone={addAdditionalStone}
@@ -334,12 +407,12 @@ const ProductMasterPage: React.FC = () => {
       onChangeImages={setImages}
       itemTypeOptions={itemTypeOptions}
       metalOptions={metalOptions}
-      stoneNameOptions={stoneNameOptions}
-      shapeOptions={shapeOptions}
+      stoneNameOptions={mergedStoneNameOptions}
+      shapeOptions={mergedShapeOptions}
       cuttingOptions={cuttingOptions}
       qualityOptions={qualityOptions}
       clarityOptions={clarityOptions}
-      accessoriesOptions={accessoriesOptions}
+      accessoriesOptions={mergedAccessoriesOptions}
       canSave={canSave}
       onCancel={() => {
         setForm(emptyForm);

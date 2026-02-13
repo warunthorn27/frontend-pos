@@ -89,6 +89,7 @@ const AccessoriesSection: React.FC<Props> = ({
                       productSize: "",
                       metal: "",
                       weight: "",
+                      unit: "g",
                       description: "",
                     });
                     return;
@@ -104,6 +105,7 @@ const AccessoriesSection: React.FC<Props> = ({
                     productSize: acc.productSize,
                     metal: acc.metal,
                     weight: acc.defaultWeight ?? "",
+                    unit: acc.unit ?? "g",
                     description: acc.description ?? "",
                   });
                 }}

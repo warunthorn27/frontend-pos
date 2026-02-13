@@ -3,9 +3,11 @@ import type {
   BaseProductForm,
   PrimaryStoneForm,
   AdditionalStoneForm,
-//   AccessoriesForm,
 } from "../../types/product/form";
-import type { SelectOption } from "../../types/shared/select";
+import type {
+  AccessoriesOption,
+  SelectOption,
+} from "../../types/shared/select";
 import ProductImagesCard from "./media/ProductImagesCard";
 import PrimaryStoneSection from "./sections/PrimaryStoneSection";
 import AccessoriesSection from "./sections/AccessoriesSection";
@@ -13,8 +15,7 @@ import ProductInfoSection from "./sections/ProductInfoSection";
 
 type Props = {
   title: string;
-
-  // state
+  mode: "create" | "edit" | "view";
   form: BaseProductForm;
   images: File[];
 
@@ -38,7 +39,7 @@ type Props = {
   cuttingOptions: SelectOption[];
   qualityOptions: SelectOption[];
   clarityOptions: SelectOption[];
-  accessoriesOptions: SelectOption[];
+  accessoriesOptions: AccessoriesOption[];
 
   // footer
   canSave: boolean;
@@ -50,6 +51,7 @@ const ProductFormPageTemplate: React.FC<Props> = ({
   title,
   form,
   images,
+  mode,
   onChangeForm,
   onChangePrimaryStone,
   onAddAdditionalStone,
@@ -68,6 +70,8 @@ const ProductFormPageTemplate: React.FC<Props> = ({
   onCancel,
   onSave,
 }) => {
+  const isView = mode === "view";
+
   return (
     <div className="w-full h-full flex flex-col min-h-0">
       <div className="w-full max-w-[1690px] mx-auto flex flex-col min-h-0">
@@ -79,7 +83,7 @@ const ProductFormPageTemplate: React.FC<Props> = ({
           <div className="flex-1 overflow-y-auto px-10 py-8 hide-scrollbar">
             <div className="grid grid-cols-[minmax(320px,30%)_1fr] gap-6 items-start">
               {/* LEFT */}
-              <div className="rounded-2xl border border-[#E6E6E6] bg-white px-6 py-5">
+              <div className="rounded-md border border-[#E6E6E6] bg-white px-6 py-5">
                 <ProductImagesCard
                   max={9}
                   value={images}
@@ -89,17 +93,18 @@ const ProductFormPageTemplate: React.FC<Props> = ({
 
               {/* RIGHT */}
               <div className="h-full min-h-0">
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col">
                   <ProductInfoSection
                     value={form}
                     onChange={onChangeForm}
                     itemTypeOptions={itemTypeOptions}
                     metalOptions={metalOptions}
-                    readonly={false}
+                    mode={isView ? "view" : "edit"}
                   />
 
                   <PrimaryStoneSection
                     value={form.primaryStone}
+                    mode={isView ? "view" : "edit"}
                     additionalStones={form.additionalStones}
                     onChangePrimary={onChangePrimaryStone}
                     onAddStone={onAddAdditionalStone}
@@ -120,6 +125,8 @@ const ProductFormPageTemplate: React.FC<Props> = ({
                       })
                     }
                     options={accessoriesOptions}
+                    mode={isView ? "view" : "edit"}
+                    metalOptions={metalOptions}
                   />
                 </div>
               </div>

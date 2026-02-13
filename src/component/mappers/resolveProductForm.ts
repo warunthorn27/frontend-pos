@@ -151,7 +151,7 @@ export function mapToBaseProductForm(
 
   return {
     active: product.is_active ?? true,
-
+    productId: product._id,
     productName: product.product_name ?? "",
     code: product.code ?? "",
     description: product.description ?? "",
@@ -164,7 +164,7 @@ export function mapToBaseProductForm(
 
     gwt: product.gross_weight !== undefined ? String(product.gross_weight) : "",
     nwt: product.net_weight !== undefined ? String(product.net_weight) : "",
-    unit: product.unit ?? "g",
+    unit: "g",
 
     primaryStone: {
       stoneName: product.primary_stone?.stone_name?._id ?? "",
@@ -174,7 +174,7 @@ export function mapToBaseProductForm(
         product.primary_stone?.weight !== undefined
           ? String(product.primary_stone.weight)
           : "",
-      unit: product.primary_stone?.unit ?? "cts",
+      unit: product.primary_stone?.unit ?? product.unit ?? "g",
       color: product.primary_stone?.color ?? "",
       cutting: product.primary_stone?.cutting?._id ?? "",
       quality: product.primary_stone?.quality?._id ?? "",
@@ -186,10 +186,7 @@ export function mapToBaseProductForm(
         stoneName: s.stone_name?._id ?? "",
         shape: s.shape?._id ?? "",
         size: s.size ?? "",
-        weight:
-          product.weight !== undefined && product.weight !== null
-            ? String(product.weight)
-            : "",
+        weight: s.weight !== undefined ? String(s.weight) : "",
         unit: s.unit ?? "g",
         color: s.color ?? "",
         cutting: s.cutting?._id ?? "",
@@ -205,10 +202,7 @@ export function mapToBaseProductForm(
           code: acc.product_id.product_code ?? "",
           productSize: acc.size ?? "",
           metal: extractId(acc.metal),
-          weight:
-            product.weight !== undefined && product.weight !== null
-              ? String(product.weight)
-              : "",
+          weight: acc.weight !== undefined ? String(acc.weight) : "",
           unit: acc.unit ?? "g",
           description: acc.description ?? "",
         }
@@ -236,6 +230,7 @@ export function mapToStoneDiamondForm(
 
   return {
     active: product.is_active ?? true,
+    productId: product._id,
     productName: product.product_name ?? "",
     code: product.code ?? "",
     description: product.description ?? "",
@@ -293,6 +288,7 @@ export function mapToAccessoriesForm(
 export function mapToOthersForm(product: FormattedProductResponse): OthersForm {
   return {
     active: product.is_active ?? true,
+    productId: product._id,
     productName: product.product_name ?? "",
     code: product.code ?? "",
     productSize: product.product_size ?? "",

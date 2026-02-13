@@ -65,11 +65,9 @@ export function useProductMasters() {
         productSize: a.size ?? "",
         metal: typeof a.metal === "object" ? a.metal._id : (a.metal ?? ""),
         defaultWeight: a.weight != null ? String(a.weight) : "",
+        unit: a.unit ?? "g",
         description: a.description ?? "",
       }));
-
-      console.log("accessoriesRaw:", accessoriesRaw);
-      console.log("accessoriesOptions:", accessories);
 
       setAccessoriesOptions(accessories);
     } catch (error) {
