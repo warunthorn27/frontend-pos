@@ -1,11 +1,19 @@
 // backend output
 
+import type { BackendMaster } from "../master";
+import type { ProductCategory } from "./form";
+
 export type ProductListItem = {
   _id: string;
   image: string | null;
-  code: string;
-  name: string;
-  category: string;
+  product_code: string;
+  product_name: string;
+
+  category: {
+    _id: string;
+    master_name: string;
+  };
+
   type_stone: string;
   size: string;
   metal: string;
@@ -18,83 +26,42 @@ export type ProductListResponse = {
   total: number;
 };
 
-export type BackendAccessory = {
+// ใช้กับ fetchAccessoryMaster()
+export type BackendAccessoryMaster = {
+  _id: string;
+  product_name: string;
+  product_code: string;
+  size: string;
+  metal: string | BackendMaster;
+  weight: string;
+  unit: "g" | "cts";
+  description?: string;
+};
+
+// ใช้กับ product.related_accessories[]
+export type BackendRelatedAccessory = {
   product_id?: {
     _id: string;
     product_name?: string;
     product_code?: string;
   };
-  weight?: number;
+  weight?: string;
+  unit?: "g" | "cts";
   size?: string;
-  metal?: string;
+  metal: string | BackendMaster;
   description?: string;
 };
 
 export type BackendAdditionalStone = {
-  stone_name?: string;
-  shape?: string;
-  size?: string;
+  stone_name?: BackendMaster;
+  shape?: BackendMaster;
   color?: string;
-  cutting?: string;
-  quality?: string;
-  clarity?: string;
-  qty?: number;
-  weight?: number;
-};
-
-export type ProductDetailResponse = {
-  _id: string;
-  is_active: boolean;
-  product_name: string;
-  product_code: string;
-  product_item_type: string;
-
-  attributes?: {
-    metal?: { name: string };
-    metal_color?: { name: string };
-  };
-
-  product_detail_id: {
-    size?: string;
-    description?: string;
-    gross_weight?: number;
-    net_weight?: number;
-
-    primary_stone?: {
-      stone_name?: string;
-      shape?: string;
-      size?: string;
-      weight?: number;
-      color?: string;
-      cutting?: string;
-      quality?: string;
-      clarity?: string;
-    };
-
-    additional_stones?: BackendAdditionalStone[];
-
-    related_accessories?: BackendAccessory[];
-  };
-};
-
-export type ProductGetOneResponse = {
-  _id: string;
-  product_name: string;
-  product_code: string;
-  product_category: string;
-  product_item_type: string;
-
-  attributes?: {
-    metal?: { name: string };
-    metal_color?: { name: string };
-  };
-
-  product_detail_id?: {
-    size?: string;
-    description?: string;
-    gross_weight?: number;
-    net_weight?: number;
-  };
+  cutting?: BackendMaster;
+  quality?: BackendMaster;
+  clarity?: BackendMaster;
+  size?: string;
+  weight?: string;
+  unit?: "g" | "cts";
 };
 
 export type CategoryOption = {
@@ -107,50 +74,91 @@ export type ItemTypeOption = {
   name: string;
 };
 
-export type BackendProductResponse = {
+// export type BackendProductWithCategory = BackendProductResponse & {
+//   product_category: ProductCategory;
+// };
+
+// Api model ใช้แทนข้อมูลที่มาจาก backend
+
+export type FormattedProductResponse = {
+  product_category: ProductCategory;
   _id: string;
-  is_active?: boolean;
-  product_name?: string;
-  product_code?: string;
-  product_item_type?: string;
+  is_active: boolean;
+  product_name: string;
+  code: string;
+  description?: string;
 
-  product_detail_id?: {
+  category: {
+    _id: string;
+    name: string;
+  };
+
+  item_type?: {
+    _id: string;
+    name: string;
+  };
+
+  product_size?: string;
+
+  metal?: {
+    _id: string;
+    name: string;
+  };
+
+  metal_color?: {
+    _id: string;
+    name: string;
+  };
+
+  weight?: number;
+  gross_weight?: number;
+  net_weight?: number;
+  unit?: "g" | "cts";
+
+  primary_stone?: {
+    stone_name?: { _id: string; name: string };
+    shape?: { _id: string; name: string };
     size?: string;
-    description?: string;
-    gross_weight?: number;
-    net_weight?: number;
-
-    primary_stone?: {
-      stone_name?: string;
-      shape?: string;
-      size?: string;
-      weight?: number;
-      color?: string;
-      cutting?: string;
-      quality?: string;
-      clarity?: string;
-    };
-
-    additional_stones?: Array<{
-      stone_name?: string;
-      shape?: string;
-      size?: string;
-      weight?: number;
-      color?: string;
-      cutting?: string;
-      quality?: string;
-      clarity?: string;
-    }>;
+    weight?: number;
+    unit?: "g" | "cts";
+    color?: string;
+    cutting?: { _id: string; name: string };
+    quality?: { _id: string; name: string };
+    clarity?: { _id: string; name: string };
   };
 
-  attributes?: {
-    metal?: { name?: string };
-    metal_color?: { name?: string };
-  };
+  additional_stones?: Array<{
+    stone_name?: { _id: string; name: string };
+    shape?: { _id: string; name: string };
+    size?: string;
+    weight?: number;
+    unit?: "g" | "cts";
+    color?: string;
+    cutting?: { _id: string; name: string };
+    quality?: { _id: string; name: string };
+    clarity?: { _id: string; name: string };
+  }>;
 
   related_accessories?: Array<{
-    code?: string;
-    name?: string;
+    product_id: {
+      _id: string;
+      product_name: string;
+      product_code: string;
+
+      product_detail_id?: {
+        unit: "g" | "cts";
+        weight: number;
+      };
+    };
     weight?: number;
+    unit: "g" | "cts";
+    size: string;
+    metal: {
+      _id: string;
+      name: string;
+    };
+    description?: string;
   }>;
+
+  file?: string[];
 };
