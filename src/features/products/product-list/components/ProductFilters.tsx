@@ -15,6 +15,7 @@ type Props = {
   onChangeSearch: (v: string) => void;
   onPrint: () => void;
   onToggleExport: () => void;
+  onExportAll: () => void;
 };
 
 export default function ProductFilters({
@@ -26,6 +27,7 @@ export default function ProductFilters({
   onPrint,
   openExport,
   onToggleExport,
+  onExportAll,
   exportDropdown,
 }: Props) {
   return (
@@ -57,7 +59,13 @@ export default function ProductFilters({
           <PrintIcon className="w-7 h-7" />
         </button>
 
-        <button type="button">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onExportAll();
+          }}
+        >
           <FileExcel className="w-7 h-7" />
         </button>
 

@@ -1,4 +1,5 @@
 import type { MasterItem } from "../types/master";
+import type { ExportProductsPayload } from "../types/product/export";
 import type {
   CategoryOption,
   FormattedProductResponse,
@@ -45,56 +46,23 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
    APIs
 ======================= */
 
-// export function fetchProducts(params?: {
-//   page?: number;
-//   limit?: number;
-//   category?: string;
-//   search?: string;
-// }) {
-//   const query = new URLSearchParams();
-
-//   if (params?.page) query.append("page", String(params.page));
-//   if (params?.limit) query.append("limit", String(params.limit));
-//   if (params?.category) query.append("category", params.category);
-//   if (params?.search) query.append("search", params.search);
-
-//   return request<ProductListResponse>(`/product/all?${query.toString()}`);
-// }
-
 export function fetchProducts(params?: {
   page?: number;
   limit?: number;
   category?: string;
-  itemType?: string;
-  stoneName?: string;
+  warehouse?: string;
   search?: string;
 }) {
   const query = new URLSearchParams();
 
-  if (params?.page) {
-    query.append("page", String(params.page));
-  }
-
-  if (params?.limit) {
-    query.append("limit", String(params.limit));
-  }
-
-  if (params?.category) {
-    query.append("category", params.category);
-  }
-
-  if (params?.itemType) {
-    query.append("item_type", params.itemType);
-  }
-
-  if (params?.search) {
-    query.append("search", params.search);
-  }
-
-  const queryString = query.toString();
+  if (params?.page) query.append("page", String(params.page));
+  if (params?.limit) query.append("limit", String(params.limit));
+  if (params?.category) query.append("category", params.category);
+  if (params?.warehouse) query.append("warehouse", params.warehouse);
+  if (params?.search) query.append("search", params.search);
 
   return request<ProductListResponse>(
-    queryString ? `/product/all?${queryString}` : `/product/all`,
+    query.toString() ? `/product/all?${query}` : `/product/all`,
   );
 }
 
@@ -154,7 +122,7 @@ export async function updateProduct(id: string, formData: FormData) {
       body: formData,
     },
   );
-
+  console.log("updateProduct", res);
   return res.data;
 }
 
@@ -222,4 +190,24 @@ export function fetchItemTypes() {
 
 export function fetchProductById(id: string) {
   return request<{ data: FormattedProductResponse }>(`/product/${id}`);
+}
+
+// export sheet excel
+export async function exportProductsToExcel(
+  payload: ExportProductsPayload,
+): Promise<Blob> {
+  const res = await fetch(`${API_BASE}/product/export/excel`, {
+    method: "POST",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new ApiError(res.status, "EXPORT_PRODUCTS_FAILED");
+  }
+
+  return res.blob();
 }
