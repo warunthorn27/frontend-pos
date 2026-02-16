@@ -11,7 +11,7 @@ const emptyForm: OthersForm = {
   productName: "",
   code: "",
   productSize: "",
-  weight: "0.00",
+  weight: "",
   unit: "g",
   description: "",
 };
