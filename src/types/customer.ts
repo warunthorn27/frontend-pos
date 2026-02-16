@@ -1,5 +1,14 @@
 export type BusinessType = "corporation" | "individual";
 
+export interface CustomerListItem {
+  id: string;
+  businessType: string;
+  companyName?: string;
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface Address {
   address: string;
   country: string;

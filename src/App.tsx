@@ -13,7 +13,7 @@ import SemiMountPage from "./features/products/semi-mount/SemiMountPage";
 import OthersPage from "./features/products/others/OthersPage";
 import ProductMasterPage from "./features/products/product-master/ProductMasterPage";
 import ProductListPage from "./features/products/product-list/ProductListPage";
-import CustomerListPage from "./features/customers/CustomerListPage";
+import CustomerListPage from "./features/customers/list/CustomerListPage";
 import AccessoriesPage from "./features/products/accessories/AccessoriesPage";
 
 import {
