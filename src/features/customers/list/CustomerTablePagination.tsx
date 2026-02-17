@@ -21,7 +21,7 @@ const CustomerTablePagination: React.FC<Props> = ({
   const end = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-end gap-6 text-sm text-gray-600">
+    <div className="flex items-center justify-end gap-6 text-sm text-gray-600 p-3">
       <div className="flex items-center gap-2">
         <span>Rows per page</span>
         <select

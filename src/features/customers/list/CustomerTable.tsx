@@ -5,6 +5,8 @@ import type { CustomerListItem } from "../../../types/customer";
 
 type Props = {
   data: CustomerListItem[];
+  page: number;
+  pageSize: number;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 };
@@ -38,7 +40,7 @@ function IconButton({
   );
 }
 
-const CustomerTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
+const CustomerTable: React.FC<Props> = ({ data }) => {
   return (
     <div className="bg-white">
       <div className="max-h-[500px] overflow-auto">
@@ -80,13 +82,13 @@ const CustomerTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
                         color="yellow"
                         icon={<IconPencil />}
                         label="Edit"
-                        onClick={() => onEdit?.(c.id)}
+                        onClick={() => {}}
                       />
                       <IconButton
                         color="red"
                         icon={<IconTrash />}
                         label="Delete"
-                        onClick={() => onDelete?.(c.id)}
+                        onClick={() => {}}
                       />
                     </div>
                   </td>

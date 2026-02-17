@@ -11,22 +11,28 @@ interface Props {
 }
 
 const CorporationForm: React.FC<Props> = ({ value, onChange }) => {
-  const update = (field: keyof CorporationCustomer, val: string) =>
-    onChange({ ...value, [field]: val });
+  const update = <K extends keyof CorporationCustomer>(
+    field: K,
+    newValue: CorporationCustomer[K],
+  ) => onChange({ ...value, [field]: newValue });
 
   return (
     <div className="space-y-4">
-      <FormLabel required>Company Name</FormLabel>
-      <FormTextInput
-        value={value.companyName}
-        onChange={(e) => update("companyName", e.target.value)}
-      />
+      <div>
+        <FormLabel required>Company Name</FormLabel>
+        <FormTextInput
+          value={value.companyName}
+          onChange={(e) => update("companyName", e.target.value)}
+        />
+      </div>
 
-      <FormLabel required>Contact Person</FormLabel>
-      <FormTextInput
-        value={value.contactPerson}
-        onChange={(e) => update("contactPerson", e.target.value)}
-      />
+      <div>
+        <FormLabel required>Contact Person</FormLabel>
+        <FormTextInput
+          value={value.contactPerson}
+          onChange={(e) => update("contactPerson", e.target.value)}
+        />
+      </div>
     </div>
   );
 };
