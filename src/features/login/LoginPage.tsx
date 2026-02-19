@@ -30,8 +30,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const hasIdentifierError = Boolean(errors.identifier);
   const hasPasswordError = Boolean(errors.password);
 
+  const resetForm = () => {
+    setIdentifier("");
+    setPassword("");
+    setServerError("");
+    setErrors({});
+  };
+
   if (showForgot) {
-    return <ForgotPassword onBack={() => setShowForgot(false)} />;
+    return (
+      <ForgotPassword
+        onBack={() => {
+          resetForm();
+          setShowForgot(false);
+        }}
+      />
+    );
   }
 
   const validateForm = (): boolean => {
@@ -49,20 +63,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+
     try {
       const data = await loginApi(identifier, password);
 
-      // เก็บ token/user ลง storage ก่อน
       saveAuth(data);
-
-      // ให้ App sync state (currentUser/token) และปลดล็อกหน้าอื่นๆ
       onLoginSuccess(data);
-
-      // ไป dashboard
       navigate("/dashboard", { replace: true });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Login failed";
-      setServerError(msg);
+    } catch {
+      setServerError("Invalid username or password");
     } finally {
       setIsSubmitting(false);
     }
@@ -71,11 +80,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
       <div className="w-[500px] h-auto bg-white backdrop-blur rounded-xl shadow-lg px-10 py-10">
-        <h1 className="text-5xl text-center font-normal text-[#084072] mt-[65.5px] mb-7">
+        <h1 className="text-5xl text-center font-normal text-[#084072] mt-10 mb-7">
           Login
         </h1>
 
-        <p className="text-base text-center text-[#9D9D9D] font-normal mb-7">
+        <p className="text-base text-center text-[#545454] font-light mb-7">
           Enter your email and password to log in
         </p>
 
@@ -87,7 +96,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
         <form onSubmit={handleSubmit} className="flex flex-col space-y-[20px]">
           {/* Email / Username */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="relative">
               <input
                 id="identifier"
@@ -98,8 +107,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   outline-none transition bg-white
                   ${
                     hasIdentifierError
-                      ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
-                      : "border border-gray-300/70 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+                      ? "border border-red-400 focus:border-red-500 focus:ring-red-200"
+                      : "border border-gray-300 focus:border-[#005AA7] focus:bg-white"
                   }
                 `}
                 value={identifier}
@@ -120,7 +129,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
 
           {/* Password */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="relative">
               <input
                 id="password"
@@ -131,8 +140,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   outline-none transition bg-white
                   ${
                     hasPasswordError
-                      ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
-                      : "border border-gray-300/70 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+                      ? "border border-red-400 focus:border-red-500 focus:ring-red-200"
+                      : "border border-gray-300 focus:border-[#005AA7] focus:bg-white"
                   }
                 `}
                 value={password}
@@ -159,7 +168,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             </div>
 
             {errors.password && (
-              <p className="text-[#FF383C] text-sm">{errors.password}</p>
+              <p className="text-[#FF383C] text-sm">
+                Invalid username or password !
+              </p>
             )}
           </div>
 
@@ -167,7 +178,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="flex justify-end">
             <button
               type="button"
-              className="text-base font-normal text-[#545454] hover:underline" //hover:text-blue-600
+              className="text-base font-light text-[#545454] hover:underline" //hover:text-blue-600
               onClick={() => setShowForgot(true)}
             >
               Forgot Password ?
@@ -179,7 +190,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-7 w-24 bg-[#0088FF] hover:bg-[#037be4] text-white py-2.5 rounded-md disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+              className="mt-7 w-full bg-[#0690F1] hover:bg-[#0071CE] text-white py-2.5 rounded-md disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
             >
               {isSubmitting ? "Loading..." : "Login"}
             </button>

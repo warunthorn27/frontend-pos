@@ -29,7 +29,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
     setErrors({});
 
     if (!identifier.trim()) {
-      setErrors({ identifier: "Please enter your email or username !" });
+      setErrors({ identifier: "Please enter your email !" });
       return;
     }
 
@@ -39,13 +39,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
       console.log("Forgot Password Success", result);
       setApiResult(result);
       setSent(true);
-    } catch (err: unknown) {
-      console.log("Forgot Password Error", err);
-      if (err instanceof Error) {
-        setErrorMessage(err.message);
-      } else {
-        setErrorMessage("Something went wrong. Please try again.");
-      }
+    } catch {
+      setErrorMessage("Email not found");
     } finally {
       setIsSubmitting(false);
     }
@@ -60,79 +55,95 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <img src={emailIcon} alt="" className="w-[86px]" />
             </div>
 
-            <h2 className="text-2xl text-black font-normal mt-[26px] mb-[20px]">
+            <h2 className="text-2xl text-[#084072] font-normal mt-[26px] mb-[20px]">
               Enter your email
             </h2>
-            <p className="text-[#545454] text-base mb-[20px]">
+            <p className="text-[#545454] text-base font-light mb-[20px]">
               Enter your email to request a password reset from the admin.
             </p>
+
+            {errorMessage && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 text-left">
+                {errorMessage}
+              </div>
+            )}
 
             <div className="flex flex-col items-center">
               <input
                 id="identifier"
                 type="text"
                 placeholder="Enter your email"
-                className={`
-                  w-[400px] h-[55px] rounded-lg px-4 py-4 pr-10 text-sm text-black font-light placeholder-[#545454]
+                className={`w-full h-[55px] rounded-lg px-4 py-4 pr-10 text-sm text-black font-light placeholder-[#545454]
                   outline-none transition bg-white
                   ${
                     hasIdentifierError
-                      ? "border border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
-                      : "border border-gray-300/70 focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-200"
+                      ? "border border-red-400 focus:border-red-500 focus:ring-red-200"
+                      : "border border-gray-300 focus:border-[#005AA7]"
                   }
-                `}
+                  `}
                 value={identifier}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e) => {
                   setIdentifier(e.target.value);
+
+                  // ลบ validation error ทันทีเมื่อเริ่มพิมพ์
                   if (errors.identifier) {
                     setErrors((prev) => ({ ...prev, identifier: undefined }));
                   }
+
+                  // ถ้ามี alert box จาก backend ก็ลบทิ้งด้วย
+                  // if (errorMessage) {
+                  //   setErrorMessage(null);
+                  // }
                 }}
               />
             </div>
 
             {errors.identifier && (
-              <p className="text-[#FF383C] text-sm">{errors.identifier}</p>
+              <p className="text-[#FF383C] text-sm text-left mt-1">
+                {errors.identifier}
+              </p>
             )}
 
-            {errorMessage && (
-              <p className="text-[#FF383C] text-sm">{errorMessage}</p>
-            )}
             <button
               onClick={handleRequest}
               disabled={isSubmitting}
-              className="bg-[#0088FF] hover:bg-[#037be4] text-white px-6 py-2.5 rounded-md mt-[26px] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="bg-[#0088FF] hover:bg-[#037be4] text-white w-full px-6 py-2.5 rounded-md mt-[26px] disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Sending..." : "Request"}
             </button>
 
-            <div>
+            <div className="mt-4 text-sm text-[#545454]">
+              <span>Already have an account? </span>
               <button
+                type="button"
                 onClick={onBack}
-                className="text-sm text-[#545454] hover:text-gray-800 underline mt-4"
+                className="underline text-[#084072] hover:text-blue-950"
               >
-                cancel
+                Login
               </button>
             </div>
           </>
         ) : (
           <>
             <div className="flex justify-center mb-6">
-              <img src={check} alt="" className="w-24" />
+              <img src={check} alt="" className="w-[86px]" />
             </div>
 
-            <p className="text-black mb-2">
-              Your request has been successfully sent to the admin
+            <p className="text-2xl text-[#084072] font-normal mt-[26px] mb-[20px]">
+              Request sent successfully
             </p>
 
             {/* message after sent email */}
             {apiResult?.message && (
-              <p className="text-xs text-[#545454] mb-4">{apiResult.message}</p>
+              <p className="text-base text-[#545454] font-light mb-4 px-2">
+                The admin has been notified. Please check your email for the new
+                password.
+              </p>
             )}
 
             <button
               onClick={onBack}
-              className="bg-[#0088FF] hover:bg-[#037be4] text-white px-8 py-2 rounded-md mb-2 mt-3"
+              className="mt-7 w-full bg-[#0690F1] hover:bg-[#0071CE] text-white py-2.5 rounded-md disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
             >
               Login
             </button>
