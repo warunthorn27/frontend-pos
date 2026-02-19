@@ -1,19 +1,19 @@
 import React from "react";
-import type { CorporationCustomer } from "../../../types/customer";
+import type { CorporationCustomerForm } from "../../../types/customer";
 import {
   FormLabel,
   FormTextInput,
 } from "../../../component/ui/form/FormControls";
 
 interface Props {
-  value: CorporationCustomer;
-  onChange: (value: CorporationCustomer) => void;
+  value: CorporationCustomerForm;
+  onChange: (value: CorporationCustomerForm) => void;
 }
 
 const CorporationForm: React.FC<Props> = ({ value, onChange }) => {
-  const update = <K extends keyof CorporationCustomer>(
+  const update = <K extends keyof CorporationCustomerForm>(
     field: K,
-    newValue: CorporationCustomer[K],
+    newValue: CorporationCustomerForm[K],
   ) => onChange({ ...value, [field]: newValue });
 
   return (

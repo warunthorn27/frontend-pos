@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import type {
   BusinessType,
-  CustomerFormInput,
-  CorporationCustomer,
-  IndividualCustomer,
+  CorporationCustomerForm,
+  CustomerForm,
+  IndividualCustomerForm,
 } from "../../../types/customer";
-import CorporationForm from "./CorporationForm";
-import IndividualForm from "./IndividualForm";
 import AddressForm, { type SelectOption } from "./AddressForm";
 import TaxInvoiceSection from "./TaxInvoiceSection";
 import Radio from "../../../component/ui/Radio";
+import CorporationForm from "./CorporationForm";
+import IndividualForm from "./IndividualForm";
+import {
+  digitsOnly,
+  isValidEmail,
+  isValidPhone,
+  normalizePhoneForApi,
+} from "../../../utils/phone";
 
 interface AddCustomerProps {
   onCancel: () => void;
-  onConfirm: (values: CustomerFormInput) => void;
+  onConfirm: (values: CustomerForm) => void;
 }
 
 const emptyAddress = {
@@ -25,9 +31,8 @@ const emptyAddress = {
   zipcode: "",
 };
 
-const createCorporation = (): CorporationCustomer => ({
-  businessType: "corporation",
-  customerId: "CUS-0001",
+const createCorporation = (): CorporationCustomerForm => ({
+  businessType: "Corporation",
   phone: "",
   email: "",
   note: "",
@@ -36,9 +41,8 @@ const createCorporation = (): CorporationCustomer => ({
   address: { ...emptyAddress },
 });
 
-const createIndividual = (): IndividualCustomer => ({
-  businessType: "individual",
-  customerId: "CUS-0001",
+const createIndividual = (): IndividualCustomerForm => ({
+  businessType: "Individual",
   phone: "",
   email: "",
   note: "",
@@ -50,8 +54,8 @@ const createIndividual = (): IndividualCustomer => ({
 });
 
 const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
-  const [businessType, setBusinessType] = useState<BusinessType>("corporation");
-  const [form, setForm] = useState<CustomerFormInput>(createIndividual());
+  const [businessType, setBusinessType] = useState<BusinessType>("Corporation");
+  const [form, setForm] = useState<CustomerForm>(createCorporation());
 
   const [showTaxInvoice, setShowTaxInvoice] = useState(false);
   const [useSameAddress, setUseSameAddress] = useState(false);
@@ -63,7 +67,7 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
 
   const switchType = (type: BusinessType) => {
     setBusinessType(type);
-    setForm(type === "corporation" ? createCorporation() : createIndividual());
+    setForm(type === "Corporation" ? createCorporation() : createIndividual());
   };
 
   const handleAddTaxInvoice = () => {
@@ -123,16 +127,16 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
                   <Radio
                     name="businessType"
                     label="Corporation"
-                    value="corporation"
-                    checked={businessType === "corporation"}
+                    value="Corporation"
+                    checked={businessType === "Corporation"}
                     onChange={switchType}
                   />
 
                   <Radio
                     name="businessType"
                     label="Individual"
-                    value="individual"
-                    checked={businessType === "individual"}
+                    value="Individual"
+                    checked={businessType === "Individual"}
                     onChange={switchType}
                   />
                 </div>
@@ -153,22 +157,17 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
                       <input
                         disabled
                         className="w-full h-[38px] rounded-md border border-[#E0E0E0] bg-[#F5F5F5] px-3 text-sm"
-                        value={form.customerId}
                       />
                     </div>
                     {/* Corporation / Individual Form */}
-                    {businessType === "corporation" && (
-                      <CorporationForm
-                        value={form as CorporationCustomer}
-                        onChange={setForm}
-                      />
+                    {form.businessType === "Corporation" && (
+                      <CorporationForm value={form} onChange={setForm} />
                     )}
-                    {businessType === "individual" && (
-                      <IndividualForm
-                        value={form as IndividualCustomer}
-                        onChange={setForm}
-                      />
+
+                    {form.businessType === "Individual" && (
+                      <IndividualForm value={form} onChange={setForm} />
                     )}
+
                     {/* Phone */}
                     <div>
                       <label className="block text- mb-2">
@@ -178,7 +177,10 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
                         className="w-full h-9 rounded-md border border-[#E0E0E0] px-3 text-base input"
                         value={form.phone}
                         onChange={(e) =>
-                          setForm({ ...form, phone: e.target.value })
+                          setForm({
+                            ...form,
+                            phone: digitsOnly(e.target.value),
+                          })
                         }
                       />
                     </div>
@@ -272,7 +274,22 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
             Cancel
           </button>
           <button
-            onClick={() => onConfirm(form)}
+            onClick={() => {
+              if (!isValidPhone(form.phone, "TH")) {
+                alert("Invalid phone number");
+                return;
+              }
+
+              if (!isValidEmail(form.email)) {
+                alert("Invalid email format");
+                return;
+              }
+
+              onConfirm({
+                ...form,
+                phone: normalizePhoneForApi(form.phone, "TH"),
+              });
+            }}
             className="w-24 px-4 py-[6px] rounded-md text-base font-normal bg-[#005AA7] hover:bg-[#084072] text-white"
           >
             Save

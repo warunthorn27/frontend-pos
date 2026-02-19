@@ -1,19 +1,19 @@
 import React from "react";
-import type { IndividualCustomer } from "../../../types/customer";
 import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import CustomDatePicker from "../../../component/ui/datepicker";
+import CustomDatePicker from "../../../component/ui/Datepicker";
+import type { IndividualCustomerForm } from "../../../types/customer";
 
 interface Props {
-  value: IndividualCustomer;
-  onChange: (value: IndividualCustomer) => void;
+  value: IndividualCustomerForm;
+  onChange: (value: IndividualCustomerForm) => void;
 }
 
 const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
-  const update = <K extends keyof IndividualCustomer>(
+  const update = <K extends keyof IndividualCustomerForm>(
     field: K,
-    newValue: IndividualCustomer[K],
+    newValue: IndividualCustomerForm[K],
   ) => {
     onChange({
       ...value,
