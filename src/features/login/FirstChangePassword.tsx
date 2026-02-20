@@ -60,16 +60,19 @@ const FirstChangePassword: React.FC<FirstChangePasswordProps> = ({
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
         <div className="bg-white w-[500px] p-10 rounded-xl shadow-lg text-center">
           <div className="flex justify-center mb-4">
-            <img src={check} alt="" className="w-24" />
+            <img src={check} alt="" className="w-[86px]" />
           </div>
 
-          <p className="mt-6 text-gray-700">
-            You have successfully changed your password
+          <h2 className="text-2xl text-[#084072] font-normal mt-[26px] mb-[20px]">
+            Password changed
+          </h2>
+          <p className="text-[#545454] text-base font-light mb-[20px]">
+            Your password has been updated successfully.
           </p>
 
           <button
             onClick={onSuccess}
-            className="bg-[#0088FF] hover:bg-[#037be4] text-white px-8 py-2 rounded-md mb-2 mt-8"
+            className="bg-[#0088FF] hover:bg-[#037be4] w-full text-white px-8 py-2 rounded-md mb-2 mt-3"
           >
             Done
           </button>
