@@ -12,7 +12,7 @@ const TopBar: React.FC<TopBarProps> = ({ onLogout }) => (
       onClick={onLogout}
       className="text-xs text-gray-900 hover:underline"
     >
-      <LogoutIcon className="w-7 h-7" />
+      <LogoutIcon className="w-7 h-7 text-white" />
     </button>
   </header>
 );
