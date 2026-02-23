@@ -29,7 +29,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       <TopBar onLogout={onLogout} />
 
       {/* Body */}
-      <div className="grid grid-cols-[auto_1fr] overflow-hidden">
+      {/* <div className="grid grid-cols-[auto_1fr] overflow-hidden"> */}
+      <div className="flex overflow-hidden">
         <SideBar
           tabs={tabs}
           activeTab={activeTab}
@@ -41,7 +42,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         />
 
         {/* CONTENT AREA = พื้นที่ที่เหลือของจอ */}
-        <main className="overflow-hidden bg-white p-8">{children}</main>
+        {/* <main className="overflow-hidden bg-white p-8"> */}
+        <main className="flex-1 ml-[240px] overflow-auto bg-white p-8">
+          {children}
+        </main>
       </div>
     </div>
   );

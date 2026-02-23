@@ -149,7 +149,7 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
             return next;
           });
         }}
-        className="w-full h-[38px] border border-[#E6E6E6] bg-white rounded-md px-3 flex items-center justify-between cursor-pointer"
+        className="w-full h-[38px] border border-[#CFCFCF] bg-white rounded-md px-3 flex items-center justify-between cursor-pointer"
       >
         <span
           className={`text-sm ${displayValue ? "text-black" : "text-gray-400"}`}

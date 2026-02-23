@@ -28,7 +28,7 @@ const TAB_TO_PATH: Record<string, string> = {
   company: "/dashboard/company-profile",
   user: "/dashboard/user-management",
 
-  "product:finished": "/dashboard/product/product-master",
+  "product:master": "/dashboard/product/product-master",
   "product:stone": "/dashboard/product/stone-diamond",
   "product:semi": "/dashboard/product/semi-mount",
   "product:accessories": "/dashboard/product/accessories",
@@ -37,6 +37,16 @@ const TAB_TO_PATH: Record<string, string> = {
 
   customer: "/dashboard/customer",
   purchase: "/dashboard/purchase",
+
+  // INVENTORY
+  "inventory:master": "/dashboard/inventory/product-master",
+  "inventory:stone": "/dashboard/inventory/stone-diamond",
+  "inventory:semi": "/dashboard/inventory/semi-mount",
+  "inventory:accessories": "/dashboard/inventory/accessories",
+  "inventory:others": "/dashboard/inventory/others",
+  "inventory:all": "/dashboard/inventory/all",
+
+  pos: "/pos",
 };
 
 function getTabIdFromPath(pathname: string): string {
@@ -48,7 +58,7 @@ function getTabIdFromPath(pathname: string): string {
   const start = entries.find(([, path]) => pathname.startsWith(path));
   if (start) return start[0];
 
-  return "product:finished";
+  return "product:master";
 }
 
 function getTitleFromTab(tabId: string): string {
@@ -57,6 +67,8 @@ function getTitleFromTab(tabId: string): string {
   if (tabId === "customer") return "Customer";
   if (tabId === "purchase") return "Purchase";
   if (tabId.startsWith("product:")) return "Product";
+  if (tabId.startsWith("inventory:")) return "Inventory";
+  if (tabId === "pos") return "POS";
   return "Dashboard";
 }
 
@@ -112,12 +124,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     const lock = mustCreateCompany;
 
     const productChildren = [
-      { id: "product:finished", label: "Product Master", disabled: lock },
+      { id: "product:master", label: "Product Master", disabled: lock },
       { id: "product:stone", label: "Stone/Diamond", disabled: lock },
       { id: "product:semi", label: "Semi-mount", disabled: lock },
       { id: "product:accessories", label: "Accessories", disabled: lock },
       { id: "product:others", label: "Others", disabled: lock },
       { id: "product:list", label: "Product List", disabled: lock },
+    ];
+
+    const inventoryChildren = [
+      { id: "inventory:master", label: "Inventory Master", disabled: lock },
+      { id: "inventory:stone", label: "Stone/Diamond", disabled: lock },
+      { id: "inventory:semi", label: "Semi-mount", disabled: lock },
+      { id: "inventory:accessories", label: "Accessories", disabled: lock },
+      { id: "inventory:others", label: "Others", disabled: lock },
+      { id: "inventory:all", label: "All", disabled: lock },
     ];
 
     return [
@@ -131,6 +152,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       },
       { id: "customer", label: "Customer", disabled: lock },
       { id: "purchase", label: "Purchase", disabled: lock },
+      {
+        id: "inventory",
+        label: "Inventory",
+        disabled: lock,
+        children: inventoryChildren,
+      },
+      { id: "pos", label: "POS", disabled: lock },
     ];
   }, [mustCreateCompany]);
 

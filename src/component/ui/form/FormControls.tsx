@@ -3,10 +3,10 @@ import React from "react";
 /* ========= STYLE PRESET ========= */
 
 export const INPUT_CLASS =
-  "w-full h-[38px] rounded-md border border-[#E0E0E0] px-3 text-base";
+  "w-full h-[38px] rounded-md border border-[#CFCFCF] px-3 text-base";
 
 export const DISABLED_INPUT_CLASS =
-  "w-full h-[38px] rounded-md border border-[#E0E0E0] bg-[#F5F5F5] px-3 text-sm";
+  "w-full h-[38px] rounded-md border border-[#CFCFCF] bg-[#F5F5F5] px-3 text-sm";
 
 export const LABEL_CLASS = "block text-base mb-2";
 
@@ -36,6 +36,6 @@ export const FormTextarea: React.FC<
 > = ({ className = "", ...props }) => (
   <textarea
     {...props}
-    className={`w-full rounded-md border border-[#E0E0E0] px-3 py-2 text-base focus:outline-none focus:border-[#2DA9FF] focus:ring-1 focus:ring-[#2DA9FF]/30 ${className}`}
+    className={`w-full rounded-md border border-[#CFCFCF] px-3 py-2 text-base focus:outline-none focus:border-[#2DA9FF] focus:ring-1 focus:ring-[#2DA9FF]/30 ${className}`}
   />
 );

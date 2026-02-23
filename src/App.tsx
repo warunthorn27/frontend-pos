@@ -26,6 +26,14 @@ import {
   clearAuth,
 } from "./utils/authStorage";
 import PurchasePage from "./features/purchase/PurchasePage";
+import InventoryAllPage from "./features/inventory/inventory-all/InventoryAllPage";
+import InventoryOthersPage from "./features/inventory/others/InventoryOthersPage";
+import InventoryAccessoriesPage from "./features/inventory/accessories/InventoryAccessoriesPage";
+import InventorySemiMountPage from "./features/inventory/semi-mount/InventorySemiMountPage";
+import InventoryProductMasterPage from "./features/inventory/product-master/InventoryProductMasterPage";
+import InventoryStoneDiamondPage from "./features/inventory/stone-diamond/InventoryStoneDiamondPage";
+import PosLayout from "./layouts/PosLayout";
+import PosHomePage from "./features/pos/page/PosHomePage";
 
 function CompanyPageRoute() {
   const { currentUser, onCompanyCreated } =
@@ -94,6 +102,7 @@ export default function App() {
 
       {/* Protected Area */}
       <Route element={<RequireAuth />}>
+        {/* Back office */}
         <Route
           path="/dashboard"
           element={
@@ -163,6 +172,30 @@ export default function App() {
 
           {/* Purchase */}
           <Route path="purchase" element={<PurchasePage />} />
+
+          {/* Inventory */}
+          <Route path="inventory">
+            <Route
+              path="product-master"
+              element={<InventoryProductMasterPage />}
+            />
+            <Route
+              path="stone-diamond"
+              element={<InventoryStoneDiamondPage />}
+            />
+            <Route path="semi-mount" element={<InventorySemiMountPage />} />
+            <Route path="accessories" element={<InventoryAccessoriesPage />} />
+            <Route path="others" element={<InventoryOthersPage />} />
+            <Route path="all" element={<InventoryAllPage />} />
+          </Route>
+        </Route>
+
+        {/* POS (Front office) */}
+        <Route path="/pos" element={<PosLayout />}>
+          <Route index element={<PosHomePage />} />
+
+          {/* เผื่ออนาคต */}
+          {/* <Route path="cart" element={<PosCartPage />} /> */}
         </Route>
       </Route>
 

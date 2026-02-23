@@ -6,6 +6,8 @@ import ProductIcon from "../../assets/svg/product.svg?react";
 import DropdownArrowIcon from "../../assets/svg/dropdown-arrow.svg?react";
 import CustomerIcon from "../../assets/svg/customer-report.svg?react";
 import PurchaseIcon from "../../assets/svg/purchase-box.svg?react";
+import InventoryIcon from "../../assets/svg/inventory.svg?react";
+import PosIcon from "../../assets/svg/pos.svg?react";
 
 interface SideBarProps {
   tabs: TabItem[];
@@ -18,6 +20,16 @@ interface SideBarProps {
   companyLogo?: string;
 }
 
+const iconMap: Record<string, React.ReactNode> = {
+  company: <CompanyIcon />,
+  user: <UserIcon />,
+  product: <ProductIcon />,
+  customer: <CustomerIcon />,
+  purchase: <PurchaseIcon />,
+  inventory: <InventoryIcon />,
+  pos: <PosIcon />,
+};
+
 const SideBar: React.FC<SideBarProps> = ({
   tabs,
   activeTab,
@@ -29,10 +41,16 @@ const SideBar: React.FC<SideBarProps> = ({
 }) => {
   const isAdmin = currentUserRole === "Admin";
 
+  // const initialDropdown = useMemo<string | null>(() => {
+  //   if (currentUserRole !== "User") return null;
+  //   return activeTab.startsWith("product:") ? "product" : null;
+  // }, [currentUserRole, activeTab]);
+
   const initialDropdown = useMemo<string | null>(() => {
-    if (currentUserRole !== "User") return null;
-    return activeTab.startsWith("product:") ? "product" : null;
-  }, [currentUserRole, activeTab]);
+    if (activeTab.startsWith("product:")) return "product";
+    if (activeTab.startsWith("inventory:")) return "inventory";
+    return null;
+  }, [activeTab]);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(
     initialDropdown,
@@ -59,16 +77,25 @@ const SideBar: React.FC<SideBarProps> = ({
 
     onTabChange(id);
 
-    if (currentUserRole === "User" && id.startsWith("product:")) {
+    // เปิด dropdown ให้ตรงหมวด
+    if (id.startsWith("product:")) {
       setOpenDropdown("product");
-    } else if (!id.startsWith("product:")) {
-      setOpenDropdown(null);
+      return;
     }
+
+    if (id.startsWith("inventory:")) {
+      setOpenDropdown("inventory");
+      return;
+    }
+
+    // tab ที่ไม่ใช่ child → ปิด dropdown
+    setOpenDropdown(null);
   };
 
   return (
-    <aside className="w-[240px] flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
-      <div className="flex justify-center py-6">
+    // <aside className="w-[240px] flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
+    <aside className="fixed top-0 left-0 w-[240px] h-screen bg-[#EFF7FF] px-3">
+      <div className="flex justify-center py-3">
         {companyLogo ? (
           <img
             src={companyLogo}
@@ -105,13 +132,10 @@ const SideBar: React.FC<SideBarProps> = ({
                     ? "bg-[#E5F3FF] text-[#0088FF]"
                     : tabDisabled
                       ? "text-gray-400 cursor-not-allowed opacity-60"
-                      : "text-black hover:text-[#0088FF]"
+                      : "text-[#06284B] hover:text-[#0088FF]"
                 }`}
               >
-                {tab.id === "company" && <CompanyIcon />}
-                {tab.id === "user" && <UserIcon />}
-                {tab.id === "customer" && <CustomerIcon />}
-                {tab.id === "purchase" && <PurchaseIcon />}
+                {iconMap[tab.id]}
                 {tab.label}
               </button>
             );
@@ -132,12 +156,12 @@ const SideBar: React.FC<SideBarProps> = ({
                       ? "bg-[#E5F3FF] text-[#0088FF]"
                       : tabDisabled
                         ? "text-gray-400 cursor-not-allowed opacity-60"
-                        : "text-black hover:text-[#0088FF]"
+                        : "text-[#06284B] hover:text-[#0088FF]"
                   }
                 `}
               >
                 <span className="flex items-center gap-2">
-                  {tab.id === "product" && <ProductIcon />}
+                  {iconMap[tab.id]}
                   {tab.label}
                 </span>
 
