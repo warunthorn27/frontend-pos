@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { TabItem } from "../DashboardLayout";
 import CompanyIcon from "../../assets/svg/company.svg?react";
 import UserIcon from "../../assets/svg/user.svg?react";
@@ -41,20 +41,23 @@ const SideBar: React.FC<SideBarProps> = ({
 }) => {
   const isAdmin = currentUserRole === "Admin";
 
-  // const initialDropdown = useMemo<string | null>(() => {
-  //   if (currentUserRole !== "User") return null;
-  //   return activeTab.startsWith("product:") ? "product" : null;
-  // }, [currentUserRole, activeTab]);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const initialDropdown = useMemo<string | null>(() => {
-    if (activeTab.startsWith("product:")) return "product";
-    if (activeTab.startsWith("inventory:")) return "inventory";
-    return null;
+  useEffect(() => {
+    if (activeTab.startsWith("product:")) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpenDropdown("product");
+      return;
+    }
+
+    if (activeTab.startsWith("inventory:")) {
+      setOpenDropdown("inventory");
+      return;
+    }
+
+    // ไม่ใช่ child → ปิด dropdown
+    setOpenDropdown(null);
   }, [activeTab]);
-
-  const [openDropdown, setOpenDropdown] = useState<string | null>(
-    initialDropdown,
-  );
 
   const visibleTabs = useMemo(() => {
     return tabs.filter((tab) => {
