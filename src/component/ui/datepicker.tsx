@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import DatePickerIcon from "../../assets/svg/date-picker.svg?react";
 import PreviousIcon from "../../assets/svg/previous.svg?react";
 import NextIcon from "../../assets/svg/next.svg?react";
+import RemoveIcon from "../../assets/svg/remove.svg?react";
 
 interface Props {
   label: string;
@@ -112,6 +113,13 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
 
   const displayValue = selectedDate ? formatDate(selectedDate) : "";
 
+  function clearDate(e: React.MouseEvent) {
+    e.stopPropagation();
+
+    setSelectedDate(null);
+    onChange?.(""); // ส่งค่าว่างกลับ parent
+  }
+
   // Close on click outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -137,7 +145,8 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
       <label className="block text-base mb-2">{label}</label>
 
       {/* Input */}
-      <div
+      <button
+        type="button"
         onClick={() => {
           setOpen((prev) => {
             const next = !prev;
@@ -149,7 +158,11 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
             return next;
           });
         }}
-        className="w-full h-[38px] border border-[#CFCFCF] bg-white rounded-md px-3 flex items-center justify-between cursor-pointer"
+        className={`w-full h-[38px] rounded-md px-3 flex items-center justify-between
+          bg-white text-sm transition-colors
+          focus:outline-none
+          ${open ? "border border-[#005AA7]" : "border border-[#CFCFCF]"}
+        `}
       >
         <span
           className={`text-sm ${displayValue ? "text-black" : "text-gray-400"}`}
@@ -157,8 +170,20 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
           {displayValue || "YYYY-MM-DD"}
         </span>
 
-        <DatePickerIcon className="w-5 h-5" />
-      </div>
+        <div className="flex items-center gap-2">
+          {selectedDate && (
+            <span
+              onClick={clearDate}
+              className=" w-5 h-5 flex items-center justify-center rounded-full bg-[#e7e7e7] hover:bg-gray-300 
+              text-gray-700 hover:text-black cursor-pointer transition"
+            >
+              <RemoveIcon className="w-3.5 h-3.5" />
+            </span>
+          )}
+
+          <DatePickerIcon className="w-5 h-5" />
+        </div>
+      </button>
 
       {/* Popup */}
       {open && (
