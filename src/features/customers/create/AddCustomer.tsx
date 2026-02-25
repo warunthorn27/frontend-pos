@@ -5,26 +5,32 @@ import type {
   CustomerForm,
   IndividualCustomerForm,
 } from "../../../types/customer";
-import AddressForm, { type SelectOption } from "./AddressForm";
+import AddressForm from "./AddressForm";
 import TaxInvoiceSection from "./TaxInvoiceSection";
 import Radio from "../../../component/ui/Radio";
 import CorporationForm from "./CorporationForm";
 import IndividualForm from "./IndividualForm";
 import {
-  digitsOnly,
   isValidEmail,
   isValidPhone,
   normalizePhoneForApi,
 } from "../../../utils/phone";
+import FormField, { FormTextarea } from "../../../component/ui/form/FormField";
+import Input from "../../../component/ui/form/Input";
+import CountryPhoneInput, {
+  type CountryCode,
+} from "../../../component/phoneInput/CountryPhoneInput";
 
 interface AddCustomerProps {
+  country: CountryCode;
+  onCountryChange: (c: CountryCode) => void;
   onCancel: () => void;
   onConfirm: (values: CustomerForm) => void;
 }
 
 const emptyAddress = {
   address: "",
-  country: "",
+  country: "Thailand",
   province: "",
   district: "",
   subDistrict: "",
@@ -53,10 +59,14 @@ const createIndividual = (): IndividualCustomerForm => ({
   address: { ...emptyAddress },
 });
 
-const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
+const AddCustomer: React.FC<AddCustomerProps> = ({
+  country,
+  onCountryChange,
+  onCancel,
+  onConfirm,
+}) => {
   const [businessType, setBusinessType] = useState<BusinessType>("Corporation");
   const [form, setForm] = useState<CustomerForm>(createCorporation());
-
   const [showTaxInvoice, setShowTaxInvoice] = useState(false);
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [taxInvoiceForm, setTaxInvoiceForm] = useState({
@@ -67,7 +77,18 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
 
   const switchType = (type: BusinessType) => {
     setBusinessType(type);
+
     setForm(type === "Corporation" ? createCorporation() : createIndividual());
+
+    // reset tax invoice state
+    setShowTaxInvoice(false);
+    setUseSameAddress(false);
+
+    setTaxInvoiceForm({
+      companyName: "",
+      taxId: "",
+      address: { ...emptyAddress },
+    });
   };
 
   const handleAddTaxInvoice = () => {
@@ -87,10 +108,19 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
 
   const handleToggleSameAddress = (isChecked: boolean) => {
     setUseSameAddress(isChecked);
+
     if (isChecked) {
       setTaxInvoiceForm((prev) => ({
         ...prev,
+
+        // copy address
         address: { ...form.address },
+
+        // copy company name เฉพาะ corporation
+        companyName:
+          form.businessType === "Corporation"
+            ? form.companyName
+            : prev.companyName,
       }));
     } else {
       setTaxInvoiceForm((prev) => ({
@@ -100,10 +130,33 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
     }
   };
 
-  const mockOptions: SelectOption[] = [
-    { label: "Option A", value: "A" },
-    { label: "Option B", value: "B" },
-  ];
+  const validateTaxInvoice = (): boolean => {
+    if (!showTaxInvoice) return true;
+
+    const { companyName, taxId, address } = taxInvoiceForm;
+
+    if (!companyName.trim()) {
+      alert("Tax Invoice: Company Name is required");
+      return false;
+    }
+
+    if (!taxId.trim()) {
+      alert("Tax Invoice: Tax ID is required");
+      return false;
+    }
+
+    if (
+      !address.address.trim() ||
+      !address.province.trim() ||
+      !address.district.trim() ||
+      !address.subDistrict.trim()
+    ) {
+      alert("Tax Invoice: Address is incomplete");
+      return false;
+    }
+
+    return true;
+  };
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -151,13 +204,13 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-base mb-2">
-                        Customer ID
-                      </label>
-                      <input
-                        disabled
-                        className="w-full h-[38px] rounded-md border border-[#E0E0E0] bg-[#F5F5F5] px-3 text-sm"
-                      />
+                      <FormField label="Customer ID">
+                        <Input
+                          disabled
+                          className="bg-[#F5F5F5] text-sm"
+                          placeholder="Auto-generated ID "
+                        />
+                      </FormField>
                     </div>
                     {/* Corporation / Individual Form */}
                     {form.businessType === "Corporation" && (
@@ -170,41 +223,41 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
 
                     {/* Phone */}
                     <div>
-                      <label className="block text- mb-2">
-                        Phone <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        className="w-full h-9 rounded-md border border-[#E0E0E0] px-3 text-base input"
-                        value={form.phone}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            phone: digitsOnly(e.target.value),
-                          })
-                        }
-                      />
+                      <FormField label="Phone" required>
+                        <CountryPhoneInput
+                          value={form.phone}
+                          country={country}
+                          onCountryChange={onCountryChange}
+                          onChange={(phoneE164) =>
+                            setForm({
+                              ...form,
+                              phone: phoneE164,
+                            })
+                          }
+                        />
+                      </FormField>
                     </div>
                     {/* Email */}
                     <div>
-                      <label className="block text-base mb-2">Email</label>
-                      <input
-                        className="w-full h-9 rounded-md border border-[#E0E0E0] px-3 text-base input"
-                        value={form.email}
-                        onChange={(e) =>
-                          setForm({ ...form, email: e.target.value })
-                        }
-                      />
+                      <FormField label="Email">
+                        <Input
+                          value={form.email}
+                          onChange={(e) =>
+                            setForm({ ...form, email: e.target.value })
+                          }
+                        />
+                      </FormField>
                     </div>
                     {/* Note */}
                     <div>
-                      <label className="block text-base mb-2">Note</label>
-                      <textarea
-                        className="w-full h-24 rounded-md border border-[#E0E0E0] px-3 py-2 text-base focus:outline-none focus:border-[#2DA9FF] focus:ring-1 focus:ring-[#2DA9FF]/30"
-                        value={form.note}
-                        onChange={(e) =>
-                          setForm({ ...form, note: e.target.value })
-                        }
-                      />
+                      <FormField label="Note">
+                        <FormTextarea
+                          value={form.note}
+                          onChange={(e) =>
+                            setForm({ ...form, note: e.target.value })
+                          }
+                        />
+                      </FormField>
                     </div>
                   </div>
                 </div>
@@ -217,23 +270,13 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
 
                   {/* AddressForm Logic Sync */}
                   <AddressForm
+                    key={form.businessType}
                     value={form.address}
-                    onChange={(field, value) => {
-                      const newAddress = { ...form.address, [field]: value };
-                      setForm({ ...form, address: newAddress });
-
-                      if (showTaxInvoice && useSameAddress) {
-                        setTaxInvoiceForm((prev) => ({
-                          ...prev,
-                          address: { ...prev.address, [field]: value },
-                        }));
-                      }
-                    }}
-                    countryOptions={mockOptions}
-                    provinceOptions={mockOptions}
-                    districtOptions={mockOptions}
-                    subDistrictOptions={mockOptions}
+                    onChange={(newAddress) =>
+                      setForm({ ...form, address: newAddress })
+                    }
                   />
+
                   <div className="my-6 border-t border-gray-200"></div>
 
                   {/* Tax Invoice Section Component */}
@@ -245,19 +288,16 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
                     onRemove={handleRemoveTaxInvoice}
                     onToggleSameAddress={handleToggleSameAddress}
                     onChangeData={(field, value) =>
-                      setTaxInvoiceForm({ ...taxInvoiceForm, [field]: value })
+                      setTaxInvoiceForm((prev) => ({ ...prev, [field]: value }))
                     }
-                    onChangeAddress={(field, value) => {
+                    onChangeAddress={(newAddress) => {
                       if (useSameAddress) setUseSameAddress(false);
+
                       setTaxInvoiceForm((prev) => ({
                         ...prev,
-                        address: { ...prev.address, [field]: value },
+                        address: newAddress,
                       }));
                     }}
-                    countryOptions={mockOptions}
-                    provinceOptions={mockOptions}
-                    districtOptions={mockOptions}
-                    subDistrictOptions={mockOptions}
                   />
                 </div>
               </div>
@@ -275,19 +315,32 @@ const AddCustomer: React.FC<AddCustomerProps> = ({ onCancel, onConfirm }) => {
           </button>
           <button
             onClick={() => {
-              if (!isValidPhone(form.phone, "TH")) {
+              if (!isValidPhone(form.phone)) {
                 alert("Invalid phone number");
                 return;
               }
 
-              if (!isValidEmail(form.email)) {
+              if (form.email && !isValidEmail(form.email)) {
                 alert("Invalid email format");
                 return;
               }
 
+              if (!validateTaxInvoice()) return;
+
               onConfirm({
                 ...form,
-                phone: normalizePhoneForApi(form.phone, "TH"),
+                phone: normalizePhoneForApi(form.phone, country),
+
+                taxInvoice: showTaxInvoice
+                  ? {
+                      companyName: taxInvoiceForm.companyName,
+                      taxId: taxInvoiceForm.taxId,
+                      address: useSameAddress
+                        ? form.address
+                        : taxInvoiceForm.address,
+                      useSameAddress,
+                    }
+                  : null,
               });
             }}
             className="w-24 px-4 py-[6px] rounded-md text-base font-normal bg-[#005AA7] hover:bg-[#084072] text-white"

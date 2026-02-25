@@ -1,9 +1,11 @@
 import React from "react";
-import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CustomDatePicker from "../../../component/ui/Datepicker";
 import type { IndividualCustomerForm } from "../../../types/customer";
+import GenderDropdown from "../list/GenderDropdown";
+import Input from "../../../component/ui/form/Input";
+import FormField from "../../../component/ui/form/FormField";
 
 interface Props {
   value: IndividualCustomerForm;
@@ -24,50 +26,31 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="space-y-4">
-        {/* First Name / Last Name */}
         <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-base mb-2">
-              First Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              className="input"
+          <FormField label="First Name" required>
+            <Input
               value={value.firstName}
               onChange={(e) => update("firstName", e.target.value)}
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-base mb-2">
-              Last Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              className="input"
+          <FormField label="Last Name" required>
+            <Input
               value={value.lastName}
               onChange={(e) => update("lastName", e.target.value)}
             />
-          </div>
+          </FormField>
         </div>
 
-        {/* Gender / Birthday */}
         <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-base mb-2">
-              Gender <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <select
-                className="input appearance-none pr-10"
-                value={value.gender}
-                onChange={(e) => update("gender", e.target.value)}
-              >
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-              <DropdownArrowIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-[#6B7280]" />
-            </div>
-          </div>
+          <FormField label="Gender" required>
+            <GenderDropdown
+              value={value.gender}
+              options={["Male", "Female", "Others"]}
+              placeholder="Select Gender"
+              onChange={(val) => update("gender", val || "")}
+            />
+          </FormField>
 
           <CustomDatePicker
             label="Birthday"
