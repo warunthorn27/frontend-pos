@@ -1,32 +1,33 @@
+import type { CountryCode } from "../component/phoneInput/CountryPhoneInput";
+
 export function digitsOnly(v: string): string {
   return (v || "").replace(/\D/g, "");
 }
 
-/** แปลง E.164 → format สำหรับโชว์ (TH) */
-export function formatPhoneForDisplay(
-  phone?: string,
-  country: "TH" = "TH"
-): string {
+export function formatPhoneForDisplay(phone?: string): string {
   if (!phone) return "";
 
-  const d = digitsOnly(phone);
+  const digits = phone.replace(/\D/g, "");
 
-  if (country === "TH") {
-    // +66xxxxxxxxx → 0xxxxxxxxx
-    if (d.startsWith("66") && d.length === 11) {
-      return "0" + d.slice(2);
-    }
-    return d;
+  if (phone.startsWith("+66")) {
+    return "0" + digits.slice(2);
   }
 
-  // future: country อื่น
+  if (phone.startsWith("+81")) {
+    return "0" + digits.slice(2);
+  }
+
+  if (phone.startsWith("+1")) {
+    return digits.slice(1);
+  }
+
   return phone;
 }
 
 /** แปลงจาก input → E.164 (ส่ง backend) */
 export function normalizePhoneForApi(
   input?: string,
-  country: "TH" = "TH"
+  country: CountryCode = "TH",
 ): string {
   if (!input) return "";
 
@@ -45,14 +46,50 @@ export function normalizePhoneForApi(
 }
 
 /** validate เบอร์ */
-export function isValidPhone(input?: string, country: "TH" = "TH"): boolean {
+export function isValidPhone(input?: string): boolean {
   if (!input) return true;
 
-  const d = digitsOnly(input);
+  return /^\+[1-9]\d{7,14}$/.test(input);
+}
 
-  if (country === "TH") {
-    return /^0\d{9}$/.test(d) || /^66\d{9}$/.test(d);
+export const isValidEmail = (email?: string): boolean => {
+  if (!email) return true; // optional field
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+export function buildE164(dialCode: string, raw: string) {
+  const digits = raw.replace(/\D/g, "");
+
+  if (!digits) return "";
+
+  // Thailand rule
+  if (dialCode === "+66" && digits.startsWith("0")) {
+    return dialCode + digits.slice(1);
   }
 
-  return false;
+  return dialCode + digits;
+}
+
+export function stripDialCode(phone?: string): string {
+  if (!phone) return "";
+
+  // ตัด + และ country code ออก เหลือเลขล้วน
+  return phone.replace(/^\+\d{1,3}/, "");
+}
+
+export const COUNTRIES: { code: CountryCode; dial: string }[] = [
+  { code: "TH", dial: "+66" },
+  { code: "US", dial: "+1" },
+  { code: "JP", dial: "+81" },
+];
+
+export function detectCountryFromPhone(phone?: string): CountryCode {
+  if (!phone) return "TH";
+
+  if (phone.startsWith("+66")) return "TH";
+  if (phone.startsWith("+1")) return "US";
+  if (phone.startsWith("+81")) return "JP";
+
+  return "TH"; // fallback
 }
