@@ -1,15 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
-import CloseIcon from "../../../assets/svg/close.svg?react";
-
-const OPTIONS = ["Individual", "Corporation"];
 
 type Props = {
   value?: string;
+  options: string[];
+  placeholder?: string;
   onChange: (value?: string) => void;
+  width?: string;
 };
 
-const BusinessTypeSelect: React.FC<Props> = ({ value, onChange }) => {
+const GenderDropdown: React.FC<Props> = ({
+  value,
+  options,
+  placeholder,
+  onChange,
+  width = "w-full",
+}) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -24,35 +30,32 @@ const BusinessTypeSelect: React.FC<Props> = ({ value, onChange }) => {
   }, []);
 
   return (
-    <div ref={ref} className="relative w-[180px]">
+    <div ref={ref} className={`relative ${width}`}>
       {/* HEADER */}
-      <div
+      <button
+        type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-between h-[40px]
-        rounded-md border border-[#CFCFCF] bg-white px-3 text-sm cursor-pointer"
+        className="flex items-center justify-between w-full h-[38px]
+        rounded-md border border-[#CFCFCF] bg-white px-3 text-sm cursor-pointer focus:border-[#005AA7] focus:outline-none"
       >
-        {/* LEFT */}
-        <span className={value ? "text-black" : "text-gray-400 font-light"}>
-          {value || "Business Type"}
+        <span className={value ? "text-black" : "text-gray-400"}>
+          {value || placeholder}
         </span>
 
         {/* RIGHT */}
         <div className="flex items-center gap-1">
           {value && (
-            <button
+            <span
               onMouseDown={(e) => {
                 e.stopPropagation();
                 onChange(undefined);
               }}
-              className="hover:bg-gray-100 rounded-xl"
-            >
-              <CloseIcon className="w-6 h-6" />
-            </button>
+            ></span>
           )}
 
           <DropdownArrowIcon className="w-3 h-3" />
         </div>
-      </div>
+      </button>
 
       {/* DROPDOWN */}
       {open && (
@@ -60,7 +63,7 @@ const BusinessTypeSelect: React.FC<Props> = ({ value, onChange }) => {
           className="absolute z-50 mt-1 w-full rounded-md
           border border-[#CFCFCF] bg-white text-sm font-light shadow-md overflow-hidden"
         >
-          {OPTIONS.map((o) => (
+          {options.map((o) => (
             <li
               key={o}
               onMouseDown={() => {
@@ -78,4 +81,4 @@ const BusinessTypeSelect: React.FC<Props> = ({ value, onChange }) => {
   );
 };
 
-export default BusinessTypeSelect;
+export default GenderDropdown;

@@ -1,4 +1,5 @@
-import { formatPhoneForDisplay } from "../utils/phone";
+import type { CountryCode } from "../component/phoneInput/CountryPhoneInput";
+import { stripDialCode } from "../utils/phone";
 
 export type BusinessType = "Corporation" | "Individual";
 export type CustomerForm = CorporationCustomerForm | IndividualCustomerForm;
@@ -50,6 +51,7 @@ export interface CreateCustomerPayload {
 
   customer_name: string;
   customer_phone: string;
+  customer_country: CountryCode;
   customer_email?: string;
   note?: string;
 
@@ -59,17 +61,30 @@ export interface CreateCustomerPayload {
   customer_gender?: string;
   customer_date?: string;
 
+  // Address
+  addr_line: string;
+  addr_country: string;
   addr_province: string;
   addr_district: string;
   addr_sub_district: string;
   addr_zipcode: string;
 
-  tax_addr?: string;
+  // Tax Invoice Address (ถ้ามี)
+  tax_company_name?: string;
+  tax_addr_line?: string;
+  tax_addr_country?: string;
+  tax_addr_province?: string;
+  tax_addr_district?: string;
+  tax_addr_sub_district?: string;
+  tax_addr_zipcode?: string;
+
+  customer_tax_id?: string;
 }
 
 // map
 export const mapCustomerFormToPayload = (
   form: CustomerForm,
+  country: CountryCode,
 ): CreateCustomerPayload => {
   const isCorporation = form.businessType === "Corporation";
 
@@ -82,35 +97,187 @@ export const mapCustomerFormToPayload = (
 
     customer_name: customerName,
     customer_phone: form.phone,
+    customer_country: country,
     customer_email: form.email,
     note: form.note,
 
-    company_name: isCorporation ? form.companyName : undefined,
+    company_name: isCorporation
+      ? form.companyName
+      : form.taxInvoice?.companyName,
     contact_person: isCorporation ? form.contactPerson : customerName,
     customer_gender: isCorporation ? undefined : form.gender,
     customer_date: isCorporation ? undefined : form.birthday,
+
+    addr_line: form.address.address,
+    addr_country: form.address.country,
     addr_province: form.address.province,
     addr_district: form.address.district,
     addr_sub_district: form.address.subDistrict,
     addr_zipcode: form.address.zipcode,
-    tax_addr: form.taxInvoice
-      ? JSON.stringify({
-          company_name: form.taxInvoice.companyName,
-          tax_id: form.taxInvoice.taxId,
-          address: {
-            address: form.taxInvoice.address.address,
-            country: form.taxInvoice.address.country,
-            province: form.taxInvoice.address.province,
-            district: form.taxInvoice.address.district,
-            sub_district: form.taxInvoice.address.subDistrict,
-            zipcode: form.taxInvoice.address.zipcode,
-          },
-        })
-      : undefined,
+
+    customer_tax_id: form.taxInvoice?.taxId,
+
+    tax_company_name: form.taxInvoice?.companyName,
+    tax_addr_line: form.taxInvoice?.address.address,
+    tax_addr_country: form.taxInvoice?.address.country,
+    tax_addr_province: form.taxInvoice?.address.province,
+    tax_addr_district: form.taxInvoice?.address.district,
+    tax_addr_sub_district: form.taxInvoice?.address.subDistrict,
+    tax_addr_zipcode: form.taxInvoice?.address.zipcode,
   };
 };
 
-// API Response Types (Mirror Backend)
+export interface UpdateCustomerPayload {
+  customer_name?: string;
+  business_type?: BusinessType;
+  company_name?: string;
+  contact_person?: string;
+
+  customer_email?: string;
+  customer_phone?: string;
+  customer_gender?: string;
+  customer_date?: string | null;
+  customer_tax_id?: string;
+  note?: string;
+
+  addr_line?: string;
+  addr_country?: string;
+  addr_province?: string;
+  addr_district?: string;
+  addr_sub_district?: string;
+  addr_zipcode?: string;
+
+  tax_company_name?: string;
+  tax_addr_line?: string;
+  tax_addr_country?: string;
+  tax_addr_province?: string;
+  tax_addr_district?: string;
+  tax_addr_sub_district?: string;
+  tax_addr_zipcode?: string;
+}
+
+export const mapCustomerToUpdatePayload = (
+  c: CustomerResponse,
+): UpdateCustomerPayload => ({
+  customer_name: c.customer_name,
+  business_type: c.business_type,
+  company_name: c.company_name,
+  contact_person: c.contact_person,
+
+  customer_email: c.customer_email,
+  customer_phone: c.customer_phone,
+  customer_gender: c.customer_gender,
+  customer_date: c.customer_date ?? null,
+  customer_tax_id: c.customer_tax_id,
+  note: c.note,
+
+  addr_line: c.address.address_line,
+  addr_country: c.address.country,
+  addr_province: c.address.province,
+  addr_district: c.address.district,
+  addr_sub_district: c.address.sub_district,
+  addr_zipcode: c.address.zipcode,
+
+  tax_company_name: c.tax_addr?.company_name,
+  tax_addr_line: c.tax_addr?.address_line,
+  tax_addr_country: c.tax_addr?.country,
+  tax_addr_province: c.tax_addr?.province,
+  tax_addr_district: c.tax_addr?.district,
+  tax_addr_sub_district: c.tax_addr?.sub_district,
+  tax_addr_zipcode: c.tax_addr?.zipcode,
+});
+
+export const isSameAddress = (
+  a?: CustomerResponse["address"],
+  b?: CustomerResponse["tax_addr"],
+) => {
+  if (!a || !b) return false;
+
+  return (
+    a.address_line === b.address_line &&
+    a.country === b.country &&
+    a.province === b.province &&
+    a.district === b.district &&
+    a.sub_district === b.sub_district &&
+    a.zipcode === b.zipcode
+  );
+};
+
+export const mapCustomerResponseToForm = (
+  c: CustomerResponse,
+): CustomerForm => {
+  const hasTax =
+    Boolean(c.customer_tax_id) || Boolean(c.tax_addr?.address_line);
+
+  const sameAddress = isSameAddress(c.address, c.tax_addr);
+
+  const taxInvoice = hasTax
+    ? {
+        companyName: c.company_name || "",
+        taxId: c.customer_tax_id || "",
+        useSameAddress: sameAddress,
+
+        address: {
+          address: c.tax_addr?.address_line || "",
+          country: c.tax_addr?.country || "Thailand",
+          province: c.tax_addr?.province || "",
+          district: c.tax_addr?.district || "",
+          subDistrict: c.tax_addr?.sub_district || "",
+          zipcode: c.tax_addr?.zipcode || "",
+        },
+      }
+    : null;
+
+  if (c.business_type === "Corporation") {
+    return {
+      businessType: "Corporation",
+      phone: c.customer_phone,
+      email: c.customer_email,
+      note: c.note,
+
+      companyName: c.company_name || "",
+      contactPerson: c.contact_person,
+
+      address: {
+        address: c.address.address_line || "",
+        country: c.address.country || "Thailand",
+        province: c.address.province,
+        district: c.address.district,
+        subDistrict: c.address.sub_district,
+        zipcode: c.address.zipcode,
+      },
+
+      taxInvoice,
+    };
+  }
+
+  const [firstName = "", lastName = ""] = c.customer_name.split(" ");
+
+  return {
+    businessType: "Individual",
+    phone: c.customer_phone,
+    email: c.customer_email,
+    note: c.note,
+
+    firstName,
+    lastName,
+    gender: c.customer_gender || "",
+    birthday: c.customer_date || "",
+
+    address: {
+      address: c.address.address_line || "",
+      country: c.address.country || "Thailand",
+      province: c.address.province,
+      district: c.address.district,
+      subDistrict: c.address.sub_district,
+      zipcode: c.address.zipcode,
+    },
+
+    taxInvoice,
+  };
+};
+
+// API Response Types
 export interface CustomerResponse {
   _id: string;
 
@@ -127,15 +294,26 @@ export interface CustomerResponse {
   customer_gender?: string;
   customer_date?: string;
 
-  customer_tax_id?: string;
-  tax_addr?: string;
-
   address: {
+    address_line: string;
+    country: string;
     province: string;
     district: string;
     sub_district: string;
     zipcode: string;
   };
+
+  tax_addr?: {
+    company_name?: string;
+    address_line?: string;
+    country?: string;
+    province?: string;
+    district?: string;
+    sub_district?: string;
+    zipcode?: string;
+  };
+
+  customer_tax_id?: string;
 
   note?: string;
 
@@ -171,6 +349,6 @@ export const mapCustomerResponseToListItem = (
       : customer.customer_name,
 
     email: customer.customer_email,
-    phone: formatPhoneForDisplay(customer.customer_phone, "TH"),
+    phone: stripDialCode(customer.customer_phone),
   };
 };

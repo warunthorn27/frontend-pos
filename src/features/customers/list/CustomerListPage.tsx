@@ -5,8 +5,12 @@ import CustomerTable from "./CustomerTable";
 import {
   mapCustomerResponseToListItem,
   type CustomerListItem,
+  type CustomerResponse,
+  type UpdateCustomerPayload,
 } from "../../../types/customer";
 import { customerService } from "../../../services/customer";
+import CustomerDetailModal from "./CustomerDetailModal";
+import type { CountryCode } from "../../../component/phoneInput/CountryPhoneInput";
 
 const CustomerListPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -16,6 +20,11 @@ const CustomerListPage: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [businessType, setBusinessType] = useState<string>();
+  const [customerDetail, setCustomerDetail] = useState<CustomerResponse>();
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [country, setCountry] = useState<CountryCode>("TH");
+  const [modalMode, setModalMode] = useState<"view" | "edit">("view");
+  const [search, setSearch] = useState("");
 
   // Hooks ต้องอยู่ก่อน return เสมอ
   useEffect(() => {
@@ -47,25 +56,80 @@ const CustomerListPage: React.FC = () => {
 
   // conditional return AFTER hooks
   if (mode === "create") {
-    if (mode === "create") {
-      return (
-        <AddCustomer
-          onCancel={() => setMode("list")}
-          onConfirm={async (values) => {
-            try {
-              setLoading(true);
-              await customerService.createCustomer(values); // ยิง API จริง
-              setMode("list"); // กลับหน้า list
-            } catch (err) {
-              console.error(err);
-            } finally {
-              setLoading(false);
-            }
-          }}
-        />
-      );
-    }
+    return (
+      <AddCustomer
+        country={country}
+        onCountryChange={setCountry}
+        onCancel={() => setMode("list")}
+        onConfirm={async (values) => {
+          try {
+            setLoading(true);
+
+            console.log("===== CREATE CUSTOMER =====");
+            console.log("FORM VALUES →", values);
+            console.log("COUNTRY →", country);
+
+            const res = await customerService.createCustomer(values, country);
+
+            console.log("API RESPONSE →", res);
+            console.log("===========================");
+            setMode("list");
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setLoading(false);
+          }
+        }}
+      />
+    );
   }
+
+  const handleRowClick = async (id: string) => {
+    try {
+      setLoading(true);
+
+      console.log("===== GET ONE CUSTOMER =====");
+      console.log("CLICKED ID →", id);
+
+      const res = await customerService.getCustomer(id);
+
+      console.log("FULL RESPONSE →", res);
+      console.log("CUSTOMER DATA →", res.data);
+      console.log("============================");
+
+      setCustomerDetail(res.data);
+      setModalMode("view");
+      setDetailOpen(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async (payload: UpdateCustomerPayload) => {
+    if (!customerDetail) return;
+
+    try {
+      setLoading(true);
+
+      console.log("UPDATE PAYLOAD →", payload);
+
+      const res = await customerService.updateCustomer(
+        customerDetail._id,
+        payload,
+      );
+
+      console.log("API RESPONSE →", res);
+
+      setCustomerDetail(res.data); // อัปเดต UI ทันที
+      setModalMode("view");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -74,6 +138,8 @@ const CustomerListPage: React.FC = () => {
       </h2>
 
       <CustomerListToolbar
+        search={search}
+        onSearchChange={setSearch}
         onAddCustomerClick={() => setMode("create")}
         businessType={businessType}
         onBusinessTypeChange={setBusinessType}
@@ -88,8 +154,18 @@ const CustomerListPage: React.FC = () => {
           loading={loading}
           onPageChange={setPage}
           onPageSizeChange={setPageSize}
+          onRowClick={handleRowClick}
         />
       </div>
+
+      <CustomerDetailModal
+        open={detailOpen}
+        mode={modalMode}
+        data={customerDetail}
+        onClose={() => setDetailOpen(false)}
+        onEdit={() => setModalMode("edit")}
+        onSave={handleSave}
+      />
     </div>
   );
 };

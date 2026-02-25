@@ -6,12 +6,16 @@ import BusinessTypeSelect from "./BusinessTypeDropdown";
 
 type Props = {
   businessType?: string;
+  search?: string;
+  onSearchChange: (value: string) => void;
   onAddCustomerClick: () => void;
   onBusinessTypeChange: (value?: string) => void;
 };
 
 const CustomerListToolbar: React.FC<Props> = ({
   businessType,
+  search,
+  onSearchChange,
   onAddCustomerClick,
   onBusinessTypeChange,
 }) => {
@@ -20,10 +24,12 @@ const CustomerListToolbar: React.FC<Props> = ({
       <div className="flex gap-3">
         <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[40px] w-[400px]">
           <input
-            className="flex-1 bg-transparent text-sm outline-none"
-            placeholder="Search"
+            value={search || ""}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="flex-1 bg-transparent text-sm font-light outline-none"
+            placeholder="Search customer id / name"
           />
-          <SearchIcon className="w-4 h-4 text-gray-400" />
+          <SearchIcon className="w-5 h-5 text-gray-400 font-light" />
         </div>
 
         <BusinessTypeSelect

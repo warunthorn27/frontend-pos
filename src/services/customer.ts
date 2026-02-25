@@ -1,7 +1,9 @@
+import type { CountryCode } from "../component/phoneInput/CountryPhoneInput";
 import type {
   CustomerForm,
   CreateCustomerPayload,
   CustomerResponse,
+  UpdateCustomerPayload,
 } from "../types/customer";
 import { mapCustomerFormToPayload } from "../types/customer";
 import { API_BASE, fetchWithAuth } from "./apiClient";
@@ -22,8 +24,11 @@ export interface CustomerListResponse {
 }
 
 export const customerService = {
-  async createCustomer(form: CustomerForm) {
-    const payload: CreateCustomerPayload = mapCustomerFormToPayload(form);
+  async createCustomer(form: CustomerForm, country: CountryCode) {
+    const payload: CreateCustomerPayload = mapCustomerFormToPayload(
+      form,
+      country,
+    );
 
     return fetchWithAuth<CustomerApiResponse>(`${API_BASE}/create-customer`, {
       method: "POST",
@@ -54,9 +59,7 @@ export const customerService = {
     return fetchWithAuth<CustomerApiResponse>(`${API_BASE}/one-customer/${id}`);
   },
 
-  async updateCustomer(id: string, form: CustomerForm) {
-    const payload: CreateCustomerPayload = mapCustomerFormToPayload(form);
-
+  async updateCustomer(id: string, payload: UpdateCustomerPayload) {
     return fetchWithAuth<CustomerApiResponse>(
       `${API_BASE}/update-customer/${id}`,
       {

@@ -27,6 +27,7 @@ const CustomerTable: React.FC<Props> = ({
   onPageSizeChange,
   onEdit,
   onDelete,
+  onRowClick,
 }) => {
   const columns: GridColDef[] = [
     {
@@ -89,6 +90,7 @@ const CustomerTable: React.FC<Props> = ({
           onPageChange(model.page + 1);
           onPageSizeChange(model.pageSize);
         }}
+        onRowClick={(params) => onRowClick?.(params.row.id)}
         disableRowSelectionOnClick
         sx={{
           border: "none",
