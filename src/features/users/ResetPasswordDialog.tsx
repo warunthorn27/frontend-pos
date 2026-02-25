@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { UserListItem } from "../../types/user";
 import LockIcon from "../../assets/svg/lock.svg?react";
 import CloseIcon from "../../assets/svg/close.svg?react";
-import CheckIcon from "../../assets/svg/check.svg?react";
+import CheckIcon from "../../assets/svg/check-reset.svg?react";
 import CopyIcon from "../../assets/svg/copy.svg?react";
 
 type Step = "confirm" | "success";
@@ -258,9 +258,9 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
 
             {step === "success" && (
               <div className="flex flex-col items-center text-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-[#DFF9E5] flex items-center justify-center">
+                <div className="rounded-full bg-[#DFF9E5] flex items-center justify-center">
                   {/* check icon */}
-                  <CheckIcon className="w-[60px] h-[60px]" />
+                  <CheckIcon className="w-[86px] h-[86px]" />
                 </div>
 
                 <h3 className="text-lg font-normal">
@@ -271,7 +271,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
                   <input
                     value={password}
                     readOnly
-                    className="w-full py-2 rounded-md border border-gray-300 px-3 text-left text-sm font-light"
+                    className="w-full py-2 rounded-md border border-[#E6E6E6] bg-[#F1F1F1] px-3 text-left text-sm font-light"
                   />
 
                   <button

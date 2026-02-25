@@ -72,7 +72,7 @@ const UserList: React.FC<UserListProps> = ({
           <h2 className="text-2xl font-normal text-[#06284B]">
             User &amp; Permission
           </h2>
-          <span className="px-1.5 py-1.5 rounded-lg bg-[#F1F1F1] text-sm text-[#024C8A]">
+          <span className="px-1.5 py-1.5 rounded-xl bg-[#084072] text-sm text-white">
             {activeUsers}/{maxUsers}
           </span>
         </div>
@@ -89,7 +89,7 @@ const UserList: React.FC<UserListProps> = ({
               bg-white px-5 text-sm outline-none placeholder:text-[#BABABA]"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B94A3]">
-              <SearchIcon className="w-6 h-6" />
+              <SearchIcon className="w-5 h-5" />
             </span>
           </div>
 
