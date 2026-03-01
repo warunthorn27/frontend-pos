@@ -56,7 +56,7 @@ export default function SingleImageUploadCard({
       if (!isAllowedImage(file)) return;
       onChange(file);
     },
-    [onChange]
+    [onChange],
   );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +122,7 @@ export default function SingleImageUploadCard({
           <img
             src={previewUrl}
             alt={value?.name ?? "Preview"}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             draggable={false}
           />
 
@@ -150,14 +150,14 @@ export default function SingleImageUploadCard({
                   type="button"
                   onClick={() => setIsViewing(true)}
                   className="
-                    w-9 h-9 rounded-md bg-white
+                    w-8 h-8 rounded-md bg-white
                     flex items-center justify-center shadow
                     transition-transform duration-150 ease-out
                     hover:scale-110 active:scale-95
                   "
                   aria-label={`View ${value?.name}`}
                 >
-                  <ZoomoutIcon className="w-[30px] h-[30px]" />
+                  <ZoomoutIcon className="w-6 h-6" />
                 </button>
 
                 {/* Delete */}
@@ -165,14 +165,14 @@ export default function SingleImageUploadCard({
                   type="button"
                   onClick={removeImage}
                   className="
-                    w-9 h-9 rounded-md bg-white
+                    w-8 h-8 rounded-md bg-white
                     flex items-center justify-center shadow
                     transition-transform duration-150 ease-out
                     hover:scale-110 active:scale-95
                   "
                   aria-label={`Delete ${value?.name}`}
                 >
-                  <TrashIcon className="w-[30px] h-[30px]" />
+                  <TrashIcon className="w-6 h-6 text-[#E71010]" />
                 </button>
               </div>
             </div>
@@ -204,8 +204,8 @@ export default function SingleImageUploadCard({
             <div className="w-full bg-[#111] flex items-center justify-center">
               <img
                 src={previewUrl}
-                alt={value?.name}
-                className="max-h-[70vh] w-auto object-contain"
+                alt={value?.name ?? "Preview"}
+                className="w-full h-full object-contain"
                 draggable={false}
               />
             </div>

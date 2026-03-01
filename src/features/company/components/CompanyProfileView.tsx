@@ -1,5 +1,11 @@
 import React from "react";
 import type { CompanyProfileViewData } from "../../../types/company";
+import EditIcon from "../../../assets/svg/edit.svg?react";
+import {
+  COUNTRIES,
+  detectCountryFromPhone,
+  formatPhoneForDisplay,
+} from "../../../utils/phone";
 
 interface CompanyProfileViewProps {
   data: CompanyProfileViewData;
@@ -8,37 +14,33 @@ interface CompanyProfileViewProps {
 }
 
 const Field = ({ value }: { value?: string }) => (
-  <div className="h-10 w-full rounded-md border border-[#E6E6E6] bg-[#F1F1F1] px-3 text-sm flex items-center">
+  <div className="h-[38px] w-full rounded-md border border-[#E6E6E6] bg-[#F1F1F1] px-3 text-sm flex items-center">
     {value || "-"}
   </div>
 );
 
 const Label = ({ text }: { text: string }) => (
-  <label className="text-base font-normal text-black mb-1 block">
+  <label className="text-base font-normal text-black mb-2 block">
     {text} <span className="text-red-500">*</span>
   </label>
 );
 
-const PhoneView = ({ value }: { value?: string }) => (
-  <div
-    className="
-      flex items-center h-10 w-full
-      rounded-md border border-[#E6E6E6]
-      bg-[#F1F1F1]
-    "
-  >
-    {/* country code */}
-    <div className="flex items-center gap-1 px-3 text-sm text-gray-500">
-      +66
+const PhoneView = ({ value }: { value?: string }) => {
+  if (!value) return <Field value="-" />;
+
+  const country = detectCountryFromPhone(value);
+  const dial = COUNTRIES.find((c) => c.code === country)?.dial;
+
+  const local = formatPhoneForDisplay(value);
+
+  return (
+    <div className="flex items-center h-[38px] w-full rounded-md border border-[#E6E6E6] bg-[#F1F1F1]">
+      <div className="px-3 text-sm text-black">{dial}</div>
+      <div className="h-[38px] w-px bg-[#E6E6E6]" />
+      <div className="flex-1 px-3 text-sm text-black">{local}</div>
     </div>
-
-    {/* divider */}
-    <div className="h-10 w-px bg-[#E6E6E6]" />
-
-    {/* phone number */}
-    <div className="flex-1 px-3 text-sm text-black">{value || "-"}</div>
-  </div>
-);
+  );
+};
 
 const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
   data,
@@ -50,15 +52,17 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
       <div className="w-full max-w-[1690px] mx-auto flex flex-col flex-1 min-h-0">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h1 className="text-2xl font-normal text-[#084072]">
+          <h1 className="text-2xl font-normal text-[#06284B]">
             Company Profile
           </h1>
 
           <button
             onClick={onEdit}
             disabled={Boolean(isSaving)}
-            className="px-5 py-2 rounded-md bg-[#FFCC00] text-base font-normal text-white hover:bg-[#E6B903] flex items-center disabled:opacity-60"
+            className="px-3 py-1.5 text-base text-black bg-white border border-[#CFCFCF] 
+                  hover:bg-[#F1F1F1] rounded-md flex items-center gap-2"
           >
+            <EditIcon className="w-5 h-5" />
             Edit
           </button>
         </div>
@@ -73,14 +77,14 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
                 {/* Logo (ซ้าย span 2 แถว) */}
                 <div className="row-span-2">
                   <div
-                    className=" w-[240px] aspect-[4/3] rounded-[16px] overflow-hidden bg-[#F3F3F3] border border-[#E6E6E6] 
+                    className=" w-[240px] aspect-[4/3] rounded-lg overflow-hidden bg-[#F3F3F3] border border-[#E6E6E6] 
                     flex items-center justify-center"
                   >
                     {data.companyFile ? (
                       <img
                         src={data.companyFile}
                         alt="Company Logo"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                         draggable={false}
                       />
                     ) : (
@@ -91,7 +95,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
 
                 {/* Row 1 : General (col-span-2) */}
                 <section className="col-span-2">
-                  <h2 className="text-lg font-normal text-[#084072] mb-6">
+                  <h2 className="text-lg font-normal text-[#06284B] mb-6">
                     General
                   </h2>
 
@@ -101,9 +105,16 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
                       <Field value={data.companyName} />
                     </div>
 
-                    <div>
-                      <Label text="Tax ID" />
-                      <Field value={data.taxId} />
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <Label text="Tax ID" />
+                        <Field value={data.taxId} />
+                      </div>
+
+                      <div>
+                        <Label text="Currency" />
+                        <Field value={data.currency} />
+                      </div>
                     </div>
 
                     <div>
@@ -120,7 +131,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
 
                 {/* Row 2 Col 2 : Address */}
                 <section>
-                  <h2 className="text-lg font-normal text-[#084072] mb-6">
+                  <h2 className="text-lg font-normal text-[#06284B] mb-6">
                     Address
                   </h2>
 
@@ -163,7 +174,7 @@ const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({
 
                 {/* Row 2 Col 3 : Contact Person */}
                 <section>
-                  <h2 className="text-lg font-normal text-[#084072] mb-6">
+                  <h2 className="text-lg font-normal text-[#06284B] mb-6">
                     Contact Person
                   </h2>
 

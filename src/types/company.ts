@@ -1,6 +1,7 @@
 export interface CompanyFormValues {
   companyName: string;
   taxId: string;
+  currency: string;
   email: string;
   phone: string;
 
@@ -28,6 +29,7 @@ export interface CompanyApiModel {
   comp_zip: string;
   comp_email: string;
   comp_taxid: string;
+  main_currency: string;
   comp_phone: string;
   comp_person_name: string;
   comp_person_phone: string;
@@ -37,6 +39,7 @@ export interface CompanyApiModel {
 
 export interface CreateCompanyPayload {
   comp_name: string;
+  comp_country: string;
   comp_addr: string;
   comp_subdist: string;
   comp_dist: string;
@@ -44,6 +47,7 @@ export interface CreateCompanyPayload {
   comp_zip: string;
   comp_email: string;
   comp_taxid: string;
+  main_currency: string;
   comp_phone: string;
   comp_person_name: string;
   comp_person_phone: string;

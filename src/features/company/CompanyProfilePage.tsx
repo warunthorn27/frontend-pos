@@ -5,24 +5,16 @@ import type { AuthUser } from "../../types/auth";
 import {
   createCompany,
   getCompanyById,
-  mapCompanyApiToForm,
-  mapCompanyFormToPayload,
   updateCompany,
 } from "../../services/company";
 import { getCompanyId as getPersistedCompanyId } from "../../utils/authStorage";
 import type { CompanyFormValues } from "../../types/company";
+import {
+  mapCompanyApiToForm,
+  mapCompanyFormToPayload,
+} from "../../component/mappers/companyMapper";
 
 type Mode = "create" | "view" | "edit";
-
-const normalizeTHPhone = (raw: string): string => {
-  const digits = raw.replace(/\D/g, "");
-
-  if (!/^0\d{9}$/.test(digits)) {
-    throw new Error("Invalid Thai phone number");
-  }
-
-  return `+66${digits.slice(1)}`;
-};
 
 function getUserCompanyId(user?: AuthUser | null): string | null {
   if (!user) return null;
@@ -47,7 +39,7 @@ const CompanyProfilePage: React.FC<Props> = ({
 }) => {
   const authCompanyId = useMemo(
     () => getUserCompanyId(currentUser),
-    [currentUser]
+    [currentUser],
   );
 
   const [companyId, setCompanyId] = useState<string | null>(null);
@@ -118,7 +110,7 @@ const CompanyProfilePage: React.FC<Props> = ({
   // =========================
   const handleSubmit = async (
     values: CompanyFormValues,
-    image: File | null
+    image: File | null,
   ) => {
     setLoading(true);
     setError(null);
@@ -126,23 +118,21 @@ const CompanyProfilePage: React.FC<Props> = ({
     try {
       const formData = new FormData();
 
-      // normalize ที่นี่ให้ชัด
-      const normalizedCompanyPhone = normalizeTHPhone(values.phone);
-      const normalizedContactPhone = normalizeTHPhone(values.contactPhone);
-
       const payload = mapCompanyFormToPayload({
         companyName: values.companyName,
         taxId: values.taxId,
         email: values.email,
-        phone: normalizedCompanyPhone,
+        phone: values.phone,
+        country: values.country,
         companyAddress: values.companyAddress,
         province: values.province,
         district: values.district,
         subDistrict: values.subDistrict,
         zipcode: values.zipcode,
         contactName: values.contactName,
-        contactPhone: normalizedContactPhone,
+        contactPhone: values.contactPhone,
         contactEmail: values.contactEmail,
+        currency: values.currency,
       });
 
       Object.entries(payload).forEach(([key, value]) => {
@@ -158,10 +148,9 @@ const CompanyProfilePage: React.FC<Props> = ({
       }
 
       let updated;
-      if (mode === "create") {
+      if (!companyId) {
         updated = await createCompany(formData);
       } else {
-        if (!companyId) throw new Error("Missing companyId");
         updated = await updateCompany(companyId, formData);
       }
 
