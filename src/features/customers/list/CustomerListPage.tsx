@@ -26,6 +26,12 @@ const CustomerListPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<"view" | "edit">("view");
   const [search, setSearch] = useState("");
 
+  const totalPages = Math.ceil(total / pageSize);
+
+  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1;
+
+  const endIndex = total === 0 ? 0 : Math.min(page * pageSize, total);
+
   // Hooks ต้องอยู่ก่อน return เสมอ
   useEffect(() => {
     if (mode !== "list") return;
@@ -37,13 +43,14 @@ const CustomerListPage: React.FC = () => {
         const res = await customerService.listCustomers(
           page,
           pageSize,
-          "",
+          search,
           businessType,
         );
+
         const mapped = res.data.map(mapCustomerResponseToListItem);
 
         setCustomers(mapped);
-        setTotal(res.total);
+        setTotal(res.total_record);
       } catch (err) {
         console.error(err);
       } finally {
@@ -52,7 +59,11 @@ const CustomerListPage: React.FC = () => {
     };
 
     load();
-  }, [page, pageSize, mode, businessType]);
+  }, [page, pageSize, mode, businessType, search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, businessType]);
 
   // conditional return AFTER hooks
   if (mode === "create") {
@@ -131,6 +142,21 @@ const CustomerListPage: React.FC = () => {
     }
   };
 
+  const handleEdit = async (id: string) => {
+    try {
+      setLoading(true);
+
+      const res = await customerService.getCustomer(id);
+
+      setCustomerDetail(res.data);
+      setModalMode("edit");
+      setDetailOpen(true); // เปิด modal
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="w-full">
       <h2 className="text-2xl font-regular text-[#06284B] mb-4">
@@ -145,18 +171,23 @@ const CustomerListPage: React.FC = () => {
         onBusinessTypeChange={setBusinessType}
       />
 
-      <div className="border shadow-sm rounded-md overflow-hidden text-sm bg-white">
-        <CustomerTable
-          data={customers}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          loading={loading}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-          onRowClick={handleRowClick}
-        />
-      </div>
+      <CustomerTable
+        data={customers}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        totalPages={totalPages}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        loading={loading}
+        onPageChange={setPage}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setPage(1);
+        }}
+        onRowClick={handleRowClick}
+        onEdit={handleEdit}
+      />
 
       <CustomerDetailModal
         open={detailOpen}

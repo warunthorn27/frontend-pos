@@ -1,14 +1,17 @@
 import React from "react";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import DataTable from "../../../component/table/DataTable";
+import type { Column } from "../../../types/table";
 import type { CustomerListItem } from "../../../types/customer";
-import EditIcon from "../../../assets/svg/edit.svg?react";
-import DeleteIcon from "../../../assets/svg/trash.svg?react";
+import ActionButtons from "../../../component/ui/ActionButtons";
 
 type Props = {
   data: CustomerListItem[];
   page: number;
   pageSize: number;
   total: number;
+  totalPages: number;
+  startIndex: number;
+  endIndex: number;
   loading: boolean;
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
@@ -22,6 +25,9 @@ const CustomerTable: React.FC<Props> = ({
   page,
   pageSize,
   total,
+  totalPages,
+  startIndex,
+  endIndex,
   loading,
   onPageChange,
   onPageSizeChange,
@@ -29,105 +35,80 @@ const CustomerTable: React.FC<Props> = ({
   onDelete,
   onRowClick,
 }) => {
-  const columns: GridColDef[] = [
+  const columns: Column<CustomerListItem>[] = [
     {
-      field: "index",
-      headerName: "#",
-      width: 80,
-      sortable: false,
-      disableColumnMenu: true,
-      renderHeader: () => <div className="pl-4">#</div>,
-      renderCell: (params) => <div className="pl-4 w-full">{params.value}</div>,
+      key: "index",
+      header: "#",
+      width: "80px",
     },
-
-    { field: "customerId", headerName: "Customer ID", flex: 1.3 },
-    { field: "businessType", headerName: "Business Type", flex: 0.8 },
-    { field: "companyName", headerName: "Company Name", flex: 1.2 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1.2 },
-    { field: "phone", headerName: "Phone", flex: 1 },
-
     {
-      field: "actions",
-      headerName: "Action",
-      width: 120,
-      sortable: false,
-      disableColumnMenu: true,
-      headerAlign: "center",
-      align: "center",
-
-      renderCell: (params) => (
-        <div className="flex items-center justify-center w-full h-full gap-3">
-          <button onClick={() => onEdit?.(params.row.id)}>
-            <EditIcon className="w-5 h-5" />
-          </button>
-          <button onClick={() => onDelete?.(params.row.id)}>
-            <DeleteIcon className="w-5 h-5" />
-          </button>
+      key: "customerId",
+      header: "Customer ID",
+      width: "170px",
+    },
+    {
+      key: "businessType",
+      header: "Business Type",
+      width: "220px",
+    },
+    {
+      key: "companyName",
+      header: "Company Name",
+      width: "270px",
+    },
+    {
+      key: "name",
+      header: "Name",
+      width: "280px",
+    },
+    {
+      key: "email",
+      header: "Email",
+      width: "250px",
+    },
+    {
+      key: "phone",
+      header: "Phone",
+      width: "180px",
+    },
+    {
+      key: "id",
+      header: "Action",
+      width: "150px",
+      render: (_, row) => (
+        <div
+          className="flex items-center gap-3"
+          onClick={(e) => e.stopPropagation()} // กัน row click
+        >
+          <ActionButtons id={row.id} onEdit={onEdit} onDelete={onDelete} />
         </div>
       ),
     },
   ];
 
-  const rows = data.map((c, i) => ({
+  const rows: CustomerListItem[] = data.map((c, i) => ({
     ...c,
     index: (page - 1) * pageSize + i + 1,
-    actions: "", // กัน warning / error
   }));
 
+  if (loading) {
+    return <div className="p-6 text-gray-400">Loading...</div>;
+  }
+
   return (
-    <div style={{ height: "100%", width: "100%" }}>
-      <DataGrid
-        loading={loading}
-        rows={rows}
-        columns={columns}
-        rowCount={total}
-        rowHeight={60}
-        paginationMode="server"
-        pageSizeOptions={[10, 20, 50]}
-        paginationModel={{ page: page - 1, pageSize }}
-        onPaginationModelChange={(model) => {
-          onPageChange(model.page + 1);
-          onPageSizeChange(model.pageSize);
-        }}
-        onRowClick={(params) => onRowClick?.(params.row.id)}
-        disableRowSelectionOnClick
-        sx={{
-          border: "none",
-          fontFamily: "Prompt, sans-serif",
-
-          "& .MuiDataGrid-columnSeparator": {
-            display: "none",
-          },
-
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#FFFFFF",
-            borderBottom: "1px solid #F1F5F9",
-          },
-
-          // header
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontSize: "18px",
-            fontWeight: "normal",
-          },
-
-          // content on each cell
-          "& .MuiDataGrid-cell": {
-            fontSize: "16px",
-            fontWeight: "light",
-            borderBottom: "1px solid #F8FAFC",
-          },
-
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "1px solid #E5E7EB",
-          },
-
-          "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": {
-            outline: "none",
-          },
-        }}
-      />
-    </div>
+    <DataTable
+      columns={columns}
+      data={rows}
+      page={page}
+      pageSize={pageSize}
+      total={total}
+      totalPages={totalPages}
+      startIndex={startIndex}
+      endIndex={endIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      onRowClick={(row) => onRowClick?.(row.id)}
+    />
   );
 };
 

@@ -1,5 +1,5 @@
 import type { CountryCode } from "../component/phoneInput/CountryPhoneInput";
-import { stripDialCode } from "../utils/phone";
+import { formatPhoneForDisplay } from "../utils/phone";
 
 export type BusinessType = "Corporation" | "Individual";
 export type CustomerForm = CorporationCustomerForm | IndividualCustomerForm;
@@ -103,7 +103,7 @@ export const mapCustomerFormToPayload = (
 
     company_name: isCorporation
       ? form.companyName
-      : form.taxInvoice?.companyName,
+      : form.taxInvoice?.companyName || "",
     contact_person: isCorporation ? form.contactPerson : customerName,
     customer_gender: isCorporation ? undefined : form.gender,
     customer_date: isCorporation ? undefined : form.birthday,
@@ -137,7 +137,7 @@ export interface UpdateCustomerPayload {
   customer_phone?: string;
   customer_gender?: string;
   customer_date?: string | null;
-  customer_tax_id?: string;
+  customer_tax_id?: string | null;
   note?: string;
 
   addr_line?: string;
@@ -147,45 +147,50 @@ export interface UpdateCustomerPayload {
   addr_sub_district?: string;
   addr_zipcode?: string;
 
-  tax_company_name?: string;
-  tax_addr_line?: string;
-  tax_addr_country?: string;
-  tax_addr_province?: string;
-  tax_addr_district?: string;
-  tax_addr_sub_district?: string;
-  tax_addr_zipcode?: string;
+  tax_company_name?: string | null;
+  tax_addr_line?: string | null;
+  tax_addr_country?: string | null;
+  tax_addr_province?: string | null;
+  tax_addr_district?: string | null;
+  tax_addr_sub_district?: string | null;
+  tax_addr_zipcode?: string | null;
 }
 
 export const mapCustomerToUpdatePayload = (
   c: CustomerResponse,
-): UpdateCustomerPayload => ({
-  customer_name: c.customer_name,
-  business_type: c.business_type,
-  company_name: c.company_name,
-  contact_person: c.contact_person,
+): UpdateCustomerPayload => {
+  const noTax = !c.customer_tax_id && !c.tax_addr;
 
-  customer_email: c.customer_email,
-  customer_phone: c.customer_phone,
-  customer_gender: c.customer_gender,
-  customer_date: c.customer_date ?? null,
-  customer_tax_id: c.customer_tax_id,
-  note: c.note,
+  return {
+    customer_name: c.customer_name,
+    business_type: c.business_type,
+    company_name: c.company_name,
+    contact_person: c.contact_person,
 
-  addr_line: c.address.address_line,
-  addr_country: c.address.country,
-  addr_province: c.address.province,
-  addr_district: c.address.district,
-  addr_sub_district: c.address.sub_district,
-  addr_zipcode: c.address.zipcode,
+    customer_email: c.customer_email,
+    customer_phone: c.customer_phone,
+    customer_gender: c.customer_gender,
+    customer_date: c.customer_date ?? null,
+    note: c.note,
 
-  tax_company_name: c.tax_addr?.company_name,
-  tax_addr_line: c.tax_addr?.address_line,
-  tax_addr_country: c.tax_addr?.country,
-  tax_addr_province: c.tax_addr?.province,
-  tax_addr_district: c.tax_addr?.district,
-  tax_addr_sub_district: c.tax_addr?.sub_district,
-  tax_addr_zipcode: c.tax_addr?.zipcode,
-});
+    addr_line: c.address.address_line,
+    addr_country: c.address.country,
+    addr_province: c.address.province,
+    addr_district: c.address.district,
+    addr_sub_district: c.address.sub_district,
+    addr_zipcode: c.address.zipcode,
+
+    // tax address
+    customer_tax_id: noTax ? null : c.customer_tax_id,
+    tax_company_name: noTax ? null : c.tax_addr?.company_name,
+    tax_addr_line: noTax ? null : c.tax_addr?.address_line,
+    tax_addr_country: noTax ? null : c.tax_addr?.country,
+    tax_addr_province: noTax ? null : c.tax_addr?.province,
+    tax_addr_district: noTax ? null : c.tax_addr?.district,
+    tax_addr_sub_district: noTax ? null : c.tax_addr?.sub_district,
+    tax_addr_zipcode: noTax ? null : c.tax_addr?.zipcode,
+  };
+};
 
 export const isSameAddress = (
   a?: CustomerResponse["address"],
@@ -324,6 +329,7 @@ export interface CustomerResponse {
 // list
 export interface CustomerListItem {
   id: string; // MUST for DataGrid (not show)
+  index?: number;
   customerId: string; // show on table
   businessType: BusinessType;
   companyName?: string;
@@ -349,6 +355,6 @@ export const mapCustomerResponseToListItem = (
       : customer.customer_name,
 
     email: customer.customer_email,
-    phone: stripDialCode(customer.customer_phone),
+    phone: formatPhoneForDisplay(customer.customer_phone),
   };
 };

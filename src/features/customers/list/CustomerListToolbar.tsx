@@ -20,7 +20,7 @@ const CustomerListToolbar: React.FC<Props> = ({
   onBusinessTypeChange,
 }) => {
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-6">
       <div className="flex gap-3">
         <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[40px] w-[400px]">
           <input

@@ -174,7 +174,7 @@ const CustomerDetailModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div
         className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-t-lg shadow-lg 
           grid grid-rows-[auto_1fr_auto]"

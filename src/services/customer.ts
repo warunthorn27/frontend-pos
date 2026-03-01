@@ -18,9 +18,10 @@ export interface CustomerApiResponse {
 export interface CustomerListResponse {
   success: boolean;
   data: CustomerResponse[];
-  total: number;
-  page: number;
-  totalPages: number;
+  total_record: number;
+  total_page: number;
+  current_page: number;
+  limit: number;
 }
 
 export const customerService = {
