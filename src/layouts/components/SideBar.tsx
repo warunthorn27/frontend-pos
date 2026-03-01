@@ -98,7 +98,7 @@ const SideBar: React.FC<SideBarProps> = ({
   return (
     // <aside className="w-[240px] flex-shrink-0 bg-[#EFF7FF] border-slate-200 px-3">
     <aside className="fixed top-0 left-0 w-[240px] h-screen bg-[#EFF7FF] px-3">
-      <div className="flex justify-center py-3">
+      <div className="flex justify-center py-4 my-2">
         {companyLogo ? (
           <img
             src={companyLogo}

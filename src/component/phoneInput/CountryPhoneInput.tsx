@@ -60,10 +60,6 @@ const CountryPhoneInput: React.FC<Props> = ({
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const rawNumber = value.startsWith(selected.dial)
-    ? value.slice(selected.dial.length)
-    : value;
-
   return (
     <div ref={rootRef} className="relative">
       {/* ชั้นนี้เอาไว้ให้ dropdown ลอย */}
@@ -107,7 +103,8 @@ const CountryPhoneInput: React.FC<Props> = ({
           className="flex-1 px-3 text-sm border-none outline-none bg-transparent"
         />
       </div>
-      {/* DROPDOWN — ย้ายออกมานอกกรอบ */}
+
+      {/* DROPDOWN */}
       {open && (
         <div
           className="
@@ -124,8 +121,9 @@ const CountryPhoneInput: React.FC<Props> = ({
               key={c.code}
               onClick={() => {
                 onCountryChange(c.code);
-                const e164 = buildE164(c.dial, rawNumber);
-                onChange(e164, rawNumber);
+
+                // RESET INPUT
+                onChange("", "");
                 setOpen(false);
               }}
               className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"

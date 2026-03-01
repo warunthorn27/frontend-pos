@@ -63,19 +63,15 @@ export function buildE164(dialCode: string, raw: string) {
 
   if (!digits) return "";
 
-  // Thailand rule
   if (dialCode === "+66" && digits.startsWith("0")) {
     return dialCode + digits.slice(1);
   }
 
+  if (dialCode === "+81" && digits.startsWith("0")) {
+    return dialCode + digits.slice(1);
+  }
+
   return dialCode + digits;
-}
-
-export function stripDialCode(phone?: string): string {
-  if (!phone) return "";
-
-  // ตัด + และ country code ออก เหลือเลขล้วน
-  return phone.replace(/^\+\d{1,3}/, "");
 }
 
 export const COUNTRIES: { code: CountryCode; dial: string }[] = [
