@@ -8,6 +8,13 @@ export interface UserListItem {
   password: string;
 }
 
+export interface PaginatedUsers {
+  data: UserListItem[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+}
+
 export type UserFormInput = {
   username: string;
   password?: string;

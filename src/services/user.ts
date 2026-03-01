@@ -5,6 +5,7 @@ import type {
   UserListItem,
   UserModel,
   PermissionRef,
+  PaginatedUsers,
 } from "../types/user";
 import { API_BASE, getAuthHeaders } from "./apiClient";
 
@@ -44,12 +45,14 @@ function mapUserToListItem(u: UserModel): UserListItem {
 }
 
 /* GET LIST */
-
-export async function fetchUsers(): Promise<UserListItem[]> {
+export async function fetchUsers(
+  page: number,
+  limit: number,
+): Promise<PaginatedUsers> {
   const comp_id = localStorage.getItem("comp_id") || "";
 
   const res = await fetch(
-    `${API_BASE}/user?comp_id=${comp_id}&user_role=User`,
+    `${API_BASE}/user?comp_id=${comp_id}&user_role=User&page=${page}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -59,13 +62,18 @@ export async function fetchUsers(): Promise<UserListItem[]> {
     },
   );
 
-  const json = await readJson<UserModel[]>(res);
+  const json = await res.json();
 
   if (!json.success) {
     throw new Error(json.message || "Failed to load users");
   }
 
-  return (json.data ?? []).map(mapUserToListItem);
+  return {
+    data: (json.data ?? []).map(mapUserToListItem),
+    total: json.total_record,
+    totalPages: json.total_page,
+    currentPage: json.current_page,
+  };
 }
 
 /* GET ONE */

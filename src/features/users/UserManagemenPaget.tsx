@@ -1,42 +1,67 @@
-import React, { useEffect, useState } from "react";
-import UserList from "./UserList";
+import React, { useMemo, useState } from "react";
 import UserForm from "./UserForm";
 import useUsers from "./hook/useUsers";
 import type { UserFormInput, UserListItem } from "../../types/user";
 import UserModal from "./UserModal";
 import ResetPasswordDialog from "../../features/users/ResetPasswordDialog";
+import UserListContainer from "./UserListContainer";
 
 const UserManagementPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
   const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
-  const [search, setSearch] = useState<string>("");
   const [resetOpen, setResetOpen] = useState(false);
   const [resetUser, setResetUser] = useState<UserListItem | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [formMode, setFormMode] = useState<"view" | "edit">("view");
+  const [search, setSearch] = useState("");
 
   const {
     users,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    setPage,
+    setPageSize,
     createUser,
-    loadUsers,
     updateUser,
     resetPassword,
-    toggleStatus,
     getUserById,
     permissionMenus,
     permissionCatalog,
   } = useUsers();
 
-  useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+  // Filter users by search
+  const filteredUsers = useMemo(() => {
+    if (!search.trim()) return users;
+
+    const keyword = search.toLowerCase();
+
+    return users.filter(
+      (u) =>
+        u.name?.toLowerCase().includes(keyword) ||
+        u.email?.toLowerCase().includes(keyword) ||
+        u.phone?.toLowerCase().includes(keyword),
+    );
+  }, [users, search]);
 
   return (
     <>
       {mode === "list" && (
-        <UserList
-          users={users}
+        <UserListContainer
+          users={filteredUsers}
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          setPageSize={setPageSize}
+          search={search}
+          onChangeSearch={setSearch}
+          maxUsers={3}
           onCreateUser={() => setMode("create")}
+          onPrint={() => window.print()}
+          onExportExcel={() => console.log("Export Excel")}
           onViewUser={async (u) => {
             const latest = await getUserById(u.id);
             setEditingUser(latest);
@@ -45,25 +70,20 @@ const UserManagementPage: React.FC = () => {
           }}
           onEditUser={async (u) => {
             const latest = await getUserById(u.id);
-            setFormMode("edit");
             setEditingUser(latest);
+            setFormMode("edit");
             setEditOpen(true);
           }}
-          onToggleStatus={(u, active) => toggleStatus(u.id, active)}
           onResetPassword={(u) => {
             setResetUser(u);
             setResetOpen(true);
           }}
-          maxUsers={3}
-          search={search}
-          onChangeSearch={setSearch}
-          onPrint={() => console.log("print")}
-          onExportExcel={() => console.log("export")}
         />
       )}
 
       {mode === "create" && (
         <UserForm
+          mode="create"
           menus={permissionMenus}
           permissionCatalog={permissionCatalog}
           onCancel={() => setMode("list")}
@@ -74,7 +94,7 @@ const UserManagementPage: React.FC = () => {
         />
       )}
 
-      {/* edit modal */}
+      {/* Edit / View Modal */}
       <UserModal
         open={editOpen}
         user={editingUser!}
@@ -104,6 +124,7 @@ const UserManagementPage: React.FC = () => {
         }}
       />
 
+      {/* Reset Password Dialog */}
       <ResetPasswordDialog
         open={resetOpen}
         user={resetUser}

@@ -9,13 +9,12 @@ import type {
 import { defaultChecks, toSelectedPermissionIds } from "../../utils/permission";
 import type { UserFormInput } from "../../types/user";
 import Checkbox from "../../component/ui/Checkbox";
-import {
-  formatPhoneForDisplay,
-  normalizePhoneForApi,
-  isValidPhone,
-} from "../../utils/phone";
+import { isValidPhone, detectCountryFromPhone } from "../../utils/phone";
 import ToggleSwitch from "../../component/ui/ToggleSwitch";
 import ReadonlyField from "../../component/ui/ReadonlyField";
+import type { CountryCode } from "../../component/phoneInput/CountryPhoneInput";
+import PhoneView from "../../component/phoneInput/PhoneView";
+import CountryPhoneInput from "../../component/phoneInput/CountryPhoneInput";
 
 type LabelProps = {
   children: React.ReactNode;
@@ -57,9 +56,9 @@ export function Input({
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled || readOnly}
       className={`
-        w-full h-[38px] rounded-md border px-3 text-sm
+        w-full h-[38px] rounded-md border border-[#CFCFCF] px-3 text-sm
         ${disabled || readOnly ? "bg-white text-black" : "bg-white"}
-        focus:outline-none focus:ring-1 focus:ring-[#3B82F6]
+        focus:outline-none focus:border-[#005AA7]
       `}
     />
   );
@@ -113,9 +112,13 @@ const UserForm: React.FC<Props> = ({
 
   const [username, setUsername] = useState(initialValues?.username ?? "");
   const [email, setEmail] = useState(initialValues?.email ?? "");
-  const [phone, setPhone] = useState(
-    initialValues?.phone ? formatPhoneForDisplay(initialValues.phone) : "",
-  );
+
+  const initialCountry = detectCountryFromPhone(initialValues?.phone);
+
+  const [country, setCountry] = useState<CountryCode>(initialCountry);
+
+  const [phone, setPhone] = useState<string>(initialValues?.phone ?? "");
+
   const [active, setActive] = useState(initialValues?.active ?? true);
   const [password, setPassword] = useState("");
   const [passwordGenerated, setPasswordGenerated] = useState(false);
@@ -226,7 +229,7 @@ const UserForm: React.FC<Props> = ({
     const payload: UserFormInput = {
       username: username.trim(),
       email: email.trim() || undefined,
-      phone: phone ? normalizePhoneForApi(phone) : undefined,
+      phone: phone || undefined,
       status: active ? "active" : "inactive",
       permissions: permissionIds,
     };
@@ -265,7 +268,7 @@ const UserForm: React.FC<Props> = ({
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="w-full max-w-[1690px] mx-auto flex flex-col flex-1 min-h-0">
         {!isView && !isEdit && (
-          <h2 className="text-2xl font-normal text-[#06284B] mb-[15px]">
+          <h2 className="text-2xl font-normal text-[#06284B] mb-5">
             User & Permission
           </h2>
         )}
@@ -317,19 +320,24 @@ const UserForm: React.FC<Props> = ({
                     required
                   >
                     {isView ? (
-                      <ReadonlyField value="*******" />
+                      <ReadonlyField value="******" />
                     ) : (
                       <div className="flex gap-2">
                         <Input
                           value={
-                            isCreate
-                              ? password
-                              : passwordGenerated
-                                ? password
-                                : "*******"
+                            passwordGenerated
+                              ? password // ถ้า generate แล้ว → แสดงรหัสจริง
+                              : isEdit
+                                ? "******" // edit mode ยังไม่ generate → แสดง ****
+                                : "" // create mode ยังไม่ generate → ว่าง
                           }
-                          onChange={setPassword}
+                          placeholder={
+                            isCreate && !passwordGenerated
+                              ? "Generate Password"
+                              : ""
+                          }
                           readOnly
+                          onChange={setPassword}
                         />
 
                         <button
@@ -363,19 +371,25 @@ const UserForm: React.FC<Props> = ({
                 <div>
                   <FormField label="Phone">
                     {isView ? (
-                      <ReadonlyField value={phone} />
+                      <PhoneView phone={phone} />
                     ) : (
                       <>
-                        <Input
+                        <CountryPhoneInput
                           value={phone}
-                          onChange={(v) => {
-                            setPhone(v);
+                          country={country}
+                          onCountryChange={(c) => {
+                            setCountry(c);
+                            markAsChanged();
+                          }}
+                          onChange={(e164) => {
+                            setPhone(e164);
                             markAsChanged();
                           }}
                         />
-                        {phoneError && (
+
+                        {phone && !isValidPhone(phone) && (
                           <div className="text-xs text-red-500 mt-1">
-                            {phoneError}
+                            Invalid phone format
                           </div>
                         )}
                       </>
@@ -424,8 +438,8 @@ const UserForm: React.FC<Props> = ({
                   className={`w-24 px-4 py-[6px] rounded-md text-base font-normal
                   ${
                     disableSave
-                      ? "bg-[#CFCFCF] text-white cursor-not-allowed"
-                      : "bg-[#005AA7] hover:bg-[#084072] text-white"
+                      ? "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed"
+                      : "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
                   }
                 `}
                 >

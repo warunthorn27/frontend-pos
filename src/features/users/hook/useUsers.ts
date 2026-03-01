@@ -24,27 +24,32 @@ export default function useUsers() {
     {},
   );
   const [permissionMenus, setPermissionMenus] = useState<string[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   /* load users */
-  const loadUsers = useCallback(async (): Promise<void> => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const data = await fetchUsers();
-      setUsers(
-        data.map((u) => ({
-          ...u,
-          password: "*****",
-        })),
-      );
+      const result = await fetchUsers(page, pageSize);
+
+      setUsers(result.data);
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
     } catch (err) {
-      console.error("Error loading users:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
-      setUsers([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, pageSize]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   /* permissions */
   useEffect(() => {
@@ -72,18 +77,10 @@ export default function useUsers() {
 
   /* create user */
   const createUser = async (values: UserFormInput): Promise<UserListItem> => {
-    /**
-     * values.password = plain text (จาก generate)
-     */
     const created = await apiCreateUser(values);
 
-    const normalized: UserListItem = {
-      ...created,
-      password: "*****",
-    };
-
-    setUsers((prev) => [normalized, ...prev]);
-    return normalized;
+    await loadUsers();
+    return created;
   };
 
   /* update user */
@@ -93,14 +90,8 @@ export default function useUsers() {
   ): Promise<UserListItem> => {
     const updated = await apiUpdateUserByAdmin(userId, values);
 
-    const normalized: UserListItem = {
-      ...updated,
-      password: "*****",
-    };
-
-    setUsers((prev) => prev.map((u) => (u.id === userId ? normalized : u)));
-
-    return normalized;
+    await loadUsers();
+    return updated;
   };
 
   /* reset password */
@@ -115,10 +106,6 @@ export default function useUsers() {
       sendEmail,
     );
 
-    setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, password: "*****" } : u)),
-    );
-
     return result.message;
   };
 
@@ -129,20 +116,20 @@ export default function useUsers() {
   ): Promise<UserListItem> => {
     const updated = await apiChangeUserStatus(userId, isActive);
 
-    const normalized: UserListItem = {
-      ...updated,
-      password: "*****",
-    };
-
-    setUsers((prev) => prev.map((u) => (u.id === userId ? normalized : u)));
-
-    return normalized;
+    await loadUsers();
+    return updated;
   };
 
   return {
     users,
     loading,
     error,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    setPage,
+    setPageSize,
     loadUsers,
     getUserById,
     createUser,
