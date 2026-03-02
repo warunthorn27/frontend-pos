@@ -5,16 +5,27 @@ import ToggleSwitch from "../../../../component/ui/ToggleSwitch";
 import type { ProductRow } from "../../../../types/product/transform";
 import ProductImage from "./ProductImage";
 import Checkbox from "../../../../component/ui/Checkbox";
+import TablePagination from "../../../../component/table/TablePagination";
 
 type Props = {
   rows: ProductRow[];
   loading: boolean;
+  selectIds: string[];
+
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  startIndex: number;
+  endIndex: number;
+
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+
   onRowClick?: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleStatus?: (id: string, active: boolean) => void;
-  // indetermenate?: boolean;
-  selectIds?: string[];
   onSelectionChange?: (ids: string[]) => void;
 };
 
@@ -31,7 +42,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-4 py-3 text-lg font-normal text-left bg-[#F7F7F7] ${className}`}
+      className={`px-6 py-4 text-lg font-normal bg-[#F7F7F7] border-b border-[#E7EDF6] truncate ${className}`}
     >
       {ellipsis ? (
         <span
@@ -61,7 +72,15 @@ function Td({
   title?: string;
 }) {
   return (
-    <td className={`px-4 py-3 ${className}`} onClick={onClick}>
+    <td
+      className={`
+        px-6 py-4
+        overflow-hidden whitespace-nowrap text-ellipsis
+        border-b border-[#EDF2FA]
+        ${className}
+      `}
+      onClick={onClick}
+    >
       {ellipsis ? (
         <span
           className="block overflow-hidden whitespace-nowrap text-ellipsis"
@@ -112,68 +131,93 @@ function Muted({ children }: { children: React.ReactNode }) {
 export default function ProductTable({
   rows,
   loading,
+  page,
+  pageSize,
+  total,
+  totalPages,
+  startIndex,
+  endIndex,
+  onPageChange,
+  onPageSizeChange,
   onRowClick,
   onEdit,
   onDelete,
   onToggleStatus,
-  selectIds = [],
+  selectIds,
   onSelectionChange,
 }: Props) {
-  const allIds = rows.map((r) => r.id);
+  const safeSelectIds = selectIds ?? [];
 
-  const isAllSelected = rows.length > 0 && selectIds.length === rows.length;
+  const currentPageIds = rows.map((r) => r.id);
+
+  const selectedInCurrentPage = safeSelectIds.filter((id) =>
+    currentPageIds.includes(id),
+  );
+
+  const isAllSelected =
+    rows.length > 0 && selectedInCurrentPage.length === rows.length;
 
   const isIndeterminate =
-    selectIds.length > 0 && selectIds.length < rows.length;
+    selectedInCurrentPage.length > 0 &&
+    selectedInCurrentPage.length < rows.length;
 
   const toggleAll = () => {
-    onSelectionChange?.(isAllSelected || isIndeterminate ? [] : allIds);
+    if (isAllSelected) {
+      onSelectionChange?.(
+        safeSelectIds.filter((id) => !currentPageIds.includes(id)),
+      );
+    } else {
+      const newIds = Array.from(new Set([...safeSelectIds, ...currentPageIds]));
+      onSelectionChange?.(newIds);
+    }
   };
 
   const toggleOne = (id: string) => {
-    if (selectIds.includes(id)) {
-      onSelectionChange?.(selectIds.filter((v) => v !== id));
+    if (safeSelectIds.includes(id)) {
+      onSelectionChange?.(safeSelectIds.filter((v) => v !== id));
     } else {
-      onSelectionChange?.([...selectIds, id]);
+      onSelectionChange?.([...safeSelectIds, id]);
     }
   };
 
   return (
-    <div className="w-full rounded-[6px] border border-[#F0F0F2] bg-white overflow-auto">
-      {/* ================= HEADER ================= */}
-      <table className="w-full text-base font-light border-collapse table-fixed">
-        <thead className="sticky top-0 z-20">
-          <tr className="border-b border-[#F0F0F2]">
-            <Th className="w-[40px]">
-              <Checkbox
-                checked={isAllSelected}
-                indeterminate={isIndeterminate}
-                onChange={toggleAll}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </Th>
-            <Th className="w-[50px]">#</Th>
-            <Th className="w-[90px]">Image</Th>
-            <Th className="w-[120px]">Code</Th>
-            <Th className="w-[180px]">Product Name</Th>
-            <Th className="w-[160px]">Category</Th>
-            <Th className="w-[180px]" ellipsis title="Item Type / Stone Name">
-              Item Type / Stone Name
-            </Th>
-            <Th className="w-[120px]">Size</Th>
-            <Th className="w-[120px]">Metal</Th>
-            <Th className="w-[140px]">Color</Th>
-            <Th className="w-[110px] text-center">Action</Th>
-            <Th className="w-[80px] text-center border-l border-[#E7EDF6]">
-              Status
-            </Th>
-          </tr>
-        </thead>
-      </table>
+    <div className="bg-white rounded-md shadow-sm overflow-hidden">
+      {/* Scroll Container */}
+      <div className="max-h-[calc(100vh-300px)] overflow-y-auto hide-scrollbar">
+        <table className="w-full border-separate border-spacing-0 table-fixed text-base font-light">
+          <thead className="sticky top-0 z-20 bg-gray-50">
+            <tr className="text-left">
+              <Th className="w-[40px] text-left">
+                <Checkbox
+                  checked={isAllSelected}
+                  indeterminate={isIndeterminate}
+                  onChange={toggleAll}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </Th>
 
-      {/* ================= BODY (SCROLL) ================= */}
-      <div className="max-h-[600px] overflow-auto hide-scrollbar">
-        <table className="w-full text-base font-light border-collapse table-fixed">
+              <Th className="w-[70px] text-left">#</Th>
+              <Th className="w-[100px] text-left">Image</Th>
+              <Th className="w-[130px] text-left">Code</Th>
+              <Th className="w-[180px] text-left">Product Name</Th>
+              <Th className="w-[180px] text-left">Category</Th>
+              <Th
+                className="w-[180px] text-left"
+                ellipsis
+                title="Item Type / Stone Name"
+              >
+                Item Type / Stone Name
+              </Th>
+              <Th className="w-[120px] text-left">Size</Th>
+              <Th className="w-[120px] text-left">Metal</Th>
+              <Th className="w-[100px] text-left">Color</Th>
+              <Th className="w-[110px] text-center">Action</Th>
+              <Th className="w-[100px] text-center border-l border-[#E7EDF6]">
+                Status
+              </Th>
+            </tr>
+          </thead>
+
           <tbody>
             {loading ? (
               <tr>
@@ -198,41 +242,50 @@ export default function ProductTable({
                 <tr
                   key={r.id}
                   onClick={() => onRowClick?.(r.id)}
-                  className="border-b border-[#EDF2FA] text-[#111827] hover:bg-[#FAFBFE] cursor-pointer"
+                  className="hover:bg-gray-50 transition-colors cursor-pointer font-light text-left"
                 >
                   <Td className="w-[40px]" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
-                      checked={selectIds.includes(r.id)}
+                      checked={safeSelectIds.includes(r.id)}
                       onChange={() => toggleOne(r.id)}
                       onClick={(e) => e.stopPropagation()}
                     />
                   </Td>
 
-                  <Td className="w-[50px]">{index + 1}</Td>
+                  <Td className="w-[50px]">{startIndex + index}</Td>
+
                   <Td className="w-[90px]">
                     <ProductImage imageUrl={r.imageUrl} />
                   </Td>
+
                   <Td className="w-[120px]" ellipsis title={r.code}>
                     {r.code}
                   </Td>
+
                   <Td className="w-[180px]" ellipsis title={r.productName}>
                     {r.productName}
                   </Td>
+
                   <Td className="w-[160px]" ellipsis title={r.categoryLabel}>
                     {r.categoryLabel}
                   </Td>
+
                   <Td className="w-[180px]" ellipsis title={r.typeOrStone}>
                     {r.typeOrStone || <Muted>-</Muted>}
                   </Td>
+
                   <Td className="w-[120px]">{r.size || <Muted>-</Muted>}</Td>
+
                   <Td className="w-[120px]" ellipsis title={r.metal}>
                     {r.metal || <Muted>-</Muted>}
                   </Td>
+
                   <Td className="w-[140px]" ellipsis title={r.color}>
                     {r.color || <Muted>-</Muted>}
                   </Td>
+
                   <Td
-                    className="w-[110px]"
+                    className="w-[110px] text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-center gap-[10px]">
@@ -252,7 +305,7 @@ export default function ProductTable({
                   </Td>
 
                   <Td
-                    className="w-[80px] border-l border-[#EDF2FA]"
+                    className="w-[80px] text-center border-l border-[#EDF2FA]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex justify-center">
@@ -271,15 +324,25 @@ export default function ProductTable({
         </table>
       </div>
 
-      {/* ================= FOOTER ================= */}
-      <div className="sticky bottom-0 z-20 flex justify-end items-center gap-2 px-4 py-3 text-sm text-[#545454] bg-white border-t border-[#E7EDF6]">
-        Rows per page
-        <select className="h-7 rounded-md border border-[#D7DDE8] bg-white px-2 text-sm outline-none">
-          <option>10</option>
-          <option>20</option>
-          <option>50</option>
-        </select>
-      </div>
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        totalPages={totalPages}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+        leftContent={
+          safeSelectIds.length > 0 ? (
+            <span className="text-[#545454]">
+              {safeSelectIds.length === rows.length
+                ? "All items selected"
+                : `${safeSelectIds.length} items selected`}
+            </span>
+          ) : null
+        }
+      />
     </div>
   );
 }

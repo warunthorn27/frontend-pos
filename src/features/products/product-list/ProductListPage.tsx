@@ -21,7 +21,6 @@ import ProductExportDropdown from "../../../component/ui/ProductExportDropdown";
 
 const ProductListPage: React.FC = () => {
   const [search, setSearch] = useState<string>("");
-  const [rowsPerPage] = useState<number>(10);
   const [rows, setRows] = useState<ProductRow[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +30,32 @@ const ProductListPage: React.FC = () => {
     null,
   );
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
   const [modalMode, setModalMode] = useState<"view" | "edit">("view");
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const [categoryOptions] = useState(CATEGORY_OPTIONS);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  const [openExport, setOpenExport] = useState(false);
+
+  /* ========================
+     Pagination (API Based)
+  ========================= */
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const endIndex = Math.min(page * pageSize, total);
+
+  /* ========================
+     Handlers
+  ========================= */
 
   const handleRowClick = (id: string) => {
     setSelectedProductId(id);
@@ -40,14 +63,14 @@ const ProductListPage: React.FC = () => {
     setOpenProductModal(true);
   };
 
+  const toggleExportDropdown = () => setOpenExport((prev) => !prev);
+  const closeExportDropdown = () => setOpenExport(false);
+
   const handleMainExportClick = () => {
-    // PRIORITY สูงสุด
     if (selectedProductIds.length > 0) {
-      handleProductExportFromUI(); // ไม่ส่ง category >> backend จะ export selected
+      handleProductExportFromUI();
       return;
     }
-
-    // ไม่มี selection >> เปิด dropdown
     toggleExportDropdown();
   };
 
@@ -73,7 +96,6 @@ const ProductListPage: React.FC = () => {
         const fileBlob = await exportProductsToExcel(payload);
 
         const downloadUrl = window.URL.createObjectURL(fileBlob);
-
         const link = document.createElement("a");
         link.href = downloadUrl;
         link.download = `products_${Date.now()}.xlsx`;
@@ -91,12 +113,8 @@ const ProductListPage: React.FC = () => {
     handleProductExportFromUI();
   }, [handleProductExportFromUI]);
 
-  const handleToggleStatus = async (
-    id: string,
-    active: boolean,
-  ): Promise<void> => {
+  const handleToggleStatus = async (id: string, active: boolean) => {
     try {
-      // optimistic update (UI เปลี่ยนทันที)
       setRows((prev) =>
         prev.map((row) =>
           row.id === id
@@ -107,7 +125,6 @@ const ProductListPage: React.FC = () => {
 
       await updateProductStatus(id, active);
     } catch {
-      // rollback ถ้า error
       setRows((prev) =>
         prev.map((row) =>
           row.id === id
@@ -120,9 +137,6 @@ const ProductListPage: React.FC = () => {
       );
     }
   };
-
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [openDelete, setOpenDelete] = useState(false);
 
   const handleEdit = (id: string) => {
     setSelectedProductId(id);
@@ -140,8 +154,7 @@ const ProductListPage: React.FC = () => {
 
     try {
       await deleteProduct(deleteId);
-      await fetchProducts(); // refresh table
-
+      loadProducts();
       setOpenDelete(false);
       setDeleteId(null);
     } catch (err) {
@@ -149,12 +162,9 @@ const ProductListPage: React.FC = () => {
     }
   };
 
-  const [categoryOptions] = useState(CATEGORY_OPTIONS);
-  const [categories, setCategories] = useState<string[]>([]);
-
-  const [openExport, setOpenExport] = useState(false);
-  const toggleExportDropdown = () => setOpenExport((prev) => !prev);
-  const closeExportDropdown = () => setOpenExport(false);
+  /* ========================
+     Load Products (API Pagination)
+  ========================= */
 
   const loadProducts = useCallback(async () => {
     try {
@@ -162,6 +172,8 @@ const ProductListPage: React.FC = () => {
       setError(null);
 
       const res = await fetchProducts({
+        page,
+        limit: pageSize,
         search,
         category: categories.join(","),
       });
@@ -174,10 +186,8 @@ const ProductListPage: React.FC = () => {
           imageUrl: p.image,
           code: p.product_code,
           productName: p.product_name,
-
-          category, // logic
-          categoryLabel: PRODUCT_CATEGORY_LABEL[category], // display
-
+          category,
+          categoryLabel: PRODUCT_CATEGORY_LABEL[category],
           typeOrStone: p.type_stone,
           size: p.size,
           metal: p.metal,
@@ -187,20 +197,26 @@ const ProductListPage: React.FC = () => {
       });
 
       setRows(mapped);
+      setTotal(res.total_record);
+      setTotalPages(res.total_page);
     } catch (err) {
       console.error("Failed to load products", err);
     } finally {
       setLoading(false);
     }
-  }, [search, categories]); // dependencies ของฟังก์ชัน
+  }, [search, categories, page, pageSize]);
 
+  /* Reload when page / size / filter changes */
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
 
+  /* ========================
+     Render
+  ========================= */
+
   return (
     <div className="w-full h-full">
-      {/* top blue bar */}
       <div className="w-full max-w-[1690px] mx-auto flex flex-col min-h-0">
         <h2 className="text-2xl font-normal text-[#06284B] mb-6">
           Product List
@@ -210,8 +226,14 @@ const ProductListPage: React.FC = () => {
           categories={categories}
           categoryOptions={categoryOptions}
           search={search}
-          onChangeCategories={setCategories}
-          onChangeSearch={setSearch}
+          onChangeCategories={(value) => {
+            setCategories(value);
+            setPage(1);
+          }}
+          onChangeSearch={(value) => {
+            setSearch(value);
+            setPage(1);
+          }}
           onPrint={() => console.log("print")}
           openExport={openExport}
           onToggleExport={handleMainExportClick}
@@ -233,10 +255,21 @@ const ProductListPage: React.FC = () => {
           </div>
         )}
 
-        <div className="mt-6 rounded-[6px] border border-[#E7EDF6] bg-white overflow-hidden">
+        <div className="mt-6 rounded-md border bg-white overflow-hidden shadow-sm">
           <ProductTable
-            rows={rows.slice(0, rowsPerPage)}
+            rows={rows}
             loading={loading}
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            totalPages={totalPages}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
             selectIds={selectedProductIds}
             onSelectionChange={setSelectedProductIds}
             onRowClick={handleRowClick}
@@ -252,15 +285,14 @@ const ProductListPage: React.FC = () => {
           />
         </div>
       </div>
+
       {openProductModal && selectedProductId && (
         <ProductModal
           open={openProductModal}
           productId={selectedProductId}
           mode={modalMode}
           onClose={() => setOpenProductModal(false)}
-          onSaved={() => {
-            loadProducts(); // รีเฟรชตาราง
-          }}
+          onSaved={loadProducts}
         />
       )}
     </div>

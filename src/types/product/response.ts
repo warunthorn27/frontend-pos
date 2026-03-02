@@ -22,8 +22,13 @@ export type ProductListItem = {
 };
 
 export type ProductListResponse = {
+  success: boolean;
+  count: number;
+  total_record: number;
+  total_page: number;
+  current_page: number;
+  limit: number;
   data: ProductListItem[];
-  total: number;
 };
 
 // ใช้กับ fetchAccessoryMaster()
