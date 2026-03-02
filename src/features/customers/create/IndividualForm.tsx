@@ -52,11 +52,12 @@ const IndividualForm: React.FC<Props> = ({ value, onChange }) => {
             />
           </FormField>
 
-          <CustomDatePicker
-            label="Birthday"
-            value={value.birthday}
-            onChange={(val) => update("birthday", val)}
-          />
+          <FormField label="Birthday">
+            <CustomDatePicker
+              value={value.birthday}
+              onChange={(val) => update("birthday", val)}
+            />
+          </FormField>
         </div>
       </div>
     </LocalizationProvider>

@@ -305,15 +305,14 @@ const CustomerDetailModal: React.FC<Props> = ({
                           <Input
                             value={
                               editData.customer_date
-                                ? editData.customer_date.slice(0, 10) // ตัด T00:00:00.000Z
+                                ? editData.customer_date.slice(0, 10)
                                 : ""
                             }
                             disabled
                           />
                         ) : (
                           <DatePicker
-                            label=""
-                            value={editData.customer_date || ""} // string YYYY-MM-DD
+                            value={editData.customer_date || ""}
                             onChange={(date) =>
                               updateField("customer_date", date)
                             }
