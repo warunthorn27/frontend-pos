@@ -5,7 +5,6 @@ import NextIcon from "../../assets/svg/next.svg?react";
 import RemoveIcon from "../../assets/svg/remove.svg?react";
 
 interface Props {
-  label: string;
   value?: string; // YYYY-MM-DD
   onChange?: (date: string) => void;
 }
@@ -45,7 +44,7 @@ function isSameDay(a: Date, b: Date) {
   );
 }
 
-const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
+const DatePicker: React.FC<Props> = ({ value, onChange }) => {
   const today = new Date();
 
   const initialDate = value ? new Date(value) : today;
@@ -142,8 +141,6 @@ const DatePicker: React.FC<Props> = ({ label, value, onChange }) => {
 
   return (
     <div ref={containerRef} className="w-full relative">
-      <label className="block text-base mb-2">{label}</label>
-
       {/* Input */}
       <button
         type="button"

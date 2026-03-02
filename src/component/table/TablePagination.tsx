@@ -9,6 +9,7 @@ type Props = {
   totalPages: number;
   startIndex: number;
   endIndex: number;
+  leftContent?: React.ReactNode;
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
 };
@@ -20,6 +21,7 @@ export default function TablePagination({
   totalPages,
   startIndex,
   endIndex,
+  leftContent,
   onPageChange,
   onPageSizeChange,
 }: Props) {
@@ -27,16 +29,20 @@ export default function TablePagination({
   const isNextDisabled = page === totalPages || totalPages === 0;
 
   return (
-    <div className="flex items-center justify-end gap-6 px-4 py-3 border-t text-sm text-[#545454]">
+    <div className="flex items-center justify-between px-6 py-3 border-t text-sm text-[#545454]">
+      {/* LEFT SIDE (optional) */}
+      <div className="min-w-[180px]">{leftContent}</div>
+
       {/* Rows per page */}
       <div className="flex items-center gap-4">
-        <span>Rows per page:</span>
+        <div className="flex items-center gap-4">
+          <span>Rows per page:</span>
 
-        <div className="relative">
-          <select
-            value={pageSize}
-            onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="
+          <div className="relative">
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="
               appearance-none
               border
               rounded-md
@@ -50,15 +56,14 @@ export default function TablePagination({
               focus-within:border-[#005AA7]
               transition
             "
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
+            >
+              <option value={10}>10</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
 
-          <DropdownIcon
-            className="
+            <DropdownIcon
+              className="
               pointer-events-none
               absolute
               right-2
@@ -68,42 +73,43 @@ export default function TablePagination({
               h-4
               text-gray-500
             "
-          />
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Showing range */}
-      <div>
-        {total === 0 ? "0-0 of 0" : `${startIndex}–${endIndex} of ${total}`}
-      </div>
+        {/* Showing range */}
+        <div>
+          {total === 0 ? "0-0 of 0" : `${startIndex}–${endIndex} of ${total}`}
+        </div>
 
-      {/* Pagination buttons */}
-      <div className="flex gap-2">
-        <button
-          disabled={isPrevDisabled}
-          onClick={() => {
-            if (!isPrevDisabled) onPageChange(page - 1);
-          }}
-          className={`
+        {/* Pagination buttons */}
+        <div className="flex gap-2">
+          <button
+            disabled={isPrevDisabled}
+            onClick={() => {
+              if (!isPrevDisabled) onPageChange(page - 1);
+            }}
+            className={`
             transition
             ${isPrevDisabled ? "opacity-40 cursor-not-allowed" : ""}
           `}
-        >
-          <PreviousIcon className="w-6 h-6" />
-        </button>
+          >
+            <PreviousIcon className="w-6 h-6" />
+          </button>
 
-        <button
-          disabled={isNextDisabled}
-          onClick={() => {
-            if (!isNextDisabled) onPageChange(page + 1);
-          }}
-          className={`
+          <button
+            disabled={isNextDisabled}
+            onClick={() => {
+              if (!isNextDisabled) onPageChange(page + 1);
+            }}
+            className={`
             transition
             ${isNextDisabled ? "opacity-40 cursor-not-allowed" : ""}
           `}
-        >
-          <NextIcon className="w-6 h-6" />
-        </button>
+          >
+            <NextIcon className="w-6 h-6" />
+          </button>
+        </div>
       </div>
     </div>
   );

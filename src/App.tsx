@@ -33,7 +33,7 @@ import InventorySemiMountPage from "./features/inventory/semi-mount/InventorySem
 import InventoryProductMasterPage from "./features/inventory/product-master/InventoryProductMasterPage";
 import InventoryStoneDiamondPage from "./features/inventory/stone-diamond/InventoryStoneDiamondPage";
 import PosLayout from "./layouts/PosLayout";
-import PosHomePage from "./features/pos/page/PosHomePage";
+import PosHomePage from "./features/pos/page/home-page/PosHomePage";
 
 function CompanyPageRoute() {
   const { currentUser, onCompanyCreated } =

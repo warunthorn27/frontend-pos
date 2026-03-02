@@ -4,8 +4,8 @@ export type SortDirection = "asc" | "desc";
 
 export type Column<T> = {
   key: keyof T;
-  header: string;
-  width?: string;
+  header: React.ReactNode;
+  width?: number | string;
   sortable?: boolean;
   filterable?: boolean;
   render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
