@@ -52,7 +52,7 @@ export default function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-6 py-6 text-center text-gray-400"
+                  className="px-6 py-6 text-center text-gray-400 font-light text-sm"
                 >
                   No data available
                 </td>
