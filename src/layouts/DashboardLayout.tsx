@@ -133,7 +133,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     ];
 
     const inventoryChildren = [
-      { id: "inventory:master", label: "Inventory Master", disabled: lock },
+      { id: "inventory:master", label: "Product Master", disabled: lock },
       { id: "inventory:stone", label: "Stone/Diamond", disabled: lock },
       { id: "inventory:semi", label: "Semi-mount", disabled: lock },
       { id: "inventory:accessories", label: "Accessories", disabled: lock },
