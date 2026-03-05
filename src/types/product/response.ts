@@ -167,3 +167,82 @@ export type FormattedProductResponse = {
 
   file?: string[];
 };
+
+export type BackendProductDetail = {
+  _id: string;
+  is_active: boolean;
+  product_name: string;
+  code: string;
+  description?: string;
+
+  category: {
+    _id: string;
+    name: string;
+  };
+
+  item_type?: {
+    _id: string;
+    name: string;
+  };
+
+  product_size?: string;
+
+  metal?: {
+    _id: string;
+    name: string;
+  };
+
+  metal_color?: {
+    _id: string;
+    name: string;
+  };
+
+  weight?: number;
+  gross_weight?: number;
+  net_weight?: number;
+  unit?: "g" | "cts";
+
+  primary_stone?: {
+    stone_name?: { _id: string; master_name: string };
+    shape?: { _id: string; master_name: string };
+    size?: string;
+    weight?: number;
+    unit?: "g" | "cts";
+    color?: string;
+    cutting?: { _id: string; master_name: string };
+    quality?: { _id: string; master_name: string };
+    clarity?: { _id: string; master_name: string };
+  };
+
+  additional_stones?: Array<{
+    stone_name?: { _id: string; master_name: string };
+    shape?: { _id: string; master_name: string };
+    size?: string;
+    weight?: number;
+    unit?: "g" | "cts";
+    color?: string;
+    cutting?: { _id: string; master_name: string };
+    quality?: { _id: string; master_name: string };
+    clarity?: { _id: string; master_name: string };
+  }>;
+
+  related_accessories?: Array<{
+    product_id: {
+      _id: string;
+      product_name: string;
+      product_code: string;
+      product_detail_id?: {
+        unit: "g" | "cts";
+        weight: number;
+      };
+    };
+
+    weight?: number;
+    unit?: "g" | "cts";
+    size?: string;
+    metal?: string | { _id: string; master_name: string };
+    description?: string;
+  }>;
+
+  file?: string[];
+};
