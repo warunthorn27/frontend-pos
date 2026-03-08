@@ -2,20 +2,25 @@ import SearchIcon from "../../assets/svg/search.svg?react";
 import PrintIcon from "../../assets/svg/print.svg?react";
 import ExportIcon from "../../assets/svg/file-x.svg?react";
 import PlusIcon from "../../assets/svg/plus.svg?react";
+import StatusFilter from "./filter/StatusFilter";
+import MasterSelect from "../masterData/MasterSelect";
+import type { SelectOption } from "../../types/shared/select";
+import DateRangePicker from "./DateRangePicker";
 
 type Props = {
   search?: string;
   onSearchChange?: (value: string) => void;
 
-  dateRange?: string;
-  onDateRangeChange?: (value: string) => void;
+  startDate?: string;
+  endDate?: string;
+  onDateRangeChange?: (start: string, end: string) => void;
 
   status?: string;
-  onStatusChange?: (value: string) => void;
+  onStatusChange?: (value?: string) => void;
 
-  category?: string;
-  onCategoryChange?: (value: string) => void;
-
+  category?: string[];
+  categoryOptions?: SelectOption[];
+  onCategoryChange?: (values: string[]) => void;
   showCategory?: boolean;
 
   addLabel?: string;
@@ -28,11 +33,13 @@ type Props = {
 export default function ListToolbar({
   search,
   onSearchChange,
-  dateRange,
+  startDate,
+  endDate,
   onDateRangeChange,
   status,
   onStatusChange,
   category,
+  categoryOptions,
   onCategoryChange,
   showCategory = false,
   addLabel,
@@ -59,40 +66,28 @@ export default function ListToolbar({
 
         {/* DATE RANGE */}
         {onDateRangeChange && (
-          <input
-            type="text"
-            value={dateRange || ""}
-            onChange={(e) => onDateRangeChange(e.target.value)}
-            placeholder="MM/DD/YYYY - MM/DD/YYYY"
-            className="h-[40px] px-3 border border-[#CFCFCF] rounded-md text-sm font-light w-[250px]"
-          />
+          <div className="w-[300px]">
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              onChange={onDateRangeChange}
+            />
+          </div>
         )}
 
         {/* CATEGORY (เฉพาะ All Page) */}
-        {showCategory && onCategoryChange && (
-          <select
-            value={category}
-            onChange={(e) => onCategoryChange(e.target.value)}
-            className="h-[40px] px-3 border border-[#CFCFCF] rounded-md text-sm font-light w-[180px] bg-white"
-          >
-            <option value="">Category</option>
-            <option value="diamond">Diamond</option>
-            <option value="semi-mount">Semi-Mount</option>
-            <option value="accessories">Accessories</option>
-          </select>
+        {showCategory && onCategoryChange && categoryOptions && (
+          <MasterSelect
+            values={category || []}
+            options={categoryOptions}
+            onChange={onCategoryChange}
+            placeholder="Category"
+          />
         )}
 
         {/* STATUS */}
         {onStatusChange && (
-          <select
-            value={status}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="h-[40px] px-3 border border-[#CFCFCF] rounded-md text-sm font-light w-[150px] bg-white"
-          >
-            <option value="">Status</option>
-            <option value="in-stock">In Stock</option>
-            <option value="out-of-stock">Out of Stock</option>
-          </select>
+          <StatusFilter value={status} onChange={onStatusChange} />
         )}
       </div>
 
