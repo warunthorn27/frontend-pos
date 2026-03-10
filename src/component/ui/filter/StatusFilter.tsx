@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DropdownArrowIcon from "../../../assets/svg/dropdown-arrow2.svg?react";
 import CloseIcon from "../../../assets/svg/close.svg?react";
 
@@ -11,14 +11,32 @@ const options = ["All", "In Stock", "Out of Stock"];
 
 export default function StatusFilter({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (status: string) => {
     onChange(status);
     setOpen(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative w-[180px]">
+    <div ref={dropdownRef} className="relative w-[180px]">
       <button
         onClick={() => setOpen(!open)}
         className={`w-full h-[40px] rounded-md px-3 flex items-center justify-between
