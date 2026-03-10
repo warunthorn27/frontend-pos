@@ -91,3 +91,54 @@ export function toSelectedPermissionIds(
   }
   return ids;
 }
+
+export function idsToChecksByMenu(
+  permissionIds: unknown[],
+  catalog: PermissionCatalog,
+  menus: string[]
+): PermissionChecksByMenu {
+  const checks: PermissionChecksByMenu = {};
+
+  // 1. Init clean state for all menus
+  for (const m of menus) {
+    checks[m] = {
+      all: false,
+      view: false,
+      add: false,
+      update: false,
+      delete: false,
+      print: false,
+      export: false,
+    };
+  }
+
+  // 2. Build reverse lookup map
+  const idToMeta = new Map<string, { menu: string; action: PermissionAction }>();
+  for (const [menu, acts] of Object.entries(catalog)) {
+    for (const [actionName, permDTO] of Object.entries(acts)) {
+      const act = actionName as PermissionAction;
+      if (ACTIONS.includes(act) && permDTO?._id) {
+        idToMeta.set(permDTO._id, { menu, action: act });
+      }
+    }
+  }
+
+  // 3. Apply checks from IDs
+  for (const p of permissionIds || []) {
+    // Handle both string ID or object with _id
+    const id = typeof p === 'string' ? p : p?._id;
+    if (!id) continue;
+
+    const meta = idToMeta.get(id);
+    if (meta && checks[meta.menu]) {
+      checks[meta.menu][meta.action] = true;
+    }
+  }
+
+  // 4. Recompute 'all' flag
+  for (const m of menus) {
+    checks[m] = recomputeAll(checks[m]);
+  }
+
+  return checks;
+}

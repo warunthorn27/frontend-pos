@@ -147,22 +147,58 @@ export async function createUser(
 
 /* UPDATE */
 
+// export async function updateUserByAdmin(
+//   id: string,
+//   payload: UserFormInput,
+// ): Promise<UserListItem> {
+//   const body: UpdateUserRequest = {
+//     user_name: payload.username,
+//     permissions: payload.permissions,
+//     status: payload.status === "active",
+//     user_role: "User",
+//   };
+
+//   const email = payload.email?.trim();
+//   const phone = payload.phone?.trim();
+
+//   if (email) body.user_email = email;
+//   if (phone) body.user_phone = phone;
+
+//   const res = await fetch(`${API_BASE}/update-user-byadmin/${id}`, {
+//     method: "PUT",
+//     headers: {
+//       ...getAuthHeaders(),
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(body),
+//   });
+
+//   const json = await readJson<UserModel>(res);
+
+//   if (!json.success || !json.data) {
+//     throw new Error(json.error || json.message || "Update user failed");
+//   }
+
+//   return mapUserToListItem(json.data);
+// }
+
 export async function updateUserByAdmin(
   id: string,
   payload: UserFormInput,
 ): Promise<UserListItem> {
   const body: UpdateUserRequest = {
     user_name: payload.username,
-    permissions: payload.permissions,
+    permissions: payload.permissions, 
     status: payload.status === "active",
-    user_role: "User",
+    user_role: "User", 
   };
 
-  const email = payload.email?.trim();
-  const phone = payload.phone?.trim();
-
-  if (email) body.user_email = email;
-  if (phone) body.user_phone = phone;
+  if (payload.email !== undefined) {
+    body.user_email = payload.email.trim();
+  }
+  if (payload.phone !== undefined) {
+    body.user_phone = payload.phone.trim();
+  }
 
   const res = await fetch(`${API_BASE}/update-user-byadmin/${id}`, {
     method: "PUT",

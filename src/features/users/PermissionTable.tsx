@@ -36,14 +36,14 @@ type PermissionRowProps = {
 
 type MenuNode =
   | {
-      type: "group";
-      parent: string;
-      children: { key: string; label: string }[];
-    }
+    type: "group";
+    parent: string;
+    children: { key: string; label: string }[];
+  }
   | {
-      type: "single";
-      menu: string;
-    };
+    type: "single";
+    menu: string;
+  };
 
 //  2. CONSTANTS (STATIC DATA)
 const PRODUCT_MENU_MAPPING = [
@@ -55,14 +55,33 @@ const PRODUCT_MENU_MAPPING = [
   { key: "Product List", label: "Product List" },
 ];
 
+const INVENTORY_MENU_MAPPING = [
+  { key: "Inventory-P", label: "Inventory-Product" },
+  { key: "Inventory-SM", label: "Inventory-Semi-Mount" },
+  { key: "Inventory-SD", label: "Inventory-Stone/Diamond" },
+  { key: "Inventory-A", label: "Inventory-Accessories" },
+  { key: "Inventory-O", label: "Inventory-Others" },
+];
+
 //   3. HELPERS / DATA BUILDERS - ทำหน้าที่แปลงข้อมูล
 function buildMenuTree(menus: string[]): MenuNode[] {
   const productChildren = PRODUCT_MENU_MAPPING.filter((m) =>
     menus.includes(m.key),
   );
 
+  const inventoryChildren = INVENTORY_MENU_MAPPING.filter((m) =>
+    menus.includes(m.key),
+  );
+
   const productKeys = productChildren.map((m) => m.key);
-  const otherMenus = menus.filter((m) => !productKeys.includes(m));
+  const inventoryKeys = inventoryChildren.map((m) => m.key);
+  const otherMenus = menus.filter((m) => {
+    if (productKeys.includes(m)) return false;
+    if (inventoryKeys.includes(m)) return false;
+    if (m === "Product" && productChildren.length > 0) return false;
+    if (m === "Inventory" && inventoryChildren.length > 0) return false;
+    return true;
+  });
 
   const result: MenuNode[] = [];
 
@@ -71,6 +90,14 @@ function buildMenuTree(menus: string[]): MenuNode[] {
       type: "group",
       parent: "Product",
       children: productChildren,
+    });
+  }
+
+  if (inventoryChildren.length > 0) {
+    result.push({
+      type: "group",
+      parent: "Inventory",
+      children: inventoryChildren,
     });
   }
 
@@ -109,18 +136,16 @@ function PermissionRow({
       {/* MENU CELL */}
       <td className="px-6 py-4">
         <div
-          className={`flex items-center gap-2 ${
-            isParent ? "cursor-pointer select-none" : ""
-          }`}
+          className={`flex items-center gap-2 ${isParent ? "cursor-pointer select-none" : ""
+            }`}
           onClick={isParent ? onToggleExpand : undefined}
         >
           <span className="font-light text-base text-[#06284B]">{label}</span>
 
           {isParent && (
             <DropdownArrowIcon
-              className={`w-5 h-5 transition-transform duration-200 ${
-                isExpanded ? "rotate-90" : "rotate-0"
-              }`}
+              className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? "rotate-90" : "rotate-0"
+                }`}
             />
           )}
         </div>
@@ -211,8 +236,8 @@ export default function PermissionTable({
       </h2>
 
       {/* TABLE + SCROLL */}
-      <div className="relative min-h-0 border border-[#E5E7EB] rounded-md bg-[#F9FAFB] shadow-sm">
-        <div className="h-full overflow-y-auto hide-scrollbar">
+      <div className="relative flex-1 min-h-0 border border-[#E5E7EB] rounded-md bg-[#F9FAFB] shadow-sm overflow-hidden">
+        <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
           <table className="w-full text-left table-auto">
             {/* HEADER */}
             <thead className="sticky top-0 z-10 bg-[#F1F1F1]">

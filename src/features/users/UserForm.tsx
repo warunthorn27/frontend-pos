@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PermissionTable from "./PermissionTable";
+import ConfirmDialog from "../../component/dialog/ConfirmDialog";
 import type {
   PermissionChecksByMenu,
   PermissionAction,
@@ -93,6 +94,7 @@ type Props = {
   onCancel: () => void;
   isSubmitting?: boolean;
   mode?: "view" | "edit" | "create";
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 const UserForm: React.FC<Props> = ({
@@ -103,6 +105,7 @@ const UserForm: React.FC<Props> = ({
   onCancel,
   isSubmitting = false,
   mode = "edit",
+  onDirtyChange,
 }) => {
   const isEdit = mode === "edit";
   const isView = mode === "view";
@@ -122,7 +125,7 @@ const UserForm: React.FC<Props> = ({
   const [active, setActive] = useState(initialValues?.active ?? true);
   const [password, setPassword] = useState("");
   const [passwordGenerated, setPasswordGenerated] = useState(false);
-  const [hasChanges, setHasChanges] = useState<boolean>(false);
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
 
   /* ---------- password generator ---------- */
 
@@ -142,7 +145,6 @@ const UserForm: React.FC<Props> = ({
 
     setPassword(newPassword);
     setPasswordGenerated(true);
-    markAsChanged();
   };
 
   /* ---------- permissions ---------- */
@@ -153,6 +155,8 @@ const UserForm: React.FC<Props> = ({
     menus.forEach((m) => (init[m] = defaultChecks()));
     return init;
   });
+
+
 
   const [sendPasswordEmail, setSendPasswordEmail] = useState(false);
 
@@ -195,7 +199,6 @@ const UserForm: React.FC<Props> = ({
 
       return { ...prev, [menu]: next };
     });
-    markAsChanged();
   };
 
   /* ---------- validation ---------- */
@@ -211,7 +214,6 @@ const UserForm: React.FC<Props> = ({
 
   const disableSave =
     isSubmitting ||
-    !hasChanges ||
     (isCreate && !isValidRequired) ||
     Boolean(phoneError);
 
@@ -260,8 +262,12 @@ const UserForm: React.FC<Props> = ({
     }
   };
 
-  const markAsChanged = (): void => {
-    setHasChanges(true);
+  const handleCancelClick = () => {
+    if (mode !== "view") {
+      setShowDiscardDialog(true);
+    } else {
+      onCancel();
+    }
   };
 
   return (
@@ -288,7 +294,6 @@ const UserForm: React.FC<Props> = ({
                   disabled={isView}
                   onChange={(checked) => {
                     setActive(checked);
-                    markAsChanged();
                   }}
                 />
                 <span className="text-sm">
@@ -307,7 +312,6 @@ const UserForm: React.FC<Props> = ({
                         value={username}
                         onChange={(v) => {
                           setUsername(v);
-                          markAsChanged();
                         }}
                       />
                     )}
@@ -361,7 +365,6 @@ const UserForm: React.FC<Props> = ({
                         value={email}
                         onChange={(v) => {
                           setEmail(v);
-                          markAsChanged();
                         }}
                       />
                     )}
@@ -379,11 +382,9 @@ const UserForm: React.FC<Props> = ({
                           country={country}
                           onCountryChange={(c) => {
                             setCountry(c);
-                            markAsChanged();
                           }}
                           onChange={(e164) => {
                             setPhone(e164);
-                            markAsChanged();
                           }}
                         />
 
@@ -426,7 +427,7 @@ const UserForm: React.FC<Props> = ({
               <div className="sticky bottom-0 z-10 bg-[#FAFAFA] py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
                 <button
                   type="button"
-                  onClick={onCancel}
+                  onClick={handleCancelClick}
                   className="w-24 px-4 py-[6px] rounded-md bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black"
                 >
                   Cancel
@@ -436,11 +437,10 @@ const UserForm: React.FC<Props> = ({
                   type="submit"
                   disabled={disableSave}
                   className={`w-24 px-4 py-[6px] rounded-md text-base font-normal
-                  ${
-                    disableSave
+                  ${disableSave
                       ? "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed"
                       : "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
-                  }
+                    }
                 `}
                 >
                   Save
@@ -450,6 +450,22 @@ const UserForm: React.FC<Props> = ({
           </form>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showDiscardDialog}
+        title="Cancel"
+        message={
+          <>
+            Are you sure you want to{" "}
+            <span className="text-red-500">Cancel</span> ?
+          </>
+        }
+        onCancel={() => setShowDiscardDialog(false)}
+        onConfirm={() => {
+          setShowDiscardDialog(false);
+          onCancel();
+        }}
+      />
     </div>
   );
 };
