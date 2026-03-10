@@ -21,6 +21,7 @@ import PlusIcon from "../../../assets/svg/plus.svg?react";
 import GenderDropdown from "./GenderDropdown";
 import DatePicker from "../../../component/ui/Datepicker";
 import { formatDateDisplay } from "../../../utils/date";
+import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
 
 type Props = {
   open: boolean;
@@ -53,6 +54,7 @@ const CustomerDetailModal: React.FC<Props> = ({
   const [addingTaxInvoice, setAddingTaxInvoice] = useState(false);
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>("TH");
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   /* sync data → edit state */
   // React.useEffect(() => {
@@ -196,7 +198,10 @@ const CustomerDetailModal: React.FC<Props> = ({
               </button>
             )}
 
-            <button onClick={onClose}>
+            <button onClick={() => {
+              if (mode === "edit") setShowCancelDialog(true);
+              else onClose();
+            }}>
               <RemoveIcon className="w-5 h-5" />
             </button>
           </div>
@@ -213,7 +218,7 @@ const CustomerDetailModal: React.FC<Props> = ({
               label={editData.business_type}
               value={editData.business_type}
               checked
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </div>
 
@@ -459,7 +464,7 @@ const CustomerDetailModal: React.FC<Props> = ({
                       zipcode: editData.tax_addr?.zipcode || "",
                     },
                   }}
-                  onAdd={() => {}}
+                  onAdd={() => { }}
                   onRemove={() => {
                     setAddingTaxInvoice(false);
 
@@ -480,14 +485,14 @@ const CustomerDetailModal: React.FC<Props> = ({
 
                           ...(field === "companyName"
                             ? {
-                                tax_addr: {
-                                  ...prev.tax_addr,
-                                  company_name: value,
-                                },
-                              }
+                              tax_addr: {
+                                ...prev.tax_addr,
+                                company_name: value,
+                              },
+                            }
                             : {
-                                customer_tax_id: value,
-                              }),
+                              customer_tax_id: value,
+                            }),
                         },
                     )
                   }
@@ -518,7 +523,7 @@ const CustomerDetailModal: React.FC<Props> = ({
             <>
               <button
                 className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
-                onClick={onClose}
+                onClick={() => setShowCancelDialog(true)}
               >
                 Cancel
               </button>
@@ -536,6 +541,15 @@ const CustomerDetailModal: React.FC<Props> = ({
           </div>
         )}
       </div>
+
+      <DiscardChangesDialog
+        open={showCancelDialog}
+        onClose={() => setShowCancelDialog(false)}
+        onConfirm={() => {
+          setShowCancelDialog(false);
+          onClose();
+        }}
+      />
     </div>
   );
 };

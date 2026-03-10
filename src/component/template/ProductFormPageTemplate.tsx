@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type {
   BaseProductForm,
   PrimaryStoneForm,
@@ -12,6 +12,7 @@ import ProductImagesCard from "./media/ProductImagesCard";
 import PrimaryStoneSection from "./sections/PrimaryStoneSection";
 import AccessoriesSection from "./sections/AccessoriesSection";
 import ProductInfoSection from "./sections/ProductInfoSection";
+import DiscardChangesDialog from "../dialog/DiscardChangesDialog";
 
 type Props = {
   title: string;
@@ -71,6 +72,7 @@ const ProductFormPageTemplate: React.FC<Props> = ({
   onSave,
 }) => {
   const isView = mode === "view";
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   return (
     <div className="w-full h-full flex flex-col min-h-0">
@@ -138,7 +140,7 @@ const ProductFormPageTemplate: React.FC<Props> = ({
             <button
               type="button"
               className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
-              onClick={onCancel}
+              onClick={() => setShowCancelDialog(true)}
             >
               Cancel
             </button>
@@ -159,6 +161,15 @@ const ProductFormPageTemplate: React.FC<Props> = ({
           </div>
         </div>
       </div>
+
+      <DiscardChangesDialog
+        open={showCancelDialog}
+        onClose={() => setShowCancelDialog(false)}
+        onConfirm={() => {
+          setShowCancelDialog(false);
+          onCancel();
+        }}
+      />
     </div>
   );
 };

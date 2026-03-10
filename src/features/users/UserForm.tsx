@@ -105,7 +105,6 @@ const UserForm: React.FC<Props> = ({
   onCancel,
   isSubmitting = false,
   mode = "edit",
-  onDirtyChange,
 }) => {
   const isEdit = mode === "edit";
   const isView = mode === "view";

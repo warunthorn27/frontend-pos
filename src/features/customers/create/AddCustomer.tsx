@@ -20,6 +20,7 @@ import Input from "../../../component/ui/form/Input";
 import CountryPhoneInput, {
   type CountryCode,
 } from "../../../component/phoneInput/CountryPhoneInput";
+import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
 
 interface AddCustomerProps {
   country: CountryCode;
@@ -74,6 +75,7 @@ const AddCustomer: React.FC<AddCustomerProps> = ({
     taxId: "",
     address: { ...emptyAddress },
   });
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const switchType = (type: BusinessType) => {
     setBusinessType(type);
@@ -308,7 +310,7 @@ const AddCustomer: React.FC<AddCustomerProps> = ({
         {/* Footer (Sticky)*/}
         <div className="py-4 border-[#E6E6E6] flex justify-center gap-4 bg-[#FAFAFA]  rounded-b-lg">
           <button
-            onClick={onCancel}
+            onClick={() => setShowCancelDialog(true)}
             className="w-24 px-4 py-[6px] rounded-md bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black"
           >
             Cancel
@@ -333,13 +335,13 @@ const AddCustomer: React.FC<AddCustomerProps> = ({
 
                 taxInvoice: showTaxInvoice
                   ? {
-                      companyName: taxInvoiceForm.companyName,
-                      taxId: taxInvoiceForm.taxId,
-                      address: useSameAddress
-                        ? form.address
-                        : taxInvoiceForm.address,
-                      useSameAddress,
-                    }
+                    companyName: taxInvoiceForm.companyName,
+                    taxId: taxInvoiceForm.taxId,
+                    address: useSameAddress
+                      ? form.address
+                      : taxInvoiceForm.address,
+                    useSameAddress,
+                  }
                   : null,
               });
             }}
@@ -349,6 +351,15 @@ const AddCustomer: React.FC<AddCustomerProps> = ({
           </button>
         </div>
       </div>
+
+      <DiscardChangesDialog
+        open={showCancelDialog}
+        onClose={() => setShowCancelDialog(false)}
+        onConfirm={() => {
+          setShowCancelDialog(false);
+          onCancel();
+        }}
+      />
     </div>
   );
 };

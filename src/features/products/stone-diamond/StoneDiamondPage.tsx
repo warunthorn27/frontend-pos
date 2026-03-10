@@ -8,6 +8,7 @@ import {
   updateStoneDiamond,
 } from "../../../services/product";
 import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
+import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
 
 const emptyStoneDiamondForm: StoneDiamondForm = {
   active: true,
@@ -31,6 +32,7 @@ const StoneDiamondPage: React.FC = () => {
   const isEdit = Boolean(id);
   const [form, setForm] = useState<StoneDiamondForm>(emptyStoneDiamondForm);
   const [images, setImages] = useState<File[]>([]);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const {
     stoneNameOptions,
@@ -141,10 +143,7 @@ const StoneDiamondPage: React.FC = () => {
             <button
               type="button"
               className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
-              onClick={() => {
-                setForm(emptyStoneDiamondForm);
-                setImages([]);
-              }}
+              onClick={() => setShowCancelDialog(true)}
             >
               Cancel
             </button>
@@ -165,6 +164,16 @@ const StoneDiamondPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <DiscardChangesDialog
+        open={showCancelDialog}
+        onClose={() => setShowCancelDialog(false)}
+        onConfirm={() => {
+          setShowCancelDialog(false);
+          setForm(emptyStoneDiamondForm);
+          setImages([]);
+        }}
+      />
     </div>
   );
 };

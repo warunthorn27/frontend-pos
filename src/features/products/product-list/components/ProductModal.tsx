@@ -35,6 +35,7 @@ import EditIcon from "../../../../assets/svg/edit.svg?react";
 import { useProductMasters } from "../../hooks/useProductMasters";
 import { isObjectId } from "../../../../utils/isObjectId";
 import { createMaster } from "../../../../services/master";
+import DiscardChangesDialog from "../../../../component/dialog/DiscardChangesDialog";
 
 type Props = {
   open: boolean;
@@ -74,6 +75,7 @@ const ProductModal: React.FC<Props> = ({
   const [realCategory, setRealCategory] = useState<ProductCategory | null>(
     null,
   );
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const {
     loading,
@@ -481,102 +483,120 @@ const ProductModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
-        <div
-          className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-t-lg shadow-lg 
+    <>
+      <Modal open={open} onClose={onClose}>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+          <div
+            className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-t-lg shadow-lg 
           grid grid-rows-[auto_1fr_auto]"
-        >
-          {/* LOADING OVERLAY */}
-          {loading && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70">
-              <div className="animate-pulse text-lg text-gray-600">
-                Loading product data...
+          >
+            {/* LOADING OVERLAY */}
+            {loading && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70">
+                <div className="animate-pulse text-lg text-gray-600">
+                  Loading product data...
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* HEADER */}
-          <div className="flex items-center justify-between px-6 py-3 border-b">
-            <h2>
-              {realCategory === "productmaster" && "Product Master"}
-              {realCategory === "semimount" && "Semi-Mount"}
-              {realCategory === "stone" && "Stone / Diamond"}
-              {realCategory === "accessory" && "Accessories"}
-              {realCategory === "others" && "Others"}
-            </h2>
+            {/* HEADER */}
+            <div className="flex items-center justify-between px-6 py-3 border-b">
+              <h2>
+                {realCategory === "productmaster" && "Product Master"}
+                {realCategory === "semimount" && "Semi-Mount"}
+                {realCategory === "stone" && "Stone / Diamond"}
+                {realCategory === "accessory" && "Accessories"}
+                {realCategory === "others" && "Others"}
+              </h2>
 
-            <div className="flex items-center gap-3">
-              {currentMode === "view" && (
-                <button
-                  className="px-3 py-1.5 text-base text-black bg-white border border-[#CFCFCF] 
+              <div className="flex items-center gap-3">
+                {currentMode === "view" && (
+                  <button
+                    className="px-3 py-1.5 text-base text-black bg-white border border-[#CFCFCF] 
                   hover:bg-[#F1F1F1] rounded-md flex items-center gap-2"
-                  onClick={onEdit}
-                >
-                  <EditIcon className="w-5 h-5" />
-                  <span>Edit</span>
-                </button>
-              )}
-
-              <button onClick={onClose}>
-                <RemoveIcon className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* BODY */}
-          <div className="overflow-auto hide-scrollbar bg-[#FAFAFA] p-8">
-            <div className="flex gap-6">
-              {/* LEFT */}
-              <div className="w-[360px] shrink-0 max-sm:w-full">
-                {currentMode === "view" ? (
-                  <div className=" aspect-square rounded-md border border-[#E6E6E6] bg-white px-6 py-5 flex items-center justify-center">
-                    {remoteImages.length > 0 ? (
-                      <RemoteImagesPreview images={remoteImages} />
-                    ) : (
-                      <ProductImage imageUrl={null} />
-                    )}
-                  </div>
-                ) : (
-                  <div className="w-full">
-                    <div className="rounded-md border bg-white px-6 py-5">
-                      <ProductImagesCard
-                        value={localImages}
-                        onChange={setLocalImages}
-                        readonly={false}
-                      />
-                    </div>
-                  </div>
+                    onClick={onEdit}
+                  >
+                    <EditIcon className="w-5 h-5" />
+                    <span>Edit</span>
+                  </button>
                 )}
+
+                <button onClick={() => {
+                  if (currentMode === "edit") {
+                    setShowCancelDialog(true);
+                  } else {
+                    onClose();
+                  }
+                }}>
+                  <RemoveIcon className="w-5 h-5" />
+                </button>
               </div>
-
-              {/* RIGHT */}
-              <div className="flex-1 min-w-0">{renderForm()}</div>
             </div>
+
+            {/* BODY */}
+            <div className="overflow-auto hide-scrollbar bg-[#FAFAFA] p-8">
+              <div className="flex gap-6">
+                {/* LEFT */}
+                <div className="w-[360px] shrink-0 max-sm:w-full">
+                  {currentMode === "view" ? (
+                    <div className=" aspect-square rounded-md border border-[#E6E6E6] bg-white px-6 py-5 flex items-center justify-center">
+                      {remoteImages.length > 0 ? (
+                        <RemoteImagesPreview images={remoteImages} />
+                      ) : (
+                        <ProductImage imageUrl={null} />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <div className="rounded-md border bg-white px-6 py-5">
+                        <ProductImagesCard
+                          value={localImages}
+                          onChange={setLocalImages}
+                          readonly={false}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* RIGHT */}
+                <div className="flex-1 min-w-0">{renderForm()}</div>
+              </div>
+            </div>
+
+            {/* FOOTER */}
+            {currentMode === "edit" && (
+              <div className="flex justify-center gap-4 px-6 py-3 border-t">
+                <>
+                  <button
+                    className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
+                    onClick={() => setShowCancelDialog(true)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="w-24 px-4 py-[6px] bg-[#005AA7] hover:bg-[#084072] text-white text-base rounded-md"
+                    onClick={onSave}
+                  >
+                    Save
+                  </button>
+                </>
+              </div>
+            )}
           </div>
-
-          {/* FOOTER */}
-          {currentMode === "edit" && (
-            <div className="flex justify-center gap-4 px-6 py-3 border-t">
-              <>
-                <button
-                  className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="w-24 px-4 py-[6px] bg-[#005AA7] hover:bg-[#084072] text-white text-base rounded-md"
-                  onClick={onSave}
-                >
-                  Save
-                </button>
-              </>
-            </div>
-          )}
         </div>
-      </div>
-    </Modal>
+
+      </Modal>
+
+      <DiscardChangesDialog
+        open={showCancelDialog}
+        onClose={() => setShowCancelDialog(false)}
+        onConfirm={() => {
+          setShowCancelDialog(false);
+          onClose();
+        }}
+      />
+    </>
   );
 };
 
