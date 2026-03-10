@@ -13,6 +13,8 @@ export type Column<T> = {
     label: string;
     value: string | number;
   }[];
+  className?: string;
+  headerClassName?: string;
 };
 
 export type PaginationConfig = {
