@@ -34,6 +34,11 @@ import InventoryProductMasterPage from "./features/inventory/product-master/Inve
 import InventoryStoneDiamondPage from "./features/inventory/stone-diamond/InventoryStoneDiamondPage";
 import PosLayout from "./layouts/PosLayout";
 import PosHomePage from "./features/pos/page/home-page/PosHomePage";
+import PosCustomPage from "./features/pos/page/custom-page/PosCustomPage";
+import PosSellPage from "./features/pos/page/sell-page/PosSellPage";
+import PosRepairPage from "./features/pos/page/repair-page/PosRepairPage";
+import PosInventoryPage from "./features/pos/page/inventory-page/PosInventoryPage";
+import PosReportPage from "./features/pos/page/report-page/PosReportPage";
 
 function CompanyPageRoute() {
   const { currentUser, onCompanyCreated } =
@@ -194,8 +199,11 @@ export default function App() {
         <Route path="/pos" element={<PosLayout />}>
           <Route index element={<PosHomePage />} />
 
-          {/* เผื่ออนาคต */}
-          {/* <Route path="cart" element={<PosCartPage />} /> */}
+          <Route path="sell" element={<PosSellPage />} />
+          <Route path="custom" element={<PosCustomPage />} />
+          <Route path="repair" element={<PosRepairPage />} />
+          <Route path="inventory" element={<PosInventoryPage />} />
+          <Route path="report" element={<PosReportPage />} />
         </Route>
       </Route>
 

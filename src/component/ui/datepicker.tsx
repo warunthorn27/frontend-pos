@@ -3,6 +3,7 @@ import DatePickerIcon from "../../assets/svg/date-picker.svg?react";
 import PreviousIcon from "../../assets/svg/previous.svg?react";
 import NextIcon from "../../assets/svg/next.svg?react";
 import RemoveIcon from "../../assets/svg/remove.svg?react";
+import { formatDateDisplay, formatDateInput } from "../../utils/date";
 
 interface Props {
   value?: string; // YYYY-MM-DD
@@ -28,13 +29,13 @@ const months = [
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function formatDate(date: Date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
+// function formatDate(date: Date) {
+//   const y = date.getFullYear();
+//   const m = String(date.getMonth() + 1).padStart(2, "0");
+//   const d = String(date.getDate()).padStart(2, "0");
 
-  return `${y}-${m}-${d}`;
-}
+//   return `${y}-${m}-${d}`;
+// }
 
 function isSameDay(a: Date, b: Date) {
   return (
@@ -92,7 +93,7 @@ const DatePicker: React.FC<Props> = ({ value, onChange }) => {
 
   function selectDate(date: Date) {
     setSelectedDate(date);
-    onChange?.(formatDate(date));
+    onChange?.(formatDateInput(date));
     setHeaderFocus(null);
     setMode("day");
     setOpen(false);
@@ -110,7 +111,7 @@ const DatePicker: React.FC<Props> = ({ value, onChange }) => {
     setViewDate(d);
   }
 
-  const displayValue = selectedDate ? formatDate(selectedDate) : "";
+  const displayValue = selectedDate ? formatDateDisplay(selectedDate) : "";
 
   function clearDate(e: React.MouseEvent) {
     e.stopPropagation();
@@ -164,7 +165,7 @@ const DatePicker: React.FC<Props> = ({ value, onChange }) => {
         <span
           className={`text-sm ${displayValue ? "text-black" : "text-gray-400"}`}
         >
-          {displayValue || "YYYY-MM-DD"}
+          {displayValue || "DD/MM/YYYY"}
         </span>
 
         <div className="flex items-center gap-2">

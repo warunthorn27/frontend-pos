@@ -20,6 +20,7 @@ import PhoneView from "../../../component/phoneInput/PhoneView";
 import PlusIcon from "../../../assets/svg/plus.svg?react";
 import GenderDropdown from "./GenderDropdown";
 import DatePicker from "../../../component/ui/Datepicker";
+import { formatDateDisplay } from "../../../utils/date";
 
 type Props = {
   open: boolean;
@@ -303,11 +304,7 @@ const CustomerDetailModal: React.FC<Props> = ({
                       <FormField label="Birthday">
                         {isView ? (
                           <Input
-                            value={
-                              editData.customer_date
-                                ? editData.customer_date.slice(0, 10)
-                                : ""
-                            }
+                            value={formatDateDisplay(editData.customer_date)}
                             disabled
                           />
                         ) : (
