@@ -68,7 +68,7 @@ export default function DataTable<T>({
                     <td
                       key={String(col.key)}
                       style={{ width: col.width }}
-                      className="px-6 py-4 overflow-hidden whitespace-nowrap text-ellipsis"
+                      className={`px-6 py-4 overflow-hidden whitespace-nowrap text-ellipsis ${col.className ?? ""}`}
                     >
                       {col.render
                         ? col.render(row[col.key], row, startIndex + idx)

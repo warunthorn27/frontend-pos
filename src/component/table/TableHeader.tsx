@@ -14,9 +14,15 @@ export default function TableHeader<T>({ columns }: Props<T>) {
           <th
             key={String(col.key)}
             style={{ width: col.width }}
-            className="px-6 py-4 text-lg font-normal bg-[#F7F7F7] truncate"
+            className={`px-6 py-4 text-lg font-normal bg-[#F7F7F7] truncate ${col.headerClassName ?? ""}`}
           >
-            <div className="flex items-center gap-2">
+            <div
+              className={`flex items-center gap-2 ${
+                col.headerClassName?.includes("text-right")
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
+            >
               <span className="truncate">{col.header}</span>
               {col.sortable && <TableSort />}
               {col.filterable && <TableFilter />}

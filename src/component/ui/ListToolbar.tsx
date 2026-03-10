@@ -28,6 +28,9 @@ type Props = {
 
   showPrint?: boolean;
   showExport?: boolean;
+
+  align?: "left" | "right";
+  searchPosition?: "first" | "last";
 };
 
 export default function ListToolbar({
@@ -46,36 +49,33 @@ export default function ListToolbar({
   onAddClick,
   showPrint = true,
   showExport = true,
+  align = "left",
+  searchPosition = "first",
 }: Props) {
+  const SearchBox = onSearchChange && (
+    <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[40px] w-[300px] focus-within:border-[#005AA7]">
+      <input
+        value={search || ""}
+        onChange={(e) => onSearchChange(e.target.value)}
+        className="flex-1 bg-transparent text-sm font-light outline-none"
+        placeholder="Search"
+      />
+      <SearchIcon className="w-5 h-5 text-gray-400" />
+    </div>
+  );
+
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div
+      className={`flex items-center mb-6 ${
+        align === "right" ? "justify-end" : "justify-between"
+      }`}
+    >
       {/* LEFT */}
       <div className="flex gap-3 items-center">
         {/* SEARCH */}
-        {onSearchChange && (
-          <div className="flex items-center border border-[#CFCFCF] bg-white rounded-md px-3 h-[40px] w-[300px]">
-            <input
-              value={search || ""}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="flex-1 bg-transparent text-sm font-light outline-none"
-              placeholder="Search"
-            />
-            <SearchIcon className="w-5 h-5 text-gray-400" />
-          </div>
-        )}
+        {searchPosition === "first" && SearchBox}
 
-        {/* DATE RANGE */}
-        {onDateRangeChange && (
-          <div className="w-[300px]">
-            <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              onChange={onDateRangeChange}
-            />
-          </div>
-        )}
-
-        {/* CATEGORY (เฉพาะ All Page) */}
+        {/* CATEGORY */}
         {showCategory && onCategoryChange && categoryOptions && (
           <MasterSelect
             values={category || []}
@@ -89,10 +89,23 @@ export default function ListToolbar({
         {onStatusChange && (
           <StatusFilter value={status} onChange={onStatusChange} />
         )}
+
+        {searchPosition === "last" && SearchBox}
+
+        {/* DATE RANGE */}
+        {onDateRangeChange && (
+          <div className="w-[300px]">
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              onChange={onDateRangeChange}
+            />
+          </div>
+        )}
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 ml-3">
         {showPrint && (
           <PrintIcon className="w-7 h-7 text-gray-600 cursor-pointer" />
         )}
