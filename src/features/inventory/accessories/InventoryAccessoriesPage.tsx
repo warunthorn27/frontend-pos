@@ -1,11 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListToolbar from "../../../component/ui/ListToolbar";
 import InventoryTable from "../components/InventoryTable";
+import { getWarehouses } from "../../../services/warehouse";
 
 export default function InventoryAccessoriesPage() {
   const [search, setSearch] = useState("");
-  const [dateRange, setDateRange] = useState("");
-  const [status, setStatus] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [status, setStatus] = useState<string | undefined>();
+  const [warehouseId, setWarehouseId] = useState<string | undefined>();
+
+  useEffect(() => {
+    const load = async () => {
+      const warehouses = await getWarehouses();
+
+      const accessories = warehouses.find(
+        (w: { warehouse_type: string }) => w.warehouse_type === "accessory",
+      );
+
+      setWarehouseId(accessories?._id);
+    };
+
+    load();
+  }, []);
 
   return (
     <div>
@@ -16,14 +33,24 @@ export default function InventoryAccessoriesPage() {
       <ListToolbar
         search={search}
         onSearchChange={setSearch}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
+        startDate={startDate}
+        endDate={endDate}
+        onDateRangeChange={(start, end) => {
+          setStartDate(start);
+          setEndDate(end);
+        }}
         status={status}
         onStatusChange={setStatus}
         onAddClick={() => {}}
       />
 
-      <InventoryTable />
+      <InventoryTable
+        warehouseId={warehouseId}
+        status={status}
+        startDate={startDate}
+        endDate={endDate}
+        search={search}
+      />
     </div>
   );
 }
