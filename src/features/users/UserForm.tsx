@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PermissionTable from "./PermissionTable";
-import ConfirmDialog from "../../component/dialog/ConfirmDialog";
+import DiscardChangesDialog from "../../component/dialog/DiscardChangesDialog";
 import type {
   PermissionChecksByMenu,
   PermissionAction,
@@ -451,16 +451,10 @@ const UserForm: React.FC<Props> = ({
         </div>
       </div>
 
-      <ConfirmDialog
+      <DiscardChangesDialog
         open={showDiscardDialog}
-        title="Cancel"
-        message={
-          <>
-            Are you sure you want to{" "}
-            <span className="text-red-500">Cancel</span> ?
-          </>
-        }
-        onCancel={() => setShowDiscardDialog(false)}
+        variant="userForm"
+        onClose={() => setShowDiscardDialog(false)}
         onConfirm={() => {
           setShowDiscardDialog(false);
           onCancel();

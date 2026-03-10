@@ -6,12 +6,14 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  variant?: "default" | "userForm";
 };
 
 export default function ConfirmDeleteDialog({
   open,
   onClose,
   onConfirm,
+  variant = "default",
 }: Props) {
   if (!open) return null;
 
@@ -37,13 +39,21 @@ export default function ConfirmDeleteDialog({
         {/* Actions */}
         <div className="flex justify-center gap-4">
           <button
-            className="w-[140px] px-6 py-2 border rounded-md text-black bg-white border-[#CFCFCF] hover:bg-[#F1F1F1]"
+            className={
+              variant === "userForm"
+                ? "px-4 py-[6px] rounded-md bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black whitespace-nowrap"
+                : "w-[140px] px-6 py-2 border rounded-md text-black bg-white border-[#CFCFCF] hover:bg-[#F1F1F1]"
+            }
             onClick={onClose}
           >
             Keep editing
           </button>
           <button
-            className="w-[100px] px-6 py-2 bg-[#E71010] text-white rounded-md hover:bg-[#C80C0C]"
+            className={
+              variant === "userForm"
+                ? "px-4 py-[6px] min-w-[100px] rounded-md bg-[#E71010] hover:bg-[#C80C0C] text-white text-base font-normal whitespace-nowrap"
+                : "w-[100px] px-6 py-2 bg-[#E71010] text-white rounded-md hover:bg-[#C80C0C]"
+            }
             onClick={onConfirm}
           >
             Discard
