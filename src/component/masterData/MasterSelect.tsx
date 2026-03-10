@@ -56,7 +56,7 @@ const MasterSelect: React.FC<Props> = ({
         tabIndex={0}
         onClick={() => !disabled && setOpen((o) => !o)}
         className="flex w-full items-center justify-between h-[38px]
-        rounded-md border border-[#CFCFCF] bg-white px-4 text-sm cursor-pointer"
+        rounded-md border border-[#CFCFCF] bg-white px-4 text-sm cursor-pointer focus:outline-none focus:border-[#005AA7]"
       >
         {/* LEFT */}
         <div className="flex items-center gap-2">

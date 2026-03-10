@@ -9,6 +9,7 @@ type Props = {
   onChangeValue: (v: string) => void;
   onChangeUnit: (u: WeightUnit) => void;
   disabledUnit?: boolean;
+  selectClassName?: string;
 };
 
 const WeightInput: React.FC<Props> = ({
@@ -18,14 +19,26 @@ const WeightInput: React.FC<Props> = ({
   onChangeValue,
   onChangeUnit,
   disabledUnit = false,
+  selectClassName,
 }) => {
   return (
     <div className="relative">
       <input
-        value={value}
+        value={value === "0.00" ? "" : value}
         inputMode="decimal"
-        onChange={(e) => onChangeValue(e.target.value)}
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
+        onChange={(e) => {
+          const val = e.target.value;
+
+          if (/^\d*(\.\d{0,2})?$/.test(val)) {
+            onChangeValue(val);
+          }
+        }}
+        onBlur={(e) => {
+          const num = Number(e.target.value || 0);
+          const rounded = Math.ceil(num * 100) / 100;
+          onChangeValue(rounded.toFixed(2));
+        }}
+        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-16 text-sm outline-none text-left focus:outline-none focus:border-[#005AA7]"
       />
 
       <div className="absolute right-0 top-0 h-full pr-1">
@@ -33,7 +46,7 @@ const WeightInput: React.FC<Props> = ({
           value={unit}
           disabled={disabledUnit}
           onChange={(e) => onChangeUnit(e.target.value as WeightUnit)}
-          className="h-full bg-transparent pl-3 pr-7 appearance-none"
+          className={`h-full bg-transparent pl-3 pr-7 appearance-none ${selectClassName}`}
         >
           {unitOptions.map((u) => (
             <option key={u.value} value={u.value}>
