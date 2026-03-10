@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ConfirmDialog from "../../../component/dialog/ConfirmDialog";
+import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
 import type { CompanyFormValues } from "../../../types/company";
 import CountryPhoneInput, {
   type CountryCode,
@@ -116,8 +116,8 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
 
   const handleChange =
     (field: keyof CompanyFormValues) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-      setValues((p) => ({ ...p, [field]: e.target.value }));
+      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+        setValues((p) => ({ ...p, [field]: e.target.value }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -353,10 +353,9 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 form="company-form"
                 disabled={disableSave}
                 className={`w-24 h-[38px] px-4 py-[6px] rounded-md text-base font-normal
-                  ${
-                    disableSave
-                      ? "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed"
-                      : "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
+                  ${disableSave
+                    ? "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed"
+                    : "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
                   }
                   `}
               >
@@ -367,16 +366,9 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
         </div>
       </div>
 
-      <ConfirmDialog
+      <DiscardChangesDialog
         open={showCancelDialog}
-        title="Cancel"
-        message={
-          <>
-            Are you sure you want to{" "}
-            <span className="text-red-500">Cancel</span> ?
-          </>
-        }
-        onCancel={() => setShowCancelDialog(false)}
+        onClose={() => setShowCancelDialog(false)}
         onConfirm={() => {
           setShowCancelDialog(false);
           onCancel();

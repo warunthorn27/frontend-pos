@@ -453,7 +453,6 @@ const UserForm: React.FC<Props> = ({
 
       <DiscardChangesDialog
         open={showDiscardDialog}
-        variant="userForm"
         onClose={() => setShowDiscardDialog(false)}
         onConfirm={() => {
           setShowDiscardDialog(false);
