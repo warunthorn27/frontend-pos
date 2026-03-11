@@ -63,7 +63,7 @@ const TableRow = ({
     className={`
       border-b border-gray-200
       hover:bg-[#FAFAFA]
-      ${selected ? "bg-[#F5F9FF]" : ""}
+      ${selected ? "bg-[#f9fbff]" : ""}
       last:border-b-0
     `}
   >
