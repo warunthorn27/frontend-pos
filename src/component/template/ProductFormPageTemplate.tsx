@@ -139,7 +139,7 @@ const ProductFormPageTemplate: React.FC<Props> = ({
           <div className="py-4 border-t border-[#E6E6E6] flex justify-center gap-4">
             <button
               type="button"
-              className="px-7 py-2 rounded-md bg-[#FF383C] text-[13px] font-normal hover:bg-[#E71010] text-white"
+              className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
               onClick={() => setShowCancelDialog(true)}
             >
               Cancel
@@ -150,10 +150,10 @@ const ProductFormPageTemplate: React.FC<Props> = ({
               disabled={!canSave}
               onClick={onSave}
               className={[
-                "px-8 py-2 rounded-md text-[13px] font-normal",
+                "w-24 h-[38px] px-4 py-[6px] rounded-md text-base font-normal",
                 canSave
-                  ? "bg-[#34C759] hover:bg-[#24913F] text-white"
-                  : "bg-[#CFCFCF] text-white cursor-not-allowed",
+                  ? "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
+                  : "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed",
               ].join(" ")}
             >
               Save
