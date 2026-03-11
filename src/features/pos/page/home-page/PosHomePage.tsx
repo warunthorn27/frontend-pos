@@ -83,7 +83,7 @@ const PosHomePage = () => {
         }}
       />
 
-      <div className="flex-1 overflow-auto bg-[#FBFBFB]">
+      <div className="flex-1 overflow-auto bg-[#FBFBFB] hide-scrollbar">
         {/* ACCESSORIES */}
 
         {activeTab === "accessories" && (

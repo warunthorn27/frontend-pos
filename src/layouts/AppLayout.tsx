@@ -43,7 +43,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* CONTENT AREA = พื้นที่ที่เหลือของจอ */}
         {/* <main className="overflow-hidden bg-white p-8"> */}
-        <main className="flex-1 ml-[240px] overflow-auto bg-white p-8">
+        <main className="flex-1 ml-[240px] overflow-auto bg-white p-8 hide-scrollbar">
           {children}
         </main>
       </div>
