@@ -1,17 +1,23 @@
 import type { CatalogueMode } from "../../../types/pos/catalogue";
-import { accessoriesData } from "../../../types/pos/dataCategory/accessoriesData";
 import CatalogueCategoryPage from "./CatalogueCategoryPage";
 
 interface Props {
+  title: string;
+  categoryId: string;
   mode: CatalogueMode;
   setMode: (mode: CatalogueMode) => void;
 }
 
-const CatalogueAccessoriesPage: React.FC<Props> = ({ mode, setMode }) => {
+const CatalogueAccessoriesPage: React.FC<Props> = ({
+  title,
+  categoryId,
+  mode,
+  setMode,
+}) => {
   return (
     <CatalogueCategoryPage
-      title="Accessories"
-      items={accessoriesData}
+      title={title}
+      categoryId={categoryId}
       mode={mode}
       setMode={setMode}
     />

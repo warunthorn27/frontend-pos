@@ -8,13 +8,27 @@ import ImagePlaceholder from "../../../assets/svg/upload-image.svg?react";
 interface Props {
   item: CatalogueProductItem;
   mode: CatalogueMode;
+  onClick?: (id: string) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ item, mode }) => {
+const ProductCard: React.FC<Props> = ({ item, mode, onClick }) => {
   return (
-    <div className="bg-white border border-gray-200 w-full flex flex-col">
+    <div
+      onClick={() => onClick?.(item.id)}
+      className="bg-white border border-gray-200 w-full flex flex-col cursor-pointer"
+    >
       <div className="w-full h-[160px] bg-gray-100 relative flex items-center justify-center">
-        <ImagePlaceholder className="w-10 h-10 text-gray-400" />
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl ?? ""}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <ImagePlaceholder className="w-10 h-10 text-gray-400" />
+        )}
       </div>
 
       <div className="p-3 flex flex-col flex-1">

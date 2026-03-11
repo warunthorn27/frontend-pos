@@ -1,103 +1,162 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PosTopNav from "../../components/PosTopNav";
 import PosSubNav from "../../components/PosSubNav";
 import ItemTypeGrid from "../../components/ItemTypeGrid";
-import { productMasterData } from "../../../../types/pos/dataCategory/productMasterData";
-import { stoneDiamondData } from "../../../../types/pos/dataCategory/stoneDiamondData";
-import { semiMountData } from "../../../../types/pos/dataCategory/semiMountData";
 import type {
   CatalogueCategoryItem,
   CatalogueMode,
 } from "../../../../types/pos/catalogue";
-import AccessoriesPage from "../../catalogue/CatalogueAccessoriesPage";
-import OthersPage from "../../catalogue/CatalogueOthersPage";
-import CatalogueProductMasterPage from "../../catalogue/CatalogueProductMasterPage";
-import CatalogueStoneDiamondPage from "../../catalogue/CatalogueStoneDiamondPage";
-import CatalogueSemiMountPage from "../../catalogue/CatalogueSemiMountPage";
+import { getItemTypes } from "../../../../services/pos/posCatalogue";
+import type { CatalogueTab } from "../../../../types/pos/navigation";
+import {
+  mapItemType,
+  mapTabToCategoryKey,
+} from "../../../../component/mappers/posCatalogueMapper";
+import CatalogueCategoryPage from "../../catalogue/CatalogueCategoryPage";
+import CatalogueAccessoriesPage from "../../catalogue/CatalogueAccessoriesPage";
+import CatalogueOthersPage from "../../catalogue/CatalogueOthersPage";
+import type { ProductCategory } from "../../../../types/product/form";
+
+const TAB_TO_PRODUCT_CATEGORY: Record<CatalogueTab, ProductCategory> = {
+  "product-master": "productmaster",
+  "stone-diamond": "stone",
+  "semi-mount": "semimount",
+  accessories: "accessory",
+  others: "others",
+};
 
 const PosHomePage = () => {
-  const [activeTab, setActiveTab] = useState("product-master");
+  const [activeTab, setActiveTab] = useState<CatalogueTab>("product-master");
   const [mode, setMode] = useState<CatalogueMode>("master");
+
   const [selectedCategory, setSelectedCategory] =
     useState<CatalogueCategoryItem | null>(null);
 
-  const resolveData = (): { title: string; items: CatalogueCategoryItem[] } => {
-    switch (activeTab) {
-      case "product-master":
-        return { title: "Item Type", items: productMasterData };
+  const [itemTypes, setItemTypes] = useState<CatalogueCategoryItem[]>([]);
 
-      case "stone-diamond":
-        return { title: "Stone", items: stoneDiamondData };
+  const [loading, setLoading] = useState(false);
 
-      case "semi-mount":
-        return { title: "Item Type", items: semiMountData };
+  /* ===================================================
+     LOAD ITEM TYPES
+  =================================================== */
 
-      case "accessories":
-      case "others":
-        return { title: "", items: [] };
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
 
-      default:
-        return { title: "", items: [] };
-    }
-  };
+      const start = Date.now();
 
-  const { title, items } = resolveData();
+      try {
+        const categoryId = mapTabToCategoryKey(activeTab);
+        const res = await getItemTypes(categoryId);
+
+        setItemTypes(res.map(mapItemType));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        const elapsed = Date.now() - start;
+
+        const MIN_LOADING_TIME = 400;
+
+        if (elapsed < MIN_LOADING_TIME) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, MIN_LOADING_TIME - elapsed),
+          );
+        }
+
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [activeTab]);
 
   return (
     <div className="flex flex-col h-full bg-white">
       <PosTopNav onLogout={() => console.log("logout")} />
-      {/* <PosSubNav activeTab={activeTab} onChange={setActiveTab} /> */}
+
       <PosSubNav
         activeTab={activeTab}
         onChange={(tab) => {
           setActiveTab(tab);
-          setSelectedCategory(null); // reset ตรงนี้แทน
+          setSelectedCategory(null);
         }}
       />
 
       <div className="flex-1 overflow-auto bg-[#FBFBFB]">
         {/* ACCESSORIES */}
+
         {activeTab === "accessories" && (
-          <AccessoriesPage mode={mode} setMode={setMode} />
+          <CatalogueAccessoriesPage
+            title="Accessories"
+            categoryId={mapTabToCategoryKey(activeTab)}
+            mode={mode}
+            setMode={setMode}
+          />
         )}
 
         {/* OTHERS */}
-        {activeTab === "others" && <OthersPage mode={mode} setMode={setMode} />}
 
-        {/* LEVEL 1 */}
+        {activeTab === "others" && (
+          <CatalogueOthersPage
+            title="Others"
+            categoryId={mapTabToCategoryKey(activeTab)}
+            mode={mode}
+            setMode={setMode}
+          />
+        )}
+
+        {/* LEVEL 1 ITEM TYPE */}
+
         {!selectedCategory &&
           activeTab !== "accessories" &&
           activeTab !== "others" && (
             <ItemTypeGrid
-              title={title}
-              items={items}
+              title="Item Type"
+              items={itemTypes}
+              loading={loading}
               onSelect={setSelectedCategory}
             />
           )}
 
+        {/* PRODUCT MASTER */}
+
         {selectedCategory && activeTab === "product-master" && (
-          <CatalogueProductMasterPage
+          <CatalogueCategoryPage
+            title={selectedCategory.label}
+            category={TAB_TO_PRODUCT_CATEGORY[activeTab]}
+            categoryId={mapTabToCategoryKey(activeTab)}
+            itemTypeId={selectedCategory.id}
             mode={mode}
             setMode={setMode}
-            categoryLabel={selectedCategory.label}
             onBack={() => setSelectedCategory(null)}
           />
         )}
+
+        {/* STONE / DIAMOND */}
 
         {selectedCategory && activeTab === "stone-diamond" && (
-          <CatalogueStoneDiamondPage
+          <CatalogueCategoryPage
+            title={selectedCategory.label}
+            category={TAB_TO_PRODUCT_CATEGORY[activeTab]}
+            categoryId={mapTabToCategoryKey(activeTab)}
+            itemTypeId={selectedCategory.id}
             mode={mode}
             setMode={setMode}
-            categoryLabel={selectedCategory.label}
             onBack={() => setSelectedCategory(null)}
           />
         )}
 
+        {/* SEMI MOUNT */}
+
         {selectedCategory && activeTab === "semi-mount" && (
-          <CatalogueSemiMountPage
+          <CatalogueCategoryPage
+            title={selectedCategory.label}
+            category={TAB_TO_PRODUCT_CATEGORY[activeTab]}
+            categoryId={mapTabToCategoryKey(activeTab)}
+            itemTypeId={selectedCategory.id}
             mode={mode}
             setMode={setMode}
-            categoryLabel={selectedCategory.label}
             onBack={() => setSelectedCategory(null)}
           />
         )}
