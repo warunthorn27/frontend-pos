@@ -59,16 +59,16 @@ export default function InventoryAccessoriesPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => { }}
+        onAddClick={() => {}}
         onExportExcel={handleExportExcel}
       />
 
       <InventoryTable
         warehouseId={warehouseId}
+        search={search}
         status={status}
         startDate={startDate}
         endDate={endDate}
-        search={search}
       />
     </div>
   );

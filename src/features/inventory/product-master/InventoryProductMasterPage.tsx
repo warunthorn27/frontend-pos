@@ -47,6 +47,7 @@ export default function InventoryProductMasterPage() {
       <h1 className="text-2xl font-normal mb-6 text-[#06284B]">
         Inventory Product Master List
       </h1>
+
       <ListToolbar
         search={search}
         onSearchChange={setSearch}
@@ -58,10 +59,17 @@ export default function InventoryProductMasterPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => { }}
+        onAddClick={() => {}}
         onExportExcel={handleExportExcel}
       />
-      <InventoryTable warehouseId={warehouseId} />
+
+      <InventoryTable
+        warehouseId={warehouseId}
+        search={search}
+        status={status}
+        startDate={startDate}
+        endDate={endDate}
+      />
     </div>
   );
 }

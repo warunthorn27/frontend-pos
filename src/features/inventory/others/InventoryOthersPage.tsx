@@ -59,11 +59,17 @@ export default function InventoryOthersPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => { }}
+        onAddClick={() => {}}
         onExportExcel={handleExportExcel}
       />
 
-      <InventoryTable warehouseId={warehouseId} />
+      <InventoryTable
+        warehouseId={warehouseId}
+        search={search}
+        status={status}
+        startDate={startDate}
+        endDate={endDate}
+      />
     </div>
   );
 }
