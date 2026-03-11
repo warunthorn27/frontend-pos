@@ -12,7 +12,7 @@ const Input: React.FC<Props> = ({ className, disabled, ...props }) => {
         ${inputStyle}
         ${
           disabled
-            ? "bg-[#F1F1F1] border-[#E6E6E6] text-black cursor-default"
+            ? "bg-[#F1F1F1] border-[#CFCFCF] text-black cursor-default"
             : "bg-white border-[#CFCFCF]"
         }
         ${className ?? ""}

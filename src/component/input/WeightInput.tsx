@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DropdownArrowIcon from "../../assets/svg/dropdown-arrow2.svg?react";
 import type { SelectOption } from "../../types/shared/select";
 import type { WeightUnit } from "../../types/shared/unit";
@@ -21,22 +22,34 @@ const WeightInput: React.FC<Props> = ({
   disabledUnit = false,
   selectClassName,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const format = (val: string) => {
+    const num = Number(val);
+
+    if (isNaN(num)) return "0.00";
+
+    const rounded = Math.ceil(num * 100) / 100;
+    return rounded.toFixed(2);
+  };
+
   return (
     <div className="relative">
       <input
-        value={value === "0.00" ? "" : value}
+        type="text"
         inputMode="decimal"
+        value={isFocused && (value === "0" || value === "0.00") ? "" : value}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          setIsFocused(false);
+          onChangeValue(format(e.target.value || "0"));
+        }}
         onChange={(e) => {
           const val = e.target.value;
 
-          if (/^\d*(\.\d{0,2})?$/.test(val)) {
+          if (/^\d*\.?\d*$/.test(val)) {
             onChangeValue(val);
           }
-        }}
-        onBlur={(e) => {
-          const num = Number(e.target.value || 0);
-          const rounded = Math.ceil(num * 100) / 100;
-          onChangeValue(rounded.toFixed(2));
         }}
         className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-16 text-sm outline-none text-left focus:outline-none focus:border-[#005AA7]"
       />

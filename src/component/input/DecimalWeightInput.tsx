@@ -27,7 +27,7 @@ export default function DecimalWeightInput({
     <div className="relative">
       <input
         type="text"
-        value={isFocused && value === "0.00" ? "" : value}
+        value={isFocused && (value === "0" || value === "0.00") ? "" : value}
         disabled={disabled}
         inputMode="decimal"
         onFocus={() => setIsFocused(true)}
@@ -43,7 +43,7 @@ export default function DecimalWeightInput({
           }
         }}
         className="
-          w-full h-[38px] pr-8
+          w-full h-[38px] pr-8 px-3
           rounded-md border border-[#CFCFCF] text-right text-sm
           focus:outline-none focus:border-[#005AA7]
         "
