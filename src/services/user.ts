@@ -188,9 +188,9 @@ export async function updateUserByAdmin(
 ): Promise<UserListItem> {
   const body: UpdateUserRequest = {
     user_name: payload.username,
-    permissions: payload.permissions, 
+    permissions: payload.permissions,
     status: payload.status === "active",
-    user_role: "User", 
+    user_role: "User",
   };
 
   if (payload.email !== undefined) {
@@ -277,4 +277,22 @@ export async function resetPasswordByAdmin(
   }
 
   return { message: json.message || "Reset password success" };
+}
+
+/* EXPORT */
+
+export async function exportUsersToExcel(): Promise<Blob> {
+  const res = await fetch(`${API_BASE}/export-users`, {
+    method: "GET",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("EXPORT_USERS_FAILED");
+  }
+
+  return res.blob();
 }

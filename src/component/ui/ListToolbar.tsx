@@ -28,6 +28,7 @@ type Props = {
 
   showPrint?: boolean;
   showExport?: boolean;
+  onExportExcel?: () => void;
 
   align?: "left" | "right";
   searchPosition?: "first" | "last";
@@ -49,6 +50,7 @@ export default function ListToolbar({
   onAddClick,
   showPrint = true,
   showExport = true,
+  onExportExcel,
   align = "left",
   searchPosition = "first",
 }: Props) {
@@ -66,9 +68,8 @@ export default function ListToolbar({
 
   return (
     <div
-      className={`flex items-center mb-6 ${
-        align === "right" ? "justify-end" : "justify-between"
-      }`}
+      className={`flex items-center mb-6 ${align === "right" ? "justify-end" : "justify-between"
+        }`}
     >
       {/* LEFT */}
       <div className="flex gap-3 items-center">
@@ -111,7 +112,10 @@ export default function ListToolbar({
         )}
 
         {showExport && (
-          <ExportIcon className="w-7 h-7 text-gray-600 cursor-pointer" />
+          <ExportIcon
+            className="w-7 h-7 text-gray-600 cursor-pointer"
+            onClick={onExportExcel}
+          />
         )}
 
         {addLabel && onAddClick && (

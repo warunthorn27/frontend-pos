@@ -11,6 +11,7 @@ import {
 import { customerService } from "../../../services/customer";
 import CustomerDetailModal from "./CustomerDetailModal";
 import type { CountryCode } from "../../../component/phoneInput/CountryPhoneInput";
+import { useCallback } from "react";
 
 const CustomerListPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -157,6 +158,23 @@ const CustomerListPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const handleExportExcel = useCallback(async () => {
+    try {
+      const fileBlob = await customerService.exportCustomersToExcel();
+
+      const downloadUrl = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Customers_Export_${Date.now()}.xlsx`;
+      link.click();
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Customer export failed", error);
+    }
+  }, []);
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-regular text-[#06284B] mb-4">
@@ -169,6 +187,7 @@ const CustomerListPage: React.FC = () => {
         onAddCustomerClick={() => setMode("create")}
         businessType={businessType}
         onBusinessTypeChange={setBusinessType}
+        onExportExcel={handleExportExcel}
       />
 
       <CustomerTable

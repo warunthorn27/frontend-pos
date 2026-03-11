@@ -5,6 +5,8 @@ import type { UserFormInput, UserListItem } from "../../types/user";
 import UserModal from "./UserModal";
 import ResetPasswordDialog from "../../features/users/ResetPasswordDialog";
 import UserListContainer from "./UserListContainer";
+import { exportUsersToExcel } from "../../services/user";
+import { useCallback } from "react";
 
 const UserManagementPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -45,6 +47,22 @@ const UserManagementPage: React.FC = () => {
     );
   }, [users, search]);
 
+  const handleExportExcel = useCallback(async () => {
+    try {
+      const fileBlob = await exportUsersToExcel();
+
+      const downloadUrl = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Users_Export_${Date.now()}.xlsx`;
+      link.click();
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("User export failed", error);
+    }
+  }, []);
+
   return (
     <>
       {mode === "list" && (
@@ -61,7 +79,7 @@ const UserManagementPage: React.FC = () => {
           maxUsers={3}
           onCreateUser={() => setMode("create")}
           onPrint={() => window.print()}
-          onExportExcel={() => console.log("Export Excel")}
+          onExportExcel={handleExportExcel}
           onViewUser={async (u) => {
             const latest = await getUserById(u.id);
             setEditingUser(latest);

@@ -6,7 +6,7 @@ import type {
   UpdateCustomerPayload,
 } from "../types/customer";
 import { mapCustomerFormToPayload } from "../types/customer";
-import { API_BASE, fetchWithAuth } from "./apiClient";
+import { API_BASE, fetchWithAuth, getAuthHeaders } from "./apiClient";
 
 // API Envelope Types
 export interface CustomerApiResponse {
@@ -76,5 +76,21 @@ export const customerService = {
       `${API_BASE}/delete-customer/${id}`,
       { method: "DELETE" },
     );
+  },
+
+  async exportCustomersToExcel(): Promise<Blob> {
+    const res = await fetch(`${API_BASE}/export-customers`, {
+      method: "GET",
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("EXPORT_CUSTOMERS_FAILED");
+    }
+
+    return res.blob();
   },
 };

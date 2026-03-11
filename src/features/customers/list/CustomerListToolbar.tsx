@@ -10,6 +10,7 @@ type Props = {
   onSearchChange: (value: string) => void;
   onAddCustomerClick: () => void;
   onBusinessTypeChange: (value?: string) => void;
+  onExportExcel: () => void;
 };
 
 const CustomerListToolbar: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const CustomerListToolbar: React.FC<Props> = ({
   onSearchChange,
   onAddCustomerClick,
   onBusinessTypeChange,
+  onExportExcel,
 }) => {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -40,7 +42,10 @@ const CustomerListToolbar: React.FC<Props> = ({
 
       <div className="flex items-center gap-3">
         <PrintIcon className="w-7 h-7 text-gray-600 cursor-pointer" />
-        <ExportIcon className="w-7 h-7 text-gray-600 cursor-pointer" />
+        <ExportIcon
+          className="w-7 h-7 text-gray-600 cursor-pointer"
+          onClick={onExportExcel}
+        />
 
         <button
           onClick={onAddCustomerClick}

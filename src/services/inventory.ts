@@ -51,3 +51,26 @@ export async function getInventoryDetail(
   const json = await res.json();
   return json.data;
 }
+
+// export excel
+export async function exportInventoryToExcel(
+  warehouseType?: string,
+): Promise<Blob> {
+  const url = warehouseType
+    ? `${API_BASE}/export-stocks?warehouse_type=${warehouseType}`
+    : `${API_BASE}/export-stocks`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("EXPORT_INVENTORY_FAILED");
+  }
+
+  return res.blob();
+}

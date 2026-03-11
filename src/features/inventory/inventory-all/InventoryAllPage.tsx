@@ -2,6 +2,8 @@ import { useState } from "react";
 import ListToolbar from "../../../component/ui/ListToolbar";
 import InventoryTable from "../components/InventoryTable";
 import { CATEGORY_OPTIONS } from "../../../utils/categoryOptions";
+import { useCallback } from "react";
+import { exportInventoryToExcel } from "../../../services/inventory";
 
 export default function InventoryAllPage() {
   const [search, setSearch] = useState("");
@@ -9,6 +11,22 @@ export default function InventoryAllPage() {
   const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState<string | undefined>();
   const [category, setCategory] = useState<string[]>([]);
+
+  const handleExportExcel = useCallback(async () => {
+    try {
+      const fileBlob = await exportInventoryToExcel();
+
+      const downloadUrl = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Inventory_All_Export_${Date.now()}.xlsx`;
+      link.click();
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Inventory export failed", error);
+    }
+  }, []);
 
   return (
     <div>
@@ -33,6 +51,7 @@ export default function InventoryAllPage() {
         onCategoryChange={(value) => {
           setCategory(value);
         }}
+        onExportExcel={handleExportExcel}
       />
 
       <InventoryTable
