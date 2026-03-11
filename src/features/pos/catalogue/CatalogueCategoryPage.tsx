@@ -60,19 +60,19 @@ const CatalogueCategoryPage: React.FC<Props> = ({
               items={
                 category
                   ? [
-                      {
-                        label: PRODUCT_CATEGORY_LABEL[category],
-                        onClick: onBack,
-                      },
-                      {
-                        label: title,
-                      },
-                    ]
+                    {
+                      label: PRODUCT_CATEGORY_LABEL[category],
+                      onClick: onBack,
+                    },
+                    {
+                      label: title,
+                    },
+                  ]
                   : [
-                      {
-                        label: title,
-                      },
-                    ]
+                    {
+                      label: title,
+                    },
+                  ]
               }
             />
           }

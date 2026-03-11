@@ -38,32 +38,28 @@ const PosToolbar: React.FC<Props> = ({
             <div className="flex gap-2">
               <button
                 onClick={() => setMode("master")}
-                className={`w-[136px] h-10 px-4 rounded-md border flex items-center justify-center gap-2 ${
-                  mode === "master"
+                className={`w-[136px] h-10 px-4 rounded-md border flex items-center justify-center gap-2 ${mode === "master"
                     ? "bg-white border-[#0071CE] text-[#0071CE]"
                     : "border-[#CFCFCF] text-[#2A2A2A]"
-                }`}
+                  }`}
               >
                 <MasterIcon
-                  className={`w-5 h-5 ${
-                    mode === "master" ? "text-[#0071CE]" : "text-[#2A2A2A]"
-                  }`}
+                  className={`w-5 h-5 ${mode === "master" ? "text-[#0071CE]" : "text-[#2A2A2A]"
+                    }`}
                 />
                 Master
               </button>
 
               <button
                 onClick={() => setMode("inventory")}
-                className={`w-[136px] h-10 px-4 rounded-md border flex items-center justify-center gap-2 ${
-                  mode === "inventory"
+                className={`w-[136px] h-10 px-4 rounded-md border flex items-center justify-center gap-2 ${mode === "inventory"
                     ? "bg-white border-[#0071CE] text-[#0071CE]"
                     : "border-[#CFCFCF] text-[#2A2A2A]"
-                }`}
+                  }`}
               >
                 <InventoryIcon
-                  className={`w-5 h-5 ${
-                    mode === "inventory" ? "text-[#0071CE]" : "text-[#2A2A2A]"
-                  }`}
+                  className={`w-5 h-5 ${mode === "inventory" ? "text-[#0071CE]" : "text-[#2A2A2A]"
+                    }`}
                 />
                 Inventory
               </button>

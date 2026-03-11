@@ -27,7 +27,7 @@ export const getItemTypes = async (
   }>(url);
 
   return res.data.map((item) => ({
-    id: item._id,
+    _id: item._id,
     name: item.name,
     image: item.image,
     count: item.count,
