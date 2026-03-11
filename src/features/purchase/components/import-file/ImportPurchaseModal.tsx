@@ -5,7 +5,10 @@ import type {
   ImportPurchaseItem,
   PurchaseItemRow,
 } from "../../../../types/purchase";
-import { importPurchaseFile } from "../../../../services/purchase";
+import {
+  downloadPurchaseTemplate,
+  importPurchaseFile,
+} from "../../../../services/purchase";
 import SelectFileIcon from "../../../../assets/svg/import.svg?react";
 import CheckIcon from "../../../../assets/svg/checkFilter.svg?react";
 import TrashIcon from "../../../../assets/svg/trash.svg?react";
@@ -196,7 +199,26 @@ export default function ImportPurchaseModal({
 
               {/* DOWNLOAD EXAMPLE */}
 
-              <button className="px-4 py-2 bg-white border border-[#CFCFCF] rounded-md hover:bg-[#F1F1F1] font-normal text-base text-[#2A2A2A]">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const blob = await downloadPurchaseTemplate();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "purchase_template.xlsx");
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
+                  } catch (err) {
+                    console.error("Download template failed:", err);
+                    // Optionally add error toast here
+                  }
+                }}
+                className="px-4 py-2 bg-white border border-[#CFCFCF] rounded-md hover:bg-[#F1F1F1] font-normal text-base text-[#2A2A2A]"
+              >
                 Download example file
               </button>
             </>
@@ -249,10 +271,9 @@ export default function ImportPurchaseModal({
                 disabled={!complete}
                 onClick={handleSubmit}
                 className={`px-4 py-2 rounded-md text-white
-                  ${
-                    complete
-                      ? "bg-[#005AA7] hover:bg-[#084072]"
-                      : "bg-gray-300 cursor-not-allowed"
+                  ${complete
+                    ? "bg-[#005AA7] hover:bg-[#084072]"
+                    : "bg-gray-300 cursor-not-allowed"
                   }
                 `}
               >

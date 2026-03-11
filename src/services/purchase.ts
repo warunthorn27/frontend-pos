@@ -79,3 +79,23 @@ export function importPurchaseFile(
     xhr.send(formData);
   });
 }
+
+export async function downloadPurchaseTemplate(): Promise<Blob> {
+  const res = await fetch(`${API_BASE}/purchase/download-template`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) {
+    let errorMessage = "Failed to download template";
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (e) {
+      // ignore JSON parse error
+    }
+    throw new Error(errorMessage);
+  }
+
+  return await res.blob();
+}
