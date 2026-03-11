@@ -6,8 +6,12 @@ import { getCompanyById } from "../../services/company";
 import { mapCompanyApiToForm } from "../../component/mappers/companyMapper";
 import { createPurchase, getNextPurchaseNumber } from "../../services/purchase";
 import { getExchangeRate } from "../../services/exchangeRate";
-import type { PurchaseItemRow } from "../../types/purchase";
+import type {
+  PurchaseItemRow,
+  RowValidationErrors,
+} from "../../types/purchase";
 import { useInventorySuccessToast } from "../../component/ui/toast/inventory-success-toast/hook";
+import ConfirmSaveWithErrorsDialog from "../../component/dialog/ConfirmSaveWithErrorsDialog";
 // import { useNavigate } from "react-router-dom";
 
 type PurchaseErrors = {
@@ -34,6 +38,8 @@ export default function PurchasePage() {
   const [note, setNote] = useState("");
 
   const { showInventorySuccessToast } = useInventorySuccessToast();
+  const [showErrorConfirm, setShowErrorConfirm] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const isSaveDisabled =
     !date || !vendor || !currency || exchangeRate <= 0 || items.length === 0;
@@ -47,10 +53,11 @@ export default function PurchasePage() {
     setRef2("");
     setNote("");
 
+    // ปิด dialog confirm error
+    setShowErrorConfirm(false);
+
     // reset currency กลับค่า default company
     setCurrency(companyCurrency);
-
-    // setDate(new Date().toISOString().slice(0, 10));
 
     const nextNumber = await getNextPurchaseNumber();
     setPurchaseNumber(nextNumber);
@@ -82,10 +89,70 @@ export default function PurchasePage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  function validatePurchaseItems(
+    items: PurchaseItemRow[],
+    setItems: React.Dispatch<React.SetStateAction<PurchaseItemRow[]>>,
+  ): boolean {
+    let isValid = true;
+
+    const updated = items.map((row) => {
+      const errors: RowValidationErrors = {};
+
+      if (!Number(row.grossWeight || 0)) {
+        errors.grossWeight = true;
+        isValid = false;
+      }
+
+      if (!row.quantity) {
+        errors.quantity = true;
+        isValid = false;
+      }
+
+      if (!row.unit) {
+        isValid = false;
+      }
+
+      if (!row.cost) {
+        errors.cost = true;
+        isValid = false;
+      }
+
+      if (!row.price) {
+        errors.price = true;
+        isValid = false;
+      }
+
+      return {
+        ...row,
+        validationErrors: errors,
+      };
+    });
+
+    setItems(updated);
+
+    return isValid;
+  }
+
   // ================= SAVE =================
-  const handleSave = async () => {
+
+  const performSave = async () => {
+    if (saving) return;
+
+    setSaving(true);
+
     try {
       if (!validateForm()) return;
+
+      const itemsValid = validatePurchaseItems(items, setItems);
+
+      if (!itemsValid) return;
+
+      const validItems = items.filter((item) => !item.isError);
+
+      if (validItems.length === 0) {
+        alert("No valid items to save");
+        return;
+      }
 
       const payload = {
         date,
@@ -93,7 +160,7 @@ export default function PurchasePage() {
         currency,
         manual_rate: exchangeRate,
 
-        items: items.map((item) => ({
+        items: validItems.map((item) => ({
           product_id: item.productId,
           quantity: item.quantity,
           unit: item.unit,
@@ -107,12 +174,32 @@ export default function PurchasePage() {
 
       await createPurchase(payload);
 
-      showInventorySuccessToast(items.length);
+      showInventorySuccessToast(validItems.length);
 
       await resetForm();
-    } catch (err) {
-      console.error(err);
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (saving) return;
+
+    const hasErrorRows = items.some((r) => r.isError);
+
+    if (hasErrorRows) {
+      setShowErrorConfirm(true);
+      return;
+    }
+
+    await performSave();
+  };
+
+  const confirmSaveWithErrors = async () => {
+    if (saving) return;
+
+    setShowErrorConfirm(false);
+    await performSave();
   };
 
   useEffect(() => {
@@ -213,7 +300,7 @@ export default function PurchasePage() {
           </button>
 
           <button
-            disabled={isSaveDisabled}
+            disabled={isSaveDisabled || saving}
             onClick={handleSave}
             className={`
               w-24 px-4 py-[6px] text-base rounded-md
@@ -228,6 +315,12 @@ export default function PurchasePage() {
           </button>
         </div>
       </div>
+
+      <ConfirmSaveWithErrorsDialog
+        open={showErrorConfirm}
+        onCancel={() => setShowErrorConfirm(false)}
+        onConfirm={confirmSaveWithErrors}
+      />
     </div>
   );
 }

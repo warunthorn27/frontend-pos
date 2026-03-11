@@ -1,4 +1,7 @@
-import type { CreatePurchasePayload } from "../types/purchase";
+import type {
+  CreatePurchasePayload,
+  ImportPurchaseResponse,
+} from "../types/purchase";
 import { API_BASE, getAuthHeaders } from "./apiClient";
 
 export async function getNextPurchaseNumber(): Promise<string> {
@@ -33,4 +36,46 @@ export async function createPurchase(
   if (!res.ok) {
     throw new Error(json?.message || "Create purchase failed");
   }
+}
+
+// import file
+export function importPurchaseFile(
+  file: File,
+  onProgress: (progress: number) => void,
+): Promise<ImportPurchaseResponse> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST", `${API_BASE}/purchase/import-preview`);
+
+    const headers = getAuthHeaders();
+
+    if (headers.Authorization) {
+      xhr.setRequestHeader("Authorization", headers.Authorization);
+    }
+
+    xhr.upload.onprogress = (event: ProgressEvent<EventTarget>) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      const response: ImportPurchaseResponse = JSON.parse(xhr.responseText);
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(response);
+      } else {
+        reject(new Error("Import failed"));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Upload failed"));
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    xhr.send(formData);
+  });
 }

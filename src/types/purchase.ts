@@ -1,7 +1,11 @@
+/* =========================================================
+   PRODUCT TYPES
+========================================================= */
+
 import type { ProductCategory } from "./product/form";
 import type { WeightUnit } from "./shared/unit";
 
-// backend type
+// backend product
 export type BackendProduct = {
   _id: string;
   product_code: string;
@@ -20,7 +24,7 @@ export type BackendProduct = {
   stone_weight?: number;
 };
 
-// frontend type
+// frontend product
 export type Product = {
   id: string;
   code: string;
@@ -38,6 +42,10 @@ export type Product = {
   hasStoneWeight?: boolean;
   hasNetWeight?: boolean;
 };
+
+/* =========================================================
+   PURCHASE TABLE TYPES
+========================================================= */
 
 export type PurchaseItemRow = {
   productId: string;
@@ -62,9 +70,18 @@ export type PurchaseItemRow = {
 
   hasStoneWeight?: boolean;
   hasNetWeight?: boolean;
+
+  /** import validation */
+  isError?: boolean;
+  errorReason?: string;
+
+  validationErrors?: RowValidationErrors;
 };
 
-// payload
+/* =========================================================
+   API PAYLOAD
+========================================================= */
+
 export interface CreatePurchasePayload {
   date: string;
   vendor_name: string;
@@ -88,3 +105,61 @@ export interface CreatePurchasePayload {
     price: number;
   }[];
 }
+
+/* =========================================================
+   IMPORT TYPES
+========================================================= */
+
+export interface ImportPurchaseResponse {
+  success: boolean;
+  count: number;
+
+  data: ImportPurchaseItem[];
+
+  hasError: boolean;
+  errorCount: number;
+
+  errorData: ImportErrorRow[];
+}
+
+export type ImportPurchaseItem = {
+  product_id: string;
+  code: string;
+  name: string;
+  image?: string;
+
+  stone_weight?: number;
+  net_weight?: number;
+  gross_weight?: number;
+
+  quantity?: number;
+  unit?: "pcs" | "g";
+
+  cost?: number;
+  amount?: number;
+  price?: number;
+
+  isError?: boolean;
+  errorReason?: string;
+};
+
+export type ImportErrorRow = {
+  Code?: string;
+  Name?: string;
+  Category?: string;
+  QTY?: number;
+
+  Error_Reason: string;
+  isError: true;
+};
+
+/* =========================================================
+   FORM VALIDATION
+========================================================= */
+
+export type RowValidationErrors = {
+  grossWeight?: boolean;
+  quantity?: boolean;
+  cost?: boolean;
+  price?: boolean;
+};

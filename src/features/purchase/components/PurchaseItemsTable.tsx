@@ -10,6 +10,9 @@ import { WEIGHT_UNIT_OPTIONS } from "../../../types/shared/unit";
 import PurchaseProductDetailsDrawer from "./PurchaseProductDetailsDrawer";
 import DecimalWeightInput from "../../../component/input/DecimalWeightInput";
 import UnitDropdown from "../../../component/input/UnitDropdown";
+import ImportPurchaseModal from "./import-file/ImportPurchaseModal";
+import DecimalInput from "../../../component/input/DecimalInput";
+import Checkbox from "../../../component/ui/Checkbox";
 
 interface Props {
   items: PurchaseItemRow[];
@@ -35,11 +38,16 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
     null,
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showErrorsOnly, setShowErrorsOnly] = useState(false);
+
+  const visibleRows = showErrorsOnly ? items.filter((r) => r.isError) : items;
 
   const UNIT_OPTIONS = [
     { label: "pcs", value: "pcs" },
     { label: "g", value: "g" },
   ] as const;
+
+  const [openImport, setOpenImport] = useState(false);
 
   /* ================= MAP PRODUCT ================= */
 
@@ -140,25 +148,36 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
   const renderNumberInput = (
     value: number,
     onChange: (val: number) => void,
+    isError?: boolean,
   ) => (
     <input
-      type="number"
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="
-        w-full
-        h-[38px]
-        px-3
-        rounded-md
-        border border-[#CFCFCF]
-        bg-white
-        text-right
-        text-sm
-        focus:outline-none focus:border-[#005AA7]
-        appearance-none
-        [&::-webkit-outer-spin-button]:appearance-none
-        [&::-webkit-inner-spin-button]:appearance-none
-      "
+      type="text"
+      inputMode="numeric"
+      value={value === 0 ? "0" : value}
+      className={`w-full h-[38px] px-3 rounded-md border
+      ${isError ? "border-red-500" : "border-[#CFCFCF]"}
+      bg-white
+      text-right
+      text-sm
+      focus:outline-none focus:border-[#005AA7]
+    `}
+      onFocus={(e) => {
+        if (e.target.value === "0") {
+          e.target.value = "";
+        }
+      }}
+      onBlur={(e) => {
+        if (e.target.value === "") {
+          onChange(0);
+        }
+      }}
+      onChange={(e) => {
+        const val = e.target.value;
+
+        if (/^\d*$/.test(val)) {
+          onChange(Number(val));
+        }
+      }}
     />
   );
 
@@ -185,8 +204,6 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
     />
   );
 
-  /* ================= RENDER ================= */
-
   return (
     <div className="space-y-6">
       {/* HEADER */}
@@ -211,17 +228,28 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
           />
         </div>
 
-        <button className="px-4 py-2 gap-3 rounded-md bg-[#0088FF] hover:bg-[#0071CE] text-base text-white flex items-center">
+        <button
+          onClick={() => setOpenImport(true)}
+          className="px-4 py-2 gap-3 rounded-md bg-[#0088FF] hover:bg-[#0071CE] text-base text-white flex items-center"
+        >
           <ImportIcon className="w-6 h-6 text-center" />
           Import
         </button>
+
+        <ImportPurchaseModal
+          open={openImport}
+          onClose={() => setOpenImport(false)}
+          onImportSuccess={(rows) => {
+            setItems((prev) => [...prev, ...rows]);
+          }}
+        />
       </div>
 
       {/* TABLE */}
       <div className="border rounded-lg bg-white overflow-hidden">
-        <div className="max-h-[380px] overflow-y-auto hide-scrollbar">
+        <div className="max-h-[400px] overflow-y-auto hide-scrollbar">
           <table className="w-full border-collapse table-fixed text-lg">
-            <thead className="sticky top-0 bg-[#F7F7F7] z-30 border-b border-[#E6E6E6]">
+            <thead className="sticky top-0 bg-[#F7F7F7] border-b border-[#E6E6E6] shadow-[0_0.1px_0_#E6E6E6] z-20">
               <tr className="text-left">
                 <th className="px-4 py-3 w-[60px]" />
                 <th className="px-4 py-3 w-[70px] font-normal">#</th>
@@ -244,7 +272,7 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
             </thead>
 
             <tbody>
-              {items.length === 0 && (
+              {visibleRows.length === 0 && (
                 <tr>
                   <td
                     colSpan={11}
@@ -255,11 +283,13 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                 </tr>
               )}
 
-              {items.map((row, index) => {
+              {visibleRows.map((row, index) => {
                 return (
                   <tr
                     key={`${row.productId}-${index}`}
-                    className="border-b last:border-b-0"
+                    className={`border-b last:border-b-0
+                      ${row.isError ? "bg-red-50 border-red-400" : ""}
+                    `}
                   >
                     <td className="px-4 text-center">
                       <button onClick={() => removeItem(index)}>
@@ -375,6 +405,11 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                       <div className="relative">
                         <DecimalWeightInput
                           value={row.grossWeight || "0.00"}
+                          className={
+                            row.validationErrors?.grossWeight
+                              ? "border-red-500"
+                              : ""
+                          }
                           onChange={(val) => {
                             setItems((prev) => {
                               const updated = [...prev];
@@ -386,9 +421,12 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                                 const gwt = Number(val || 0);
                                 const swt = Number(r.stoneWeight || 0);
 
-                                const nwt = gwt - swt;
-
-                                r.netWeight = nwt > 0 ? nwt.toFixed(2) : "0.00";
+                                // only calculate NWT if SWT exists
+                                if (swt > 0) {
+                                  const nwt = gwt - swt;
+                                  r.netWeight =
+                                    nwt > 0 ? nwt.toFixed(2) : "0.00";
+                                }
                               }
 
                               updated[index] = r;
@@ -403,8 +441,10 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                     </td>
 
                     <td className="px-4">
-                      {renderNumberInput(row.quantity, (val) =>
-                        updateItem(index, "quantity", val),
+                      {renderNumberInput(
+                        row.quantity,
+                        (val) => updateItem(index, "quantity", val),
+                        row.validationErrors?.quantity,
                       )}
                     </td>
 
@@ -437,24 +477,32 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                     </td>
 
                     <td className="px-4">
-                      {renderNumberInput(row.cost, (val) =>
-                        updateItem(index, "cost", val),
-                      )}
+                      <DecimalInput
+                        value={row.cost}
+                        onChange={(val) => updateItem(index, "cost", val)}
+                        className={
+                          row.validationErrors?.cost ? "border-red-500" : ""
+                        }
+                      />
                     </td>
 
                     <td className="px-4">{renderReadonlyInput(row.amount)}</td>
 
                     <td className="px-4">
-                      {renderNumberInput(row.price, (val) =>
-                        updateItem(index, "price", val),
-                      )}
+                      <DecimalInput
+                        value={row.price}
+                        onChange={(val) => updateItem(index, "price", val)}
+                        className={
+                          row.validationErrors?.price ? "border-red-500" : ""
+                        }
+                      />
                     </td>
                   </tr>
                 );
               })}
             </tbody>
 
-            <tfoot className="bg-[#F7F7F7] border-t text-sm">
+            <tfoot className="sticky bottom-0 bg-[#F7F7F7] border-t border-[#E6E6E6] shadow-[0_-1px_0_#E6E6E6] text-sm z-20">
               <tr>
                 <td colSpan={3} className="px-4 py-4 font-normal">
                   Grand Total
@@ -487,6 +535,20 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
           </table>
         </div>
       </div>
+
+      {/* ERROR CHECKBOX */}
+      {items.some((r) => r.isError) && (
+        <div className="flex items-center gap-4 text-sm text-red-500">
+          <Checkbox
+            checked={showErrorsOnly}
+            onChange={(checked) => setShowErrorsOnly(checked)}
+          />
+
+          <span>
+            Only show rows with errors ({items.filter((r) => r.isError).length})
+          </span>
+        </div>
+      )}
 
       <PurchaseProductDetailsDrawer
         productId={selectedProductId}
