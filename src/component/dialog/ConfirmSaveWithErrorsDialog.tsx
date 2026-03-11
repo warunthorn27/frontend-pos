@@ -1,4 +1,5 @@
 import CloseIcon from "../../assets/svg/close.svg?react";
+import WarningIcon from "../../assets/svg/warning-icon3.svg?react";
 
 interface Props {
   open: boolean;
@@ -14,37 +15,34 @@ export default function ConfirmSaveWithErrorsDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-[420px] rounded-lg shadow-lg p-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="w-[520px] rounded-md bg-white shadow-lg relative px-10 py-8">
         <button className="absolute right-4 top-4" onClick={onCancel}>
           <CloseIcon className="w-5 h-5" />
         </button>
 
         <div className="flex flex-col items-center text-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full border-4 border-red-500 flex items-center justify-center text-red-500 text-xl font-bold">
-              !
-            </div>
-          </div>
+          <WarningIcon/>
 
-          <h2 className="text-lg font-medium">Save with errors</h2>
+          <h2 className="text-lg font-normal text-black mt-4">
+            Save with errors
+          </h2>
 
-          <p className="text-sm text-gray-600">
-            Items with errors will not be saved.
+          <p className="text-base text-gray-600 font-light">
+            Items with errors will not be saved. Do you want to confirm saving?
           </p>
 
-          <p className="text-sm text-gray-600">
-            Do you want to confirm saving?
-          </p>
-
-          <div className="flex gap-4 mt-4">
-            <button onClick={onCancel} className="px-5 py-2 border rounded-md">
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={onCancel}
+              className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
+            >
               Cancel
             </button>
 
             <button
               onClick={onConfirm}
-              className="px-5 py-2 bg-[#2C5AA0] text-white rounded-md"
+              className="w-24 px-4 py-[6px] rounded-md text-base font-normal bg-[#005AA7] hover:bg-[#084072] text-white"
             >
               Confirm
             </button>
