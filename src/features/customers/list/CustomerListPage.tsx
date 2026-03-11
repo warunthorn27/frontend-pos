@@ -66,6 +66,22 @@ const CustomerListPage: React.FC = () => {
     setPage(1);
   }, [search, businessType]);
 
+  const handleExportExcel = useCallback(async () => {
+    try {
+      const fileBlob = await customerService.exportCustomersToExcel();
+
+      const downloadUrl = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Customers_Export_${Date.now()}.xlsx`;
+      link.click();
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Customer export failed", error);
+    }
+  }, []);
+
   // conditional return AFTER hooks
   if (mode === "create") {
     return (
@@ -158,22 +174,6 @@ const CustomerListPage: React.FC = () => {
       setLoading(false);
     }
   };
-
-  const handleExportExcel = useCallback(async () => {
-    try {
-      const fileBlob = await customerService.exportCustomersToExcel();
-
-      const downloadUrl = window.URL.createObjectURL(fileBlob);
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = `Customers_Export_${Date.now()}.xlsx`;
-      link.click();
-
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      console.error("Customer export failed", error);
-    }
-  }, []);
 
   return (
     <div className="w-full">
