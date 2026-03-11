@@ -3,9 +3,10 @@ import { useState } from "react";
 interface Props {
   value: number;
   onChange: (value: number) => void;
+  className?: string;
 }
 
-export default function DecimalInput({ value, onChange }: Props) {
+export default function DecimalInput({ value, onChange, className }: Props) {
   const [text, setText] = useState(value.toFixed(2));
   const [isFocused, setIsFocused] = useState(false);
 
@@ -32,17 +33,18 @@ export default function DecimalInput({ value, onChange }: Props) {
       onFocus={() => setIsFocused(true)}
       onChange={(e) => handleChange(e.target.value)}
       onBlur={handleBlur}
-      className="
-        w-full
-        h-[38px]
-        px-3
-        rounded-md
-        border border-[#CFCFCF]
-        bg-white
-        text-right
-        text-sm
-        focus:outline-none focus:border-[#005AA7]
-      "
+      className={`
+  w-full
+  h-[38px]
+  px-3
+  rounded-md
+  border
+  ${className ? className : "border-[#CFCFCF]"}
+  bg-white
+  text-right
+  text-sm
+  focus:outline-none focus:border-[#005AA7]
+`}
     />
   );
 }
