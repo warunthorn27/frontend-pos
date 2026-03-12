@@ -176,11 +176,16 @@ const CustomerDetailModal: React.FC<Props> = ({
     setEditData((prev) => prev && { ...prev, [key]: value });
   };
 
+  const display = (v?: string | null) => {
+    if (v === undefined || v === null || v === "") return "-";
+    return v;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div
-        className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-t-lg shadow-lg 
-          grid grid-rows-[auto_1fr_auto]"
+        className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-lg shadow-lg 
+           overflow-hidden grid grid-rows-[auto_1fr_auto]"
       >
         {/* ================= HEADER ================= */}
         <div className="flex items-center justify-between px-6 py-3 border-b">
@@ -198,10 +203,12 @@ const CustomerDetailModal: React.FC<Props> = ({
               </button>
             )}
 
-            <button onClick={() => {
-              if (mode === "edit") setShowCancelDialog(true);
-              else onClose();
-            }}>
+            <button
+              onClick={() => {
+                if (mode === "edit") setShowCancelDialog(true);
+                else onClose();
+              }}
+            >
               <RemoveIcon className="w-5 h-5" />
             </button>
           </div>
@@ -218,7 +225,7 @@ const CustomerDetailModal: React.FC<Props> = ({
               label={editData.business_type}
               value={editData.business_type}
               checked
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </div>
 
@@ -291,7 +298,7 @@ const CustomerDetailModal: React.FC<Props> = ({
                       <FormField label="Gender" required>
                         {isView ? (
                           <Input
-                            value={editData.customer_gender || ""}
+                            value={display(editData.customer_gender)}
                             disabled
                           />
                         ) : (
@@ -340,7 +347,11 @@ const CustomerDetailModal: React.FC<Props> = ({
 
                 <FormField label="Email">
                   <Input
-                    value={editData.customer_email || ""}
+                    value={
+                      isView
+                        ? display(editData.customer_email)
+                        : editData.customer_email || ""
+                    }
                     disabled={isView}
                     onChange={(e) =>
                       updateField("customer_email", e.target.value)
@@ -350,7 +361,9 @@ const CustomerDetailModal: React.FC<Props> = ({
 
                 <FormField label="Note">
                   <FormTextarea
-                    value={editData.note || ""}
+                    value={
+                      isView ? display(editData.note) : editData.note || ""
+                    }
                     disabled={isView}
                     onChange={(e) => updateField("note", e.target.value)}
                   />
@@ -464,7 +477,7 @@ const CustomerDetailModal: React.FC<Props> = ({
                       zipcode: editData.tax_addr?.zipcode || "",
                     },
                   }}
-                  onAdd={() => { }}
+                  onAdd={() => {}}
                   onRemove={() => {
                     setAddingTaxInvoice(false);
 
@@ -485,14 +498,14 @@ const CustomerDetailModal: React.FC<Props> = ({
 
                           ...(field === "companyName"
                             ? {
-                              tax_addr: {
-                                ...prev.tax_addr,
-                                company_name: value,
-                              },
-                            }
+                                tax_addr: {
+                                  ...prev.tax_addr,
+                                  company_name: value,
+                                },
+                              }
                             : {
-                              customer_tax_id: value,
-                            }),
+                                customer_tax_id: value,
+                              }),
                         },
                     )
                   }

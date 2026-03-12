@@ -36,14 +36,14 @@ type PermissionRowProps = {
 
 type MenuNode =
   | {
-    type: "group";
-    parent: string;
-    children: { key: string; label: string }[];
-  }
+      type: "group";
+      parent: string;
+      children: { key: string; label: string }[];
+    }
   | {
-    type: "single";
-    menu: string;
-  };
+      type: "single";
+      menu: string;
+    };
 
 //  2. CONSTANTS (STATIC DATA)
 const PRODUCT_MENU_MAPPING = [
@@ -132,20 +132,22 @@ function PermissionRow({
   const c = checksByMenu[menu];
 
   return (
-    <tr className="bg-white border-b">
+    <tr className="bg-white border-b last:border-b-0">
       {/* MENU CELL */}
       <td className="px-6 py-4">
         <div
-          className={`flex items-center gap-2 ${isParent ? "cursor-pointer select-none" : ""
-            }`}
+          className={`flex items-center gap-2 ${
+            isParent ? "cursor-pointer select-none" : ""
+          }`}
           onClick={isParent ? onToggleExpand : undefined}
         >
           <span className="font-light text-base text-[#06284B]">{label}</span>
 
           {isParent && (
             <DropdownArrowIcon
-              className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? "rotate-90" : "rotate-0"
-                }`}
+              className={`w-5 h-5 transition-transform duration-200 ${
+                isExpanded ? "rotate-90" : "rotate-0"
+              }`}
             />
           )}
         </div>

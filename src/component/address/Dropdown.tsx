@@ -42,7 +42,7 @@ const Dropdown: React.FC<Props> = ({
           transition-colors
           ${
             disabled
-              ? "bg-[#F1F1F1] border-[#E6E6E6] text-gray-400 cursor-default"
+              ? "bg-[#F1F1F1] border-[#CFCFCF] text-gray-400 cursor-default"
               : "bg-white border-[#CFCFCF] focus:outline-none focus:border-[#005AA7]"
           }
         `}

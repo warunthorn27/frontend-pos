@@ -71,13 +71,12 @@ const UserModal: React.FC<Props> = ({
     setShowDiscard(false);
   };
 
-
   return (
     <>
       <Modal open={open} onClose={handleClose}>
         <div className="fixed inset-0 flex items-center justify-center bg-black/30">
           <div
-            className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] h-full bg-white rounded-t-lg shadow-lg 
+            className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] h-full bg-white rounded-lg shadow-lg 
           grid grid-rows-[auto_1fr_auto]"
           >
             {/* HEADER */}

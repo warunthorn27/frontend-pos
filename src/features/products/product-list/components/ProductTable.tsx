@@ -42,7 +42,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-6 py-4 text-lg font-normal bg-[#F7F7F7] border-b border-[#E7EDF6] truncate ${className}`}
+      className={`px-6 py-4 text-lg font-normal bg-[#F7F7F7] border-b truncate ${className}`}
     >
       {ellipsis ? (
         <span
@@ -76,7 +76,7 @@ function Td({
       className={`
         px-6 py-4
         overflow-hidden whitespace-nowrap text-ellipsis
-        border-b border-[#EDF2FA]
+        border-b
         ${className}
       `}
       onClick={onClick}
@@ -212,7 +212,7 @@ export default function ProductTable({
               <Th className="w-[120px] text-left">Metal</Th>
               <Th className="w-[100px] text-left">Color</Th>
               <Th className="w-[110px] text-center">Action</Th>
-              <Th className="w-[100px] text-center border-l border-[#E7EDF6]">
+              <Th className="w-[100px] text-center border-l">
                 Status
               </Th>
             </tr>
@@ -305,7 +305,7 @@ export default function ProductTable({
                   </Td>
 
                   <Td
-                    className="w-[80px] text-center border-l border-[#EDF2FA]"
+                    className="w-[80px] text-center border-l"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex justify-center">

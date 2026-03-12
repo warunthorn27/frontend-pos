@@ -33,7 +33,7 @@ const AddressFields: React.FC<Props> = ({
   const inputStyle =
     "w-full h-[38px] rounded-md border border-[#CFCFCF] px-3 text-sm focus:outline-none focus:border-[#005AA7]";
   const labelStyle = "block text-base mb-2";
-  const disabledStyle = "bg-[#F1F1F1] border-[#E6E6E6] text-black";
+  const disabledStyle = "bg-[#F1F1F1] border-[#CFCFCF] text-black";
 
   const handleChange = (field: keyof BaseAddress, val: string) => {
     const updated = { ...value, [field]: val };

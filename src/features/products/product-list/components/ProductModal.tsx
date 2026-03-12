@@ -491,8 +491,8 @@ const ProductModal: React.FC<Props> = ({
       <Modal open={open} onClose={onClose}>
         <div className="fixed inset-0 flex items-center justify-center bg-black/30">
           <div
-            className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-t-lg shadow-lg 
-          grid grid-rows-[auto_1fr_auto]"
+            className="w-full max-w-[min(1200px,95vw)] max-h-[90vh] bg-white rounded-lg shadow-lg 
+           overflow-hidden grid grid-rows-[auto_1fr_auto]"
           >
             {/* LOADING OVERLAY */}
             {loading && (

@@ -155,8 +155,6 @@ const UserForm: React.FC<Props> = ({
     return init;
   });
 
-
-
   const [sendPasswordEmail, setSendPasswordEmail] = useState(false);
 
   /* ---------- checkbox ---------- */
@@ -212,9 +210,7 @@ const UserForm: React.FC<Props> = ({
     (isCreate ? password.trim().length > 0 : true);
 
   const disableSave =
-    isSubmitting ||
-    (isCreate && !isValidRequired) ||
-    Boolean(phoneError);
+    isSubmitting || (isCreate && !isValidRequired) || Boolean(phoneError);
 
   /* ---------- submit ---------- */
 
@@ -285,7 +281,7 @@ const UserForm: React.FC<Props> = ({
             onKeyDown={handleKeyDown}
             className="flex flex-col h-full min-h-0"
           >
-            <div className="flex-1 px-10 py-6 min-h-0 flex flex-col">
+            <div className="flex-1 px-10 py-8 min-h-0 flex flex-col overflow-y-auto hide-scrollbar">
               {/* Status */}
               <div className="flex items-center gap-3 mb-6">
                 <ToggleSwitch
@@ -411,7 +407,7 @@ const UserForm: React.FC<Props> = ({
                 </label>
               )}
 
-              <div className="w-full h-full flex flex-col min-h-0">
+              <div className="w-full flex flex-col min-h-[390px] overflow-y-auto hide-scrollbar">
                 <PermissionTable
                   menus={menus}
                   disabled={isView}
@@ -436,10 +432,11 @@ const UserForm: React.FC<Props> = ({
                   type="submit"
                   disabled={disableSave}
                   className={`w-24 px-4 py-[6px] rounded-md text-base font-normal
-                  ${disableSave
+                  ${
+                    disableSave
                       ? "bg-[#BABABA] text-[#6B6B6B] cursor-not-allowed"
                       : "bg-[#005AA7] hover:bg-[#084072] text-white cursor-pointer"
-                    }
+                  }
                 `}
                 >
                   Save

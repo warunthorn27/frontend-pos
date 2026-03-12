@@ -209,7 +209,7 @@ const AddCustomer: React.FC<AddCustomerProps> = ({
                       <FormField label="Customer ID">
                         <Input
                           disabled
-                          className="bg-[#F5F5F5] text-sm"
+                          className="bg-[#F1F1F1] text-sm"
                           placeholder="Auto-generated ID "
                         />
                       </FormField>

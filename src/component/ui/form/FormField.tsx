@@ -32,7 +32,7 @@ export const FormTextarea: React.FC<TextareaProps> = ({
       focus:outline-none focus:border-[#005AA7] transition-colors
       ${
         disabled
-          ? "bg-[#F1F1F1] border-[#E6E6E6] text-black resize-none cursor-default"
+          ? "bg-[#F1F1F1] border-[#CFCFCF] text-black resize-none cursor-default"
           : "bg-white border-[#CFCFCF]"
       }
       ${className ?? ""}

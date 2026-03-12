@@ -14,7 +14,7 @@ interface CompanyProfileViewProps {
 }
 
 const Field = ({ value }: { value?: string }) => (
-  <div className="h-[38px] w-full rounded-md border border-[#E6E6E6] bg-[#F1F1F1] px-3 text-sm flex items-center">
+  <div className="h-[38px] w-full rounded-md border border-[#CFCFCF] bg-[#F1F1F1] px-3 text-sm flex items-center">
     {value || "-"}
   </div>
 );
@@ -34,7 +34,7 @@ const PhoneView = ({ value }: { value?: string }) => {
   const local = formatPhoneForDisplay(value);
 
   return (
-    <div className="flex items-center h-[38px] w-full rounded-md border border-[#E6E6E6] bg-[#F1F1F1]">
+    <div className="flex items-center h-[38px] w-full rounded-md border border-[#CFCFCF] bg-[#F1F1F1]">
       <div className="px-3 text-sm text-black">{dial}</div>
       <div className="h-[38px] w-px bg-[#E6E6E6]" />
       <div className="flex-1 px-3 text-sm text-black">{local}</div>

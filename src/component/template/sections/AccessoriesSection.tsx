@@ -43,7 +43,7 @@ function Input({
         w-full h-[38px]
         rounded-md border border-[#CFCFCF]
         bg-white px-3 text-sm outline-none
-        disabled:bg-[#F5F5F5] disabled:text-[#9AA3B2]
+        disabled:bg-[#F1F1F1] disabled:text-[#9AA3B2]
       "
     />
   );
