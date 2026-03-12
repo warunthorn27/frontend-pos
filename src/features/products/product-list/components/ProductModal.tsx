@@ -209,31 +209,22 @@ const ProductModal: React.FC<Props> = ({
     return new File([blob], filename, { type: blob.type });
   }
 
-  const onEdit = async () => {
+  const onEdit = () => {
     setCurrentMode("edit");
-
-    if (remoteImages.length === 0) return;
-
-    const files = await Promise.all(
-      remoteImages.map((url, i) => urlToFile(url, `image-${i}.jpg`)),
-    );
-
-    setLocalImages(files);
   };
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || currentMode !== "edit") return;
+    if (remoteImages.length === 0) return;
 
-    if (mode === "edit" && remoteImages.length > 0) {
-      (async () => {
-        const files = await Promise.all(
-          remoteImages.map((url, i) => urlToFile(url, `image-${i}.jpg`)),
-        );
-        setLocalImages(files);
-        // setCurrentMode("edit");
-      })();
-    }
-  }, [open, mode, remoteImages]);
+    (async () => {
+      const files = await Promise.all(
+        remoteImages.map((url, i) => urlToFile(url, `image-${i}.jpg`)),
+      );
+
+      setLocalImages(files);
+    })();
+  }, [currentMode, remoteImages, open]);
 
   const getCurrentForm = () => {
     switch (realCategory) {
@@ -284,9 +275,15 @@ const ProductModal: React.FC<Props> = ({
     console.log("UPDATE PAYLOAD", payload);
     append(payload);
 
+    // upload files
     localImages.forEach((file) => {
       formData.append("files", file);
     });
+
+    // remove images only if user deleted them
+    if (remoteImages.length > 0 && localImages.length === 0) {
+      formData.append("image", "");
+    }
 
     return formData;
   };
@@ -521,13 +518,15 @@ const ProductModal: React.FC<Props> = ({
                   </button>
                 )}
 
-                <button onClick={() => {
-                  if (currentMode === "edit") {
-                    setShowCancelDialog(true);
-                  } else {
-                    onClose();
-                  }
-                }}>
+                <button
+                  onClick={() => {
+                    if (currentMode === "edit") {
+                      setShowCancelDialog(true);
+                    } else {
+                      onClose();
+                    }
+                  }}
+                >
                   <RemoveIcon className="w-5 h-5" />
                 </button>
               </div>
@@ -585,7 +584,6 @@ const ProductModal: React.FC<Props> = ({
             )}
           </div>
         </div>
-
       </Modal>
 
       <DiscardChangesDialog

@@ -183,7 +183,7 @@ const ProductListPage: React.FC = () => {
 
         return {
           id: p._id,
-          imageUrl: p.image,
+          imageUrl: p.image && p.image.trim() !== "" ? p.image : null,
           code: p.product_code,
           productName: p.product_name,
           category,
