@@ -1,3 +1,4 @@
+import { formatCurrency } from "../../../utils/number";
 import { formatStockUnit } from "../../../utils/unit";
 
 type Props = {
@@ -19,9 +20,6 @@ export default function InventoryDetailsInfo({
   price,
   status,
 }: Props) {
-  const formatAmount = (num: number) =>
-    num.toLocaleString(undefined, { minimumFractionDigits: 2 });
-
   const isInStock = status === "In Stock";
 
   return (
@@ -43,17 +41,17 @@ export default function InventoryDetailsInfo({
 
       <div className="flex py-[2px] text-sm">
         <span className="w-[150px] shrink-0">Cost :</span>
-        <span className="font-light">{formatAmount(cost)}</span>
+        <span className="font-light">{formatCurrency(cost)}</span>
       </div>
 
       <div className="flex py-[2px] text-sm">
         <span className="w-[150px] shrink-0">Amount :</span>
-        <span className="font-light">{formatAmount(amount)}</span>
+        <span className="font-light">{formatCurrency(amount)}</span>
       </div>
 
       <div className="flex py-[2px] text-sm">
         <span className="w-[150px] shrink-0">Sale Price :</span>
-        <span className="font-light">{formatAmount(price)}</span>
+        <span className="font-light">{formatCurrency(price)}</span>
       </div>
 
       <div className="flex py-[2px] text-sm items-center">

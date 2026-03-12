@@ -9,6 +9,7 @@ import { formatDateDisplay } from "../../../utils/date";
 import ProductImage from "../../products/product-list/components/ProductImage";
 import { getCategoryLabel } from "../../../utils/categoryOptions";
 import { formatStockUnit } from "../../../utils/unit";
+import { formatCurrency } from "../../../utils/number";
 
 type Props = {
   warehouseId?: string;
@@ -91,23 +92,24 @@ export default function InventoryTable({
     {
       key: "unit",
       header: "Unit",
-      width: "100px",
+      width: "90px",
       render: (value) => formatStockUnit(value as string),
     },
-
     {
       key: "cost",
       header: "Cost",
       width: "130px",
       headerClassName: "text-right",
       className: "text-right",
+      render: (value) => formatCurrency(value as number),
     },
     {
       key: "amount",
       header: "Amount",
-      width: "130px",
+      width: "150px",
       headerClassName: "text-right",
       className: "text-right",
+      render: (value) => formatCurrency(value as number),
     },
     {
       key: "salePrice",
@@ -115,6 +117,7 @@ export default function InventoryTable({
       width: "130px",
       headerClassName: "text-right",
       className: "text-right",
+      render: (value) => formatCurrency(value as number),
     },
 
     {
