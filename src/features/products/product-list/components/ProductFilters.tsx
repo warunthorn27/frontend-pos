@@ -39,7 +39,7 @@ export default function ProductFilters({
             value={search}
             onChange={(e) => onChangeSearch(e.target.value)}
             placeholder="Search"
-            className="w-[400px] h-[40px] rounded-[10px] border border-[#CFCFCF] bg-white px-[20px] text-sm text-black font-light placeholder:text-[#BABABA] outline-none"
+            className="w-[400px] h-[40px] rounded-md border border-[#CFCFCF] bg-white px-[20px] text-sm text-black font-light placeholder:text-[#BABABA] outline-none"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B94A3]">
             <SearchIcon className="w-6 h-6" />

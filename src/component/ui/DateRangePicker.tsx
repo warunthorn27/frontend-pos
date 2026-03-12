@@ -399,7 +399,7 @@ const DateRangePicker: React.FC<Props> = ({ startDate, endDate, onChange }) => {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`w-full h-[38px] rounded-md px-3 flex items-center justify-between
+        className={`w-full h-[40px] rounded-md px-3 flex items-center justify-between
         bg-white text-sm transition-colors
         ${open ? "border border-[#005AA7]" : "border border-[#CFCFCF]"}`}
       >
