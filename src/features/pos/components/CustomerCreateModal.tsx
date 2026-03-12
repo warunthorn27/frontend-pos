@@ -46,7 +46,7 @@ const CustomerCreateModal: React.FC<CustomerCreateModalProps> = ({
           maxWidth: "1200px",
           height: "90vh",
           bgcolor: "background.paper",
-          borderRadius: "8px",
+          borderRadius: "4px",
           boxShadow: 24,
           p: 0,
           outline: "none",

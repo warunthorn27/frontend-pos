@@ -188,7 +188,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm font-inherit">
-      <div className="bg-white w-full max-w-[1000px] max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div className="bg-white w-full max-w-[1000px] max-h-[95vh] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
         
         {/* Header - Centered Title */}
         <div className="relative flex justify-center items-center px-8 py-6">
@@ -218,7 +218,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
           <div className="flex gap-12 mb-12">
             {/* Left: Images area */}
             <div className="w-[320px] flex-shrink-0">
-              <div className="aspect-square bg-white rounded-2xl border border-gray-100 overflow-hidden flex items-center justify-center mb-6 shadow-sm">
+              <div className="aspect-square bg-white rounded-lg border border-gray-100 overflow-hidden flex items-center justify-center mb-6 shadow-sm">
                 {displayImage ? (
                   <img src={displayImage} className="w-full h-full object-cover" />
                 ) : (
@@ -226,10 +226,10 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
                 )}
               </div>
               <div className="flex gap-4">
-                <div className="w-20 h-20 bg-white rounded-xl border border-gray-100 flex-shrink-0 overflow-hidden shadow-xs">
+                <div className="w-20 h-20 bg-white rounded-lg border border-gray-100 flex-shrink-0 overflow-hidden shadow-xs">
                     {displayImage && <img src={displayImage} className="w-full h-full object-cover opacity-80" />}
                 </div>
-                <div className="w-20 h-20 bg-white rounded-xl border border-gray-100 flex-shrink-0 overflow-hidden shadow-xs">
+                <div className="w-20 h-20 bg-white rounded-lg border border-gray-100 flex-shrink-0 overflow-hidden shadow-xs">
                     {displayImage && <img src={displayImage} className="w-full h-full object-cover opacity-80" />}
                 </div>
               </div>

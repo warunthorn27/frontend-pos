@@ -35,7 +35,7 @@ const CatalogueCategoryPage: React.FC<Props> = ({
 }) => {
   const [products, setProducts] = useState<CatalogueProductItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const { addItem } = useCustomSession();
+  const { addItem, addSellItem } = useCustomSession();
 
   /* Detail modal */
   const [selectedDetail, setSelectedDetail] = useState<PosProductDetail | null>(null);
@@ -79,6 +79,14 @@ const CatalogueCategoryPage: React.FC<Props> = ({
       imageUrl: item.imageUrl,
       metal: item.metal,
       metalColor: item.metalColor,
+    });
+  };
+
+  const handleSell = async (item: CatalogueProductItem) => {
+    await addSellItem(item.id, item.price || 0, {
+      name: item.name,
+      code: item.code,
+      imageUrl: item.imageUrl,
     });
   };
 
@@ -133,6 +141,7 @@ const CatalogueCategoryPage: React.FC<Props> = ({
         loading={loading}
         onSelect={handleOpenDetail}
         onCustom={handleCustom}
+        onSell={handleSell}
       />
 
       {/* Detail modal */}

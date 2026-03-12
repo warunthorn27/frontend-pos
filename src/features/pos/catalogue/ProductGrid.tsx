@@ -11,6 +11,7 @@ interface Props {
   loading?: boolean;
   onSelect?: (id: string) => void;
   onCustom?: (item: CatalogueProductItem) => void;
+  onSell?: (item: CatalogueProductItem) => void;
 }
 
 const ProductGrid: React.FC<Props> = ({
@@ -20,6 +21,7 @@ const ProductGrid: React.FC<Props> = ({
   loading,
   onSelect,
   onCustom,
+  onSell,
 }) => {
   const visibleItems =
     mode === "inventory" ? items.filter((item) => item.inStock) : items;
@@ -48,6 +50,7 @@ const ProductGrid: React.FC<Props> = ({
             mode={mode}
             onClick={onSelect}
             onCustom={onCustom}
+            onSell={onSell}
           />
         ))}
       </div>

@@ -19,7 +19,7 @@ const menus = [
 const PosTopNav: React.FC<PosTopNavProps> = ({ onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { customCount } = useCustomSession();
+  const { customCount, sellCount } = useCustomSession();
 
   return (
     <div className="h-14 border-b grid grid-cols-3 items-center px-10">
@@ -36,6 +36,7 @@ const PosTopNav: React.FC<PosTopNavProps> = ({ onLogout }) => {
         {menus.map((menu) => {
           const active = location.pathname === menu.path;
           const isCustom = menu.name === "Custom";
+          const isSell = menu.name === "Sell";
 
           return (
             <div
@@ -69,6 +70,29 @@ const PosTopNav: React.FC<PosTopNavProps> = ({ onLogout }) => {
                   }}
                 >
                   {customCount > 99 ? "99+" : customCount}
+                </span>
+              )}
+              {isSell && sellCount > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-6px",
+                    right: "-10px",
+                    background: "#ef4444",
+                    color: "#fff",
+                    borderRadius: "9999px",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    minWidth: "16px",
+                    height: "16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 4px",
+                    lineHeight: 1,
+                  }}
+                >
+                  {sellCount > 99 ? "99+" : sellCount}
                 </span>
               )}
             </div>

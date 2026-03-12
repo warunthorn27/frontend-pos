@@ -246,7 +246,7 @@ const PosCustomPage = () => {
 
       <div className="flex flex-1 overflow-hidden p-8 gap-6">
         {/* ═══ LEFT SIDE ═══ */}
-        <div className="flex-1 bg-white border border-[#E5E7EB] rounded-2xl p-6 flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white border border-[#E5E7EB] rounded-xl p-6 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-[#06284B]">Details</h2>
@@ -258,7 +258,7 @@ const PosCustomPage = () => {
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   onFocus={() => handleSearch(searchQuery, true)}
-                  className="w-[320px] h-10 border border-[#E5E7EB] rounded-lg px-4 pr-10 text-sm outline-none focus:border-[#2E5B9A]"
+                  className="w-[320px] h-10 border border-[#E5E7EB] rounded-md px-4 pr-10 text-sm outline-none focus:border-[#2E5B9A]"
                 />
                 <div className="absolute right-3 text-gray-400">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -269,7 +269,7 @@ const PosCustomPage = () => {
                 {/* Search Results Dropdown */}
                 {showResults && (
                   <div 
-                    className="absolute top-11 left-0 w-full bg-white border border-[#E5E7EB] rounded-xl shadow-xl z-[60] max-h-[360px] overflow-auto [&::-webkit-scrollbar]:hidden"
+                    className="absolute top-11 left-0 w-full bg-white border border-[#E5E7EB] rounded-lg shadow-xl z-[60] max-h-[360px] overflow-auto [&::-webkit-scrollbar]:hidden"
                     style={{ scrollbarWidth: "none" }}
                   >
                     {isSearching && searchResults.length === 0 ? (
@@ -284,7 +284,7 @@ const PosCustomPage = () => {
                             onClick={() => handleAddFromSearch(product)}
                             className="flex items-center gap-4 p-3 hover:bg-blue-50 cursor-pointer transition-colors"
                           >
-                            <div className="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                            <div className="w-12 h-12 rounded bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                               {product.image && <img src={product.image} className="w-full h-full object-cover" />}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -331,7 +331,7 @@ const PosCustomPage = () => {
                   <div key={item.session_id} className="py-6 first:pt-0">
                     <div className="flex items-start gap-4">
                       {/* Thumbnail */}
-                      <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                      <div className="w-16 h-16 rounded bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                         {item.image ? (
                           <img src={item.image} alt={item.product_name} className="w-full h-full object-cover" />
                         ) : null}
@@ -346,7 +346,7 @@ const PosCustomPage = () => {
                               {item.product_name}
                             </h3>
                             {item.is_customized && (
-                              <span className="bg-[#EBF5FF] text-[#0066CC] text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider flex-shrink-0">
+                              <span className="bg-[#EBF5FF] text-[#0066CC] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider flex-shrink-0">
                                 Customized
                               </span>
                             )}
@@ -385,7 +385,7 @@ const PosCustomPage = () => {
                             placeholder="Deposit"
                             value={deposits[item.session_id] ?? (item.deposit != null ? item.deposit.toLocaleString() : item.price != null ? item.price.toLocaleString() : "")}
                             onChange={(e) => setDeposits(prev => ({ ...prev, [item.session_id]: e.target.value }))}
-                            className="w-[140px] h-9 border border-[#E5E7EB] rounded-lg px-3 text-sm text-gray-700 outline-none focus:border-[#2E5B9A] transition-colors"
+                            className="w-[140px] h-9 border border-[#E5E7EB] rounded-md px-3 text-sm text-gray-700 outline-none focus:border-[#2E5B9A] transition-colors"
                           />
 
                           <div className="flex items-center gap-2">
@@ -410,7 +410,7 @@ const PosCustomPage = () => {
         </div>
 
         {/* ═══ RIGHT SIDE ═══ */}
-        <div className="w-[420px] bg-white border border-[#E5E7EB] rounded-2xl p-6 flex flex-col justify-between overflow-hidden">
+        <div className="w-[420px] bg-white border border-[#E5E7EB] rounded-xl p-6 flex flex-col justify-between overflow-hidden">
           <div>
             <div className="flex justify-between text-[13px] text-gray-400 mb-6">
               <span className="font-medium text-gray-900">{orderRef}</span>
@@ -454,7 +454,7 @@ const PosCustomPage = () => {
             <button 
               onClick={handleFinishOrder}
               disabled={loading || items.length === 0}
-              className="w-full h-12 bg-[#005AA7] hover:bg-[#004A8A] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold flex items-center justify-center transition-colors shadow-sm"
+              className="w-full h-12 bg-[#005AA7] hover:bg-[#004A8A] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold flex items-center justify-center transition-colors shadow-sm"
             >
               {loading ? "Processing..." : "Finish Order"}
             </button>

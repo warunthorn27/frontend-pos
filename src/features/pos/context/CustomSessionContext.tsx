@@ -3,6 +3,10 @@ import {
   addToCustomSession,
   getCustomSessionList,
 } from "../../../services/pos/posCustom";
+import {
+  addToSellSession,
+  getSellSessionList,
+} from "../../../services/pos/posSell";
 import CustomAddedToast from "../components/CustomAddedToast";
 import type { ToastItem } from "../components/CustomAddedToast";
 
@@ -12,7 +16,9 @@ import type { ToastItem } from "../components/CustomAddedToast";
 interface CustomSessionContextValue {
   /** Current count of items in custom session */
   customCount: number;
-  /** Add a product to the session; shows toast on success */
+  /** Current count of items in sell session */
+  sellCount: number;
+  /** Add a product to the custom session; shows toast on success */
   addItem: (productId: string, productInfo?: {
     name: string;
     code: string;
@@ -20,7 +26,13 @@ interface CustomSessionContextValue {
     metal?: string;
     metalColor?: string;
   }) => Promise<void>;
-  /** Pull latest count from server (called from PosCustomPage on mount) */
+  /** Add a product to the sell session */
+  addSellItem: (productId: string, price: number, productInfo?: {
+    name: string;
+    code: string;
+    imageUrl?: string | null;
+  }) => Promise<void>;
+  /** Pull latest counts from server */
   refreshCount: () => Promise<void>;
 }
 
@@ -33,14 +45,22 @@ export const CustomSessionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [customCount, setCustomCount] = useState(0);
+  const [sellCount, setSellCount] = useState(0);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const toastIdRef = useRef(0);
 
   const refreshCount = useCallback(async () => {
     try {
-      const items = await getCustomSessionList();
-      const total = items.reduce((sum, i) => sum + (i.qty ?? 1), 0);
-      setCustomCount(total);
+      const [customItems, sellRes] = await Promise.all([
+        getCustomSessionList(),
+        getSellSessionList(),
+      ]);
+      
+      const customTotal = customItems.reduce((sum, i) => sum + (i.qty ?? 1), 0);
+      setCustomCount(customTotal);
+
+      const sellTotal = sellRes.data.reduce((sum, i) => sum + (i.qty ?? 1), 0);
+      setSellCount(sellTotal);
     } catch (err) {
       console.error("refreshCount error", err);
     }
@@ -83,12 +103,46 @@ export const CustomSessionProvider: React.FC<{ children: React.ReactNode }> = ({
     [],
   );
 
+  const addSellItem = useCallback(
+    async (
+      productId: string,
+      price: number,
+      productInfo?: {
+        name: string;
+        code: string;
+        imageUrl?: string | null;
+      },
+    ) => {
+      try {
+        await addToSellSession({ product_id: productId, unit_price: price });
+
+        // Optimistically bump counter
+        setSellCount((c) => c + 1);
+
+        // Show toast (reusing the same toast system)
+        const id = ++toastIdRef.current;
+        setToasts((prev) => [
+          ...prev,
+          {
+            id,
+            productName: productInfo?.name ?? "Item",
+            productCode: productInfo?.code ?? "",
+            imageUrl: productInfo?.imageUrl ?? null,
+          },
+        ]);
+      } catch (err) {
+        console.error("addSellItem error", err);
+      }
+    },
+    [],
+  );
+
   const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   return (
-    <CustomSessionContext.Provider value={{ customCount, addItem, refreshCount }}>
+    <CustomSessionContext.Provider value={{ customCount, sellCount, addItem, addSellItem, refreshCount }}>
       {children}
       <CustomAddedToast toasts={toasts} onClose={removeToast} />
     </CustomSessionContext.Provider>

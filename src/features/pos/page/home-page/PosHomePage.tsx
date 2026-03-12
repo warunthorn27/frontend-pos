@@ -16,6 +16,7 @@ import CatalogueCategoryPage from "../../catalogue/CatalogueCategoryPage";
 import CatalogueAccessoriesPage from "../../catalogue/CatalogueAccessoriesPage";
 import CatalogueOthersPage from "../../catalogue/CatalogueOthersPage";
 import type { ProductCategory } from "../../../../types/product/form";
+import { useCustomSession } from "../../context/CustomSessionContext";
 
 const TAB_TO_PRODUCT_CATEGORY: Record<CatalogueTab, ProductCategory> = {
   "product-master": "productmaster",
@@ -35,6 +36,7 @@ const PosHomePage = () => {
   const [itemTypes, setItemTypes] = useState<CatalogueCategoryItem[]>([]);
 
   const [loading, setLoading] = useState(false);
+  const { refreshCount } = useCustomSession();
 
   /* ===================================================
      LOAD ITEM TYPES
@@ -69,7 +71,8 @@ const PosHomePage = () => {
     };
 
     load();
-  }, [activeTab]);
+    refreshCount();
+  }, [activeTab, refreshCount]);
 
   return (
     <div className="flex flex-col h-full bg-white">

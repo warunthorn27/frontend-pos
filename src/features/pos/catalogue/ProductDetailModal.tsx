@@ -68,7 +68,7 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
         onClick={(e) => e.stopPropagation()}
         style={{
           background: "#fff",
-          borderRadius: "12px",
+          borderRadius: "6px",
           width: "920px",
           height: "580px",
           display: "flex",
@@ -107,7 +107,7 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
             <div style={{
               flex: 1,
               width: "100%",
-              background: "#f9fafb", borderRadius: "8px",
+              background: "#f9fafb", borderRadius: "4px",
               overflow: "hidden", display: "flex",
               alignItems: "center", justifyContent: "center",
             }}>
@@ -127,7 +127,7 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
                     onClick={() => setActiveImg(img)}
                     style={{
                       width: "52px", height: "52px",
-                      borderRadius: "6px", overflow: "hidden",
+                      borderRadius: "4px", overflow: "hidden",
                       border: activeImg === img ? "2px solid #2563eb" : "2px solid #e5e7eb",
                       cursor: "pointer", background: "#f3f4f6",
                     }}
@@ -251,7 +251,7 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
             style={{
               padding: "0 28px", height: "38px",
               background: "#fff", border: "1px solid #d1d5db",
-              borderRadius: "6px", fontSize: "13px", cursor: "pointer",
+              borderRadius: "4px", fontSize: "13px", cursor: "pointer",
               color: "#111827", fontWeight: 500,
             }}
           >

@@ -60,7 +60,7 @@ const ToastCard: React.FC<CardProps> = ({ toast, onClose, onViewCustom }) => {
       style={{
         background: "#fff",
         border: "1px solid #e5e7eb",
-        borderRadius: "8px",
+        borderRadius: "6px",
         boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
         padding: "12px 14px",
         width: "280px",

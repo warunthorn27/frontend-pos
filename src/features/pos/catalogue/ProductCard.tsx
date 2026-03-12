@@ -10,9 +10,10 @@ interface Props {
   mode: CatalogueMode;
   onClick?: (id: string) => void;
   onCustom?: (item: CatalogueProductItem) => void;
+  onSell?: (item: CatalogueProductItem) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom }) => {
+const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom, onSell }) => {
   return (
     <div
       onClick={() => onClick?.(item.id)}
@@ -56,13 +57,19 @@ const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom }) => {
 
         <div className="flex gap-2 mt-auto pt-3 justify-end">
           {mode === "inventory" && (
-            <button className="w-[96px] h-9 rounded-md text-sm bg-[#06284B] text-white">
+            <button 
+              className="w-[96px] h-9 rounded text-sm bg-[#06284B] text-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSell?.(item);
+              }}
+            >
               Sell
             </button>
           )}
 
           <button
-            className="w-[96px] h-9 rounded-md border border-gray-300 text-sm bg-white"
+            className="w-[96px] h-9 rounded border border-gray-300 text-sm bg-white"
             onClick={(e) => {
               e.stopPropagation();
               onCustom?.(item);
