@@ -3,14 +3,14 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import { InventorySuccessToastProvider } from "./component/ui/toast/inventory-success-toast/provider";
+import { ToastProvider } from "./component/ui/toast/toast-provider";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <InventorySuccessToastProvider>
+      <ToastProvider>
         <App />
-      </InventorySuccessToastProvider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
