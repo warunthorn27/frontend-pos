@@ -15,16 +15,16 @@ export default function ConfirmSaveWithErrorsDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="w-[520px] rounded-md bg-white shadow-lg relative px-10 py-8">
+    <div className="fixed inset-0 z-[1500] flex items-center justify-center bg-black/30">
+      <div className="w-[500px] bg-white rounded-xl px-8 py-8 text-center relative shadow-xl">
         <button className="absolute right-4 top-4" onClick={onCancel}>
           <CloseIcon className="w-5 h-5" />
         </button>
 
-        <div className="flex flex-col items-center text-center gap-4">
-          <WarningIcon/>
+        <div className="flex flex-col items-center text-center gap-2">
+          <WarningIcon />
 
-          <h2 className="text-lg font-normal text-black mt-4">
+          <h2 className="text-lg font-normal text-black mt-3">
             Save with errors
           </h2>
 
