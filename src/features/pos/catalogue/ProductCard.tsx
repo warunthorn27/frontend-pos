@@ -9,9 +9,10 @@ interface Props {
   item: CatalogueProductItem;
   mode: CatalogueMode;
   onClick?: (id: string) => void;
+  onCustom?: (item: CatalogueProductItem) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ item, mode, onClick }) => {
+const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom }) => {
   return (
     <div
       onClick={() => onClick?.(item.id)}
@@ -60,7 +61,13 @@ const ProductCard: React.FC<Props> = ({ item, mode, onClick }) => {
             </button>
           )}
 
-          <button className="w-[96px] h-9 rounded-md border border-gray-300 text-sm bg-white">
+          <button
+            className="w-[96px] h-9 rounded-md border border-gray-300 text-sm bg-white"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCustom?.(item);
+            }}
+          >
             Custom
           </button>
         </div>

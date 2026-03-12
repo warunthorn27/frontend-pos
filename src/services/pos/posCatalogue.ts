@@ -40,7 +40,7 @@ export const getItemTypes = async (
 ========================================================= */
 
 interface GetProductsParams {
-  category: string;
+  category?: string;
   item_type_id?: string;
   view_mode: "master" | "inventory";
   page?: number;
@@ -83,7 +83,7 @@ export const getProducts = async (
 ): Promise<PosProductListResponse> => {
   const query = new URLSearchParams();
 
-  query.append("category", params.category);
+  if (params.category) query.append("category", params.category);
   query.append("view_mode", params.view_mode);
 
   if (params.item_type_id) query.append("item_type", params.item_type_id);

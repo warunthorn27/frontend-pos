@@ -26,6 +26,8 @@ export interface PosProduct {
   metal_color?: string;
   price: number;
   quantity: number;
+  category?: string;
+  master_name?: string;
 }
 
 export interface PosProductListResponse {
@@ -38,20 +40,29 @@ export interface PosProductListResponse {
   };
 }
 
+export interface LabelValue {
+  label: string;
+  value: string;
+}
+
 export interface PosProductDetail {
   _id: string;
   product_code: string;
   product_name: string;
 
-  description: string;
+  description?: string;
   images: string[];
-
   cover_image: string | null;
 
   price: number;
   quantity: number;
+  unit?: string;
 
-  unit: string;
+  attributes: {
+    main_info: LabelValue[];
+    stone_info: LabelValue[];
+    additional_stones: LabelValue[][];
+  };
 }
 
 /* ========================================

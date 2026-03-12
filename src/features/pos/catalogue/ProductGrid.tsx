@@ -10,6 +10,7 @@ interface Props {
   mode: CatalogueMode;
   loading?: boolean;
   onSelect?: (id: string) => void;
+  onCustom?: (item: CatalogueProductItem) => void;
 }
 
 const ProductGrid: React.FC<Props> = ({
@@ -18,9 +19,14 @@ const ProductGrid: React.FC<Props> = ({
   mode,
   loading,
   onSelect,
+  onCustom,
 }) => {
   const visibleItems =
     mode === "inventory" ? items.filter((item) => item.inStock) : items;
+
+  if (loading) {
+    return <div className="p-10 text-center">Loading...</div>;
+  }
 
   if (visibleItems.length === 0) {
     return (
@@ -28,10 +34,6 @@ const ProductGrid: React.FC<Props> = ({
         No products found
       </div>
     );
-  }
-
-  if (loading) {
-    return <div className="p-10 text-center">Loading...</div>;
   }
 
   return (
@@ -45,6 +47,7 @@ const ProductGrid: React.FC<Props> = ({
             item={item}
             mode={mode}
             onClick={onSelect}
+            onCustom={onCustom}
           />
         ))}
       </div>
