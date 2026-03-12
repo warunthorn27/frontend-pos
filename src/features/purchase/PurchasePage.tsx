@@ -10,8 +10,9 @@ import type {
   PurchaseItemRow,
   RowValidationErrors,
 } from "../../types/purchase";
-import { useInventorySuccessToast } from "../../component/ui/toast/inventory-success-toast/hook";
 import ConfirmSaveWithErrorsDialog from "../../component/dialog/ConfirmSaveWithErrorsDialog";
+import { useToast } from "../../component/ui/toast/useToast";
+import ConfirmDeleteDialog from "../../component/dialog/DiscardChangesDialog";
 // import { useNavigate } from "react-router-dom";
 
 type PurchaseErrors = {
@@ -37,12 +38,21 @@ export default function PurchasePage() {
   const [ref2, setRef2] = useState("");
   const [note, setNote] = useState("");
 
-  const { showInventorySuccessToast } = useInventorySuccessToast();
+  const toast = useToast();
   const [showErrorConfirm, setShowErrorConfirm] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const isSaveDisabled =
     !date || !vendor || !currency || exchangeRate <= 0 || items.length === 0;
+
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
+
+  const hasUnsavedChanges =
+    items.length > 0 ||
+    vendor.trim() !== "" ||
+    ref1.trim() !== "" ||
+    ref2.trim() !== "" ||
+    note.trim() !== "";
 
   // ================= RESET FORM =================
   const resetForm = async () => {
@@ -174,7 +184,9 @@ export default function PurchasePage() {
 
       await createPurchase(payload);
 
-      showInventorySuccessToast(validItems.length);
+      toast.success(
+        `${validItems.length} item(s) successfully added to inventory.`,
+      );
 
       await resetForm();
     } finally {
@@ -275,7 +287,11 @@ export default function PurchasePage() {
                   companyCurrency={companyCurrency}
                 />
 
-                <PurchaseItemsTable items={items} setItems={setItems} />
+                <PurchaseItemsTable
+                  key={purchaseNumber}
+                  items={items}
+                  setItems={setItems}
+                />
 
                 <div className="max-w-xl">
                   <label className="block text-base font-normal mb-2">
@@ -295,7 +311,16 @@ export default function PurchasePage() {
 
         {/* FOOTER */}
         <div className="py-4 border-[#E6E6E6] flex justify-center gap-4 bg-[#FAFAFA] rounded-b-lg">
-          <button className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md">
+          <button
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                setShowDiscardDialog(true);
+              } else {
+                resetForm();
+              }
+            }}
+            className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
+          >
             Cancel
           </button>
 
@@ -320,6 +345,15 @@ export default function PurchasePage() {
         open={showErrorConfirm}
         onCancel={() => setShowErrorConfirm(false)}
         onConfirm={confirmSaveWithErrors}
+      />
+
+      <ConfirmDeleteDialog
+        open={showDiscardDialog}
+        onClose={() => setShowDiscardDialog(false)}
+        onConfirm={async () => {
+          setShowDiscardDialog(false);
+          await resetForm();
+        }}
       />
     </div>
   );
