@@ -106,17 +106,15 @@ const MasterInputSelect: React.FC<Props> = ({
           setQuery(val);
           setOpen(true);
 
-          // required field !!
           if (required) {
-            // ห้ามว่าง และห้าม "-"
             if (val.trim() === "" || val.trim() === "-") {
               return;
             }
           }
-
-          // optional field ให้เป็น "", "-" ได้
+        }}
+        onBlur={() => {
           if (allowCreate) {
-            onChange(val);
+            onChange(query);
           }
         }}
         className="

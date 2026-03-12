@@ -275,6 +275,13 @@ const ProductModal: React.FC<Props> = ({
     console.log("UPDATE PAYLOAD", payload);
     append(payload);
 
+    // empty array
+    const accessories = payload["related_accessories"] as unknown[];
+
+    if (Array.isArray(accessories) && accessories.length === 0) {
+      formData.append("related_accessories", "[]");
+    }
+
     // upload files
     localImages.forEach((file) => {
       formData.append("files", file);

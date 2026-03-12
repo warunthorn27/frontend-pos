@@ -138,7 +138,7 @@ export function mapBaseProductFormToUpdatePayload(form: BaseProductForm) {
                 : form.accessories.description || undefined,
           },
         ]
-      : undefined,
+      : [],
   };
 }
 

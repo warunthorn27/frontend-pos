@@ -147,7 +147,10 @@ export function mapFormToUpdatePayload(
 export function mapToBaseProductForm(
   product: FormattedProductResponse,
 ): BaseProductForm {
-  const acc = product.related_accessories?.[0];
+  const acc =
+    product.related_accessories && product.related_accessories.length > 0
+      ? product.related_accessories[0]
+      : null;
 
   return {
     active: product.is_active ?? true,
@@ -260,11 +263,11 @@ export function mapToAccessoriesForm(
   const acc = product.related_accessories?.[0];
   const metalSource = acc?.metal ?? product.metal;
 
-  console.log("[mapToAccessoriesForm]");
-  console.log("product.metal:", product.metal);
-  console.log("acc?.metal:", acc?.metal);
-  console.log("metalSource:", metalSource);
-  console.log("metalId:", extractId(metalSource));
+  // console.log("[mapToAccessoriesForm]");
+  // console.log("product.metal:", product.metal);
+  // console.log("acc?.metal:", acc?.metal);
+  // console.log("metalSource:", metalSource);
+  // console.log("metalId:", extractId(metalSource));
 
   return {
     active: product.is_active ?? true,

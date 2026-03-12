@@ -17,7 +17,7 @@ const ReadonlyField: React.FC<Props> = ({
         w-full
         rounded-md
         border border-[#CFCFCF]
-        bg-[#F9FAFB]
+        bg-[#F1F1F1]
         px-3
         text-sm text-black
         ${multiline ? "py-2" : "flex items-center"}
