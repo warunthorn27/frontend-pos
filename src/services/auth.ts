@@ -31,7 +31,7 @@ function parseJsonOrText(text: string): LoginApiRawResponse {
 
 export async function loginApi(
   identifier: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> {
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
@@ -88,7 +88,7 @@ export interface ApiMessageResponse {
 /** helper แปลง text เป็น ApiMessageResponse แบบ type-safe */
 function parseApiMessageResponse(
   text: string,
-  defaultError: string
+  defaultError: string,
 ): ApiMessageResponse {
   try {
     const parsed = JSON.parse(text) as Partial<ApiMessageResponse>;
@@ -107,7 +107,7 @@ function parseApiMessageResponse(
 export async function changeFirstPasswordApi(
   token: string,
   userId: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<ApiMessageResponse> {
   const res = await fetch(
     `${API_BASE_URL}/changefirstpassword-user/${userId}`,
@@ -119,7 +119,7 @@ export async function changeFirstPasswordApi(
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ new_password: newPassword }),
-    }
+    },
   );
 
   const text = await res.text();
@@ -133,7 +133,7 @@ export async function changeFirstPasswordApi(
 }
 
 export async function forgotPasswordApi(
-  email: string
+  email: string,
 ): Promise<ApiMessageResponse> {
   const res = await fetch(`${API_BASE_URL}/forgotPassword`, {
     method: "POST",

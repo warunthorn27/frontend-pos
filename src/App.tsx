@@ -1,4 +1,10 @@
-import { Routes, Route, Navigate, useOutletContext } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useOutletContext,
+  useNavigate,
+} from "react-router-dom";
 import LoginPage from "./features/login/LoginPage";
 import FirstChangePasswordPage from "./features/login/FirstChangePassword";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -64,6 +70,7 @@ function DashboardIndexRedirect({ user }: { user: AuthUser }) {
 }
 
 export default function App() {
+  const navigate = useNavigate();
   const token = getToken();
   const currentUser = getCurrentUser();
   const forceChangePassword = getForceChangePassword();
@@ -80,7 +87,7 @@ export default function App() {
           <LoginPage
             onLoginSuccess={(data) => {
               saveAuth(data);
-              window.location.href = "/dashboard";
+              navigate("/dashboard", { replace: true });
             }}
           />
         }
@@ -96,7 +103,7 @@ export default function App() {
               userId={currentUser.id}
               onSuccess={() => {
                 setForceChangePassword(false);
-                window.location.href = "/dashboard";
+                navigate("/dashboard", { replace: true });
               }}
             />
           ) : (

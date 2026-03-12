@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ForgotPassword from "./ForgotPassword";
 import { loginApi } from "../../services/auth";
-import { saveAuth } from "../../utils/authStorage";
 import type { LoginResponse } from "../../types/auth";
 import EyeIcon from "../../assets/svg/eye.svg?react";
 import EyeOffIcon from "../../assets/svg/eye-slash.svg?react";
@@ -17,7 +15,6 @@ type FieldErrors = {
 };
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const navigate = useNavigate();
 
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -67,9 +64,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     try {
       const data = await loginApi(identifier, password);
 
-      saveAuth(data);
+      // saveAuth(data);
       onLoginSuccess(data);
-      navigate("/dashboard", { replace: true });
+      // navigate("/dashboard", { replace: true });
     } catch {
       setServerError("Invalid username or password");
     } finally {

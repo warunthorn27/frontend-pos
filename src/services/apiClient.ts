@@ -1,4 +1,4 @@
-import { getToken } from "../utils/authStorage";
+import { clearAuth, getToken } from "../utils/authStorage";
 
 export const API_BASE =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api";
@@ -56,6 +56,10 @@ export async function fetchWithAuth<T>(
   });
 
   if (res.status === 401) {
+    clearAuth();
+
+    window.location.replace("/login");
+
     throw new UnauthorizedError("Session expired");
   }
 

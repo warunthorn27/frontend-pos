@@ -1,12 +1,13 @@
-import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { getToken } from "../utils/authStorage";
+import { getToken, getCurrentUser } from "../utils/authStorage";
 
-const RequireAuth: React.FC = () => {
+const RequireAuth = () => {
   const location = useLocation();
-  const token = getToken();
 
-  if (!token) {
+  const token = getToken();
+  const user = getCurrentUser();
+
+  if (!token || !user) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
