@@ -59,7 +59,7 @@ export default function InventoryStoneDiamondPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => {}}
+        onAddClick={() => { }}
         onExportExcel={handleExportExcel}
       />
 

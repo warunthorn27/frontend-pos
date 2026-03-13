@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PosTopNav from "../../components/PosTopNav";
 import InventoryTable from "../../../inventory/components/InventoryTable";
 import InventoryTabs from "./components/InventoryTabs";
 import { getWarehouses } from "../../../../services/warehouse";
 import { CATEGORY_OPTIONS } from "../../../../utils/categoryOptions";
 import ListToolbar from "../../../../component/ui/ListToolbar";
+import { exportInventoryToExcel } from "../../../../services/inventory";
 
 type TabType =
   | "all"
@@ -80,6 +81,35 @@ export default function PosInventoryPage() {
     return id;
   };
 
+  const handleExportExcel = useCallback(async () => {
+    try {
+      const warehouseType =
+        activeTab === "product-master"
+          ? "productmaster"
+          : activeTab === "stone-diamond"
+            ? "stone"
+            : activeTab === "semi-mount"
+              ? "semimount"
+              : activeTab === "accessories"
+                ? "accessory"
+                : activeTab === "others"
+                  ? "others"
+                  : undefined;
+
+      const fileBlob = await exportInventoryToExcel(warehouseType);
+
+      const downloadUrl = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `Inventory_${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}_Export_${Date.now()}.xlsx`;
+      link.click();
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Inventory export failed", error);
+    }
+  }, [activeTab]);
+
   return (
     <div className="bg-white">
       <PosTopNav onLogout={() => console.log("logout")} />
@@ -106,6 +136,7 @@ export default function PosInventoryPage() {
               categoryOptions={CATEGORY_OPTIONS}
               onCategoryChange={setCategory}
               showCategory={activeTab === "all"}
+              onExportExcel={handleExportExcel}
             />
           </div>
 

@@ -59,7 +59,7 @@ export default function InventoryOthersPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => {}}
+        onAddClick={() => { }}
         onExportExcel={handleExportExcel}
       />
 

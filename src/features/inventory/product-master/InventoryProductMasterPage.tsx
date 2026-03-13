@@ -59,7 +59,7 @@ export default function InventoryProductMasterPage() {
         }}
         status={status}
         onStatusChange={setStatus}
-        onAddClick={() => {}}
+        onAddClick={() => { }}
         onExportExcel={handleExportExcel}
       />
 
