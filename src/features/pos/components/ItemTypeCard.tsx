@@ -11,7 +11,7 @@ const ItemTypeCard: React.FC<Props> = ({ label, image, onClick }) => {
     <div
       onClick={onClick}
       className="
-        group relative rounded overflow-hidden bg-[#d3d2d2]
+        group relative rounded-md overflow-hidden bg-[#d3d2d2]
         aspect-square cursor-pointer transition-all duration-200
         hover:bg-white hover:-translate-y-1 hover:shadow-lg
       "
@@ -24,8 +24,8 @@ const ItemTypeCard: React.FC<Props> = ({ label, image, onClick }) => {
         </div>
       )}
 
-      <div className="absolute bottom-2 left-3">
-        <div className="text-sm tracking-wide text-white group-hover:text-[#06284B]">
+      <div className="absolute bottom-2 left-4">
+        <div className="text-base font-light tracking-wide text-white group-hover:text-[#06284B]">
           {label}
         </div>
       </div>

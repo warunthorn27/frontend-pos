@@ -16,7 +16,7 @@ export default function ConfirmDeleteDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[1500] flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-[1500] flex items-center justify-center bg-black/30">
       <div className="w-[500px] bg-white rounded-xl px-8 py-8 text-center relative shadow-xl">
         {/* Close */}
         <button className="absolute right-4 top-3" onClick={onClose}>

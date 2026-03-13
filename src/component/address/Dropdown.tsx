@@ -77,7 +77,7 @@ const Dropdown: React.FC<Props> = ({
                   onChange(opt);
                   setOpen(false);
                 }}
-                className="cursor-pointer px-4 py-2 text-sm hover:bg-blue-50 transition-colors"
+                className="cursor-pointer px-4 py-2 text-sm hover:bg-[#F1F1F1] transition-colors"
               >
                 {opt}
               </div>

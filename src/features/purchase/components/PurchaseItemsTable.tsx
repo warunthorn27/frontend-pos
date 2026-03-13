@@ -43,8 +43,8 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
   const visibleRows = showErrorsOnly ? items.filter((r) => r.isError) : items;
 
   const UNIT_OPTIONS = [
-    { label: "pcs", value: "pcs" },
-    { label: "g", value: "g" },
+    { label: "Pcs", value: "pcs" },
+    { label: "G", value: "g" },
   ] as const;
 
   const [openImport, setOpenImport] = useState(false);
@@ -288,7 +288,7 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
                   <tr
                     key={`${row.productId}-${index}`}
                     className={`border-b last:border-b-0
-                      ${row.isError ? "bg-red-50 border-red-400" : ""}
+                      ${row.isError ? "bg-red-50" : ""}
                     `}
                   >
                     <td className="px-4 text-center">
@@ -538,7 +538,7 @@ export default function PurchaseItemsTable({ items, setItems }: Props) {
 
       {/* ERROR CHECKBOX */}
       {items.some((r) => r.isError) && (
-        <div className="flex items-center gap-4 text-sm text-red-500">
+        <div className="flex items-center gap-3 text-sm text-red-500">
           <Checkbox
             checked={showErrorsOnly}
             onChange={(checked) => setShowErrorsOnly(checked)}

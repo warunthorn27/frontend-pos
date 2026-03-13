@@ -108,8 +108,8 @@ const CurrencySelect: React.FC<Props> = ({
                 }}
                 className={`
                   cursor-pointer px-4 py-2 text-sm transition-colors
-                  hover:bg-blue-50
-                  ${value === opt.code ? "bg-blue-50" : ""}
+                  hover:bg-[#F1F1F1]
+                  ${value === opt.code ? "bg-[#F1F1F1]" : ""}
                 `}
               >
                 {opt.label || opt.code}

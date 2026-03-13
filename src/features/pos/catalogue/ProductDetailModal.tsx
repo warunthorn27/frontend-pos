@@ -1,6 +1,10 @@
 import { useState } from "react";
 import type { PosProductDetail } from "../../../types/pos/catalogue";
 import { useCustomSession } from "../context/CustomSessionContext";
+import PlusIcon from "../../../assets/svg/plus.svg?react";
+import MinusIcon from "../../../assets/svg/minus.svg?react";
+import CloseIcon from "../../../assets/svg/close.svg?react";
+import BlankImageIcon from "../../../assets/svg/upload-image.svg?react";
 
 interface Props {
   detail: PosProductDetail;
@@ -10,16 +14,14 @@ interface Props {
 const val = (v?: string) => (!v || v === "-" ? "-" : v);
 
 const Row = ({ label, value }: { label: string; value?: string }) => (
-  <div style={{ display: "flex", gap: "12px", padding: "4px 0", fontSize: "13px", alignItems: "baseline" }}>
-    <span style={{ width: "100px", flexShrink: 0, color: "#6b7280" }}>{label}</span>
-    <span style={{ color: "#111827", wordBreak: "break-word" }}>{val(value)}</span>
+  <div className="flex gap-24 py-1 text-sm items-baseline">
+    <span className="w-[100px] flex-shrink-0 text-[#2A2A2A]">{label}: </span>
+    <span className="text-[#545454] break-words">{val(value)}</span>
   </div>
 );
 
 const SectionHeader = ({ label }: { label: string }) => (
-  <div style={{ fontSize: "12px", fontWeight: 600, color: "#2563eb", margin: "12px 0 2px" }}>
-    {label}
-  </div>
+  <div className="text-sm font-normal text-[#0071CE] mt-4 mb-1">{label}</div>
 );
 
 const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
@@ -32,13 +34,11 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { addItem } = useCustomSession();
 
-  /* Helper: get value from main_info by label */
   const mainVal = (label: string) =>
     detail.attributes?.main_info?.find(
       (x) => x.label.toLowerCase() === label.toLowerCase(),
     )?.value ?? undefined;
 
-  /* Quick chips — Metal, Metal Color, Size */
   const chipMetal = mainVal("Metal");
   const chipColor = mainVal("Metal color");
   const chipSize = mainVal("Product size");
@@ -57,156 +57,118 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
   return (
     <div
       onClick={onClose}
-      style={{
-        position: "fixed", inset: 0,
-        background: "rgba(0,0,0,0.35)",
-        zIndex: 1000,
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/35"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "#fff",
-          borderRadius: "6px",
-          width: "920px",
-          height: "580px",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-          position: "relative",
-          fontFamily: "inherit",
-        }}
+        className="relative bg-white rounded-md w-[95vw] max-w-[1200px] h-[80vh] flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
       >
-        {/* Close */}
         <button
           onClick={onClose}
-          style={{
-            position: "absolute", top: "14px", right: "14px",
-            background: "none", border: "none", cursor: "pointer",
-            color: "#9ca3af", fontSize: "16px", zIndex: 10,
-            width: "28px", height: "28px",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            borderRadius: "50%",
-          }}
+          className="absolute top-4 right-6 flex items-center justify-center text-black"
         >
-          ✕
+          <CloseIcon className="w-7 h-7" />
         </button>
 
-        {/* Body: image left (fixed) + info right (scrollable) */}
-        <style>{`.pos-info-panel::-webkit-scrollbar{display:none}`}</style>
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-
-          {/* LEFT — fixed image panel */}
-          <div style={{
-            width: "460px", flexShrink: 0,
-            padding: "20px",
-            display: "flex", flexDirection: "column",
-          }}>
-            <div style={{
-              flex: 1,
-              width: "100%",
-              background: "#f9fafb", borderRadius: "4px",
-              overflow: "hidden", display: "flex",
-              alignItems: "center", justifyContent: "center",
-            }}>
-              {activeImg ? (
-                <img src={activeImg} alt={detail.product_name}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                <div style={{ color: "#d1d5db", fontSize: "12px" }}>No image</div>
-              )}
-            </div>
-
-            {allImages.length > 1 && (
-              <div style={{ display: "flex", gap: "8px", marginTop: "10px", flexWrap: "wrap" }}>
-                {allImages.map((img, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setActiveImg(img)}
-                    style={{
-                      width: "52px", height: "52px",
-                      borderRadius: "4px", overflow: "hidden",
-                      border: activeImg === img ? "2px solid #2563eb" : "2px solid #e5e7eb",
-                      cursor: "pointer", background: "#f3f4f6",
-                    }}
-                  >
-                    <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                ))}
+        <div className="flex-1 bg-white py-10 px-8 overflow-hidden">
+          <div className="flex gap-16 h-full">
+            {/* IMAGE */}
+            <div className="lg:w-[400px] w-full flex-shrink-0 flex flex-col">
+              <div className="w-full aspect-square bg-[#F5F5F5] rounded-md overflow-hidden flex items-center justify-center">
+                {activeImg ? (
+                  <img
+                    src={activeImg}
+                    alt={detail.product_name}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <BlankImageIcon className="w-16 h-16 text-[#9AA3B2]" />
+                )}
               </div>
-            )}
-          </div>
 
-          {/* RIGHT — scrollable info panel */}
-          <div
-            className="pos-info-panel"
-            style={{
-              flex: 1, minWidth: 0,
-              overflowY: "auto",
-              scrollbarWidth: "none",
-              padding: "20px 20px 20px 16px",
-            }}
-          >
-            <div style={{ fontSize: "18px", fontWeight: 600, color: "#111827", marginBottom: "4px" }}>
-              {detail.product_name}
-            </div>
-            <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "10px" }}>
-              {detail.product_code}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {allImages.map((img, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setActiveImg(img)}
+                      className={`w-16 h-16 rounded-md overflow-hidden cursor-pointer border-2 bg-border-[#E6E6E6] ${
+                        activeImg === img
+                          ? "border-[#0690F1]"
+                          : "border-[#E6E6E6]"
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {detail.description && detail.description !== "-" && (
-              <div style={{ fontSize: "13px", color: "#374151", lineHeight: 1.6, marginBottom: "12px" }}>
-                {detail.description}
+            {/* INFO */}
+            {/* <div className="flex-1 overflow-y-auto p-5 pr-4 hide-scrollbar"> */}
+            <div className="flex-1 overflow-y-auto hide-scrollbar pr-4">
+              <div className="text-2xl font-normal text-[#06284B] mb-1">
+                {detail.product_name}
               </div>
-            )}
 
-            {/* Quick chips */}
-            <div style={{ fontSize: "12px", color: "#6b7280", display: "flex", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
-              {chipMetal && chipMetal !== "-" && (
-                <span>Metal : <b style={{ color: "#111827" }}>{chipMetal}</b></span>
-              )}
-              {chipColor && chipColor !== "-" && (
-                <span>Metal Color : <b style={{ color: "#111827" }}>{chipColor}</b></span>
-              )}
-              {chipSize && chipSize !== "-" && (
-                <span>Size : <b style={{ color: "#111827" }}>{chipSize}</b></span>
-              )}
-            </div>
+              <div className="text-base text-[#2A2A2A] mb-3">
+                {detail.product_code}
+              </div>
 
-            {/* DETAILS accordion */}
-            <div>
-              <style>{`
-                @keyframes slideDown {
-                  from { opacity: 0; transform: translateY(-6px); }
-                  to   { opacity: 1; transform: translateY(0); }
-                }
-              `}</style>
+              {detail.description && detail.description !== "-" && (
+                <div className="text-sm text-[#545454] leading-relaxed mb-2">
+                  {detail.description}
+                </div>
+              )}
 
-              {/* Header row */}
+              <div className="text-sm text-[#2A2A2A] font-normal flex flex-wrap gap-4 mb-4">
+                {chipMetal && chipMetal !== "-" && (
+                  <span>
+                    Metal:{" "}
+                    <b className="text-[#545454] font-normal">{chipMetal}</b>
+                  </span>
+                )}
+                {chipColor && chipColor !== "-" && (
+                  <span>
+                    Metal Color:{" "}
+                    <b className="text-[#545454] font-normal">{chipColor}</b>
+                  </span>
+                )}
+                {chipSize && chipSize !== "-" && (
+                  <span>
+                    Size:{" "}
+                    <b className="text-[#545454] font-normal">{chipSize}</b>
+                  </span>
+                )}
+              </div>
+
+              {/* DETAILS */}
               <button
                 onClick={() => setDetailsOpen((o) => !o)}
-                style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  width: "100%", background: "none", border: "none", cursor: "pointer",
-                  padding: "8px 0",
-                }}
+                className="flex justify-between items-center w-full py-2"
               >
-                <span style={{ fontSize: "13px", fontWeight: 600, color: "#374151", letterSpacing: "0.04em" }}>
+                <span className="text-sm font-normal text-[#2A2A2A] tracking-wider">
                   DETAILS
                 </span>
-                <span style={{ fontSize: "18px", color: "#6b7280", lineHeight: 1 }}>
-                  {detailsOpen ? "−" : "+"}
+
+                <span className="flex items-center justify-center">
+                  {detailsOpen ? (
+                    <MinusIcon className="w-5 h-5 text-[#2A2A2A]" />
+                  ) : (
+                    <PlusIcon className="w-5 h-5 text-[#2A2A2A]" />
+                  )}
                 </span>
               </button>
 
-              {/* Gray divider below header */}
-              <div style={{ borderTop: "1px solid #e5e7eb" }} />
+              <div className="border-t border-gray-200" />
 
-              {/* Animated content */}
               {detailsOpen && (
-                <div style={{ animation: "slideDown 0.2s ease", marginTop: "8px" }}>
+                <div className="mt-2">
                   {(detail.attributes?.main_info ?? []).map((item, i) => (
                     <Row key={i} label={item.label} value={item.value} />
                   ))}
@@ -220,40 +182,32 @@ const ProductDetailModal: React.FC<Props> = ({ detail, onClose }) => {
                     </>
                   )}
 
-                  {(detail.attributes?.additional_stones ?? []).map((stone, si) => (
-                    <div key={si}>
-                      <SectionHeader
-                        label={`Additional Stone${
-                          detail.attributes.additional_stones.length > 1 ? ` ${si + 1}` : ""
-                        }`}
-                      />
-                      {stone.map((item, i) => (
-                        <Row key={i} label={item.label} value={item.value} />
-                      ))}
-                    </div>
-                  ))}
+                  {(detail.attributes?.additional_stones ?? []).map(
+                    (stone, si) => (
+                      <div key={si}>
+                        <SectionHeader
+                          label={`Additional Stone${
+                            detail.attributes.additional_stones.length > 1
+                              ? ` ${si + 1}`
+                              : ""
+                          }`}
+                        />
+                        {stone.map((item, i) => (
+                          <Row key={i} label={item.label} value={item.value} />
+                        ))}
+                      </div>
+                    ),
+                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            padding: "12px 28px",
-            borderTop: "1px solid #e5e7eb",
-            display: "flex", justifyContent: "flex-end",
-          }}
-        >
+        <div className="px-8 mb-6 flex justify-end">
           <button
             onClick={handleCustom}
-            style={{
-              padding: "0 28px", height: "38px",
-              background: "#fff", border: "1px solid #d1d5db",
-              borderRadius: "4px", fontSize: "13px", cursor: "pointer",
-              color: "#111827", fontWeight: 500,
-            }}
+            className="w-24 px-4 py-[6px] bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black rounded-md"
           >
             Custom
           </button>

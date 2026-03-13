@@ -14,6 +14,7 @@ import CheckIcon from "../../../../assets/svg/checkFilter.svg?react";
 import TrashIcon from "../../../../assets/svg/trash.svg?react";
 import UploadIcon from "../../../../assets/svg/file-download.svg?react";
 import CloseIcon from "../../../../assets/svg/close.svg?react";
+import { useToast } from "../../../../component/ui/toast/useToast";
 
 interface Props {
   open: boolean;
@@ -32,6 +33,8 @@ export default function ImportPurchaseModal({
   const [complete, setComplete] = useState(false);
   const [rows, setRows] = useState<ImportPurchaseItem[]>([]);
   const [errorRows, setErrorRows] = useState<ImportErrorRow[]>([]);
+
+  const toast = useToast();
 
   useEffect(() => {
     if (open) {
@@ -97,16 +100,22 @@ export default function ImportPurchaseModal({
   /* ================= SUBMIT ================= */
 
   const handleSubmit = () => {
-    const validRows = rows.filter((r) => !r.isError);
+    // row ที่ match กับ product master
+    const validRows = rows.filter((r) => r.product_id);
 
-    // ถ้าไม่มี match เลย
+    // ไม่มี product match เลย
     if (validRows.length === 0) {
-      onImportSuccess([]);
-      onClose();
+      onClose(); // ปิด modal ก่อน
+
+      setTimeout(() => {
+        toast.error("No valid products found in the file.");
+      }, 100);
+
       return;
     }
 
-    const mappedRows: PurchaseItemRow[] = rows.map((r) => {
+    // มีบาง row match → import เฉพาะ valid row
+    const mappedRows: PurchaseItemRow[] = validRows.map((r) => {
       const stoneWeight = r.stone_weight ?? 0;
       const netWeight = r.net_weight ?? 0;
       const grossWeight = r.gross_weight ?? 0;
@@ -137,9 +146,6 @@ export default function ImportPurchaseModal({
         cost,
         amount,
         price: r.price ?? 0,
-
-        isError: r.isError ?? false,
-        errorReason: r.errorReason,
       };
     });
 
@@ -270,10 +276,11 @@ export default function ImportPurchaseModal({
               <button
                 disabled={!complete}
                 onClick={handleSubmit}
-                className={`px-4 py-2 rounded-md text-white
-                  ${complete
-                    ? "bg-[#005AA7] hover:bg-[#084072]"
-                    : "bg-gray-300 cursor-not-allowed"
+                className={`px-6 py-2 rounded-md text-white
+                  ${
+                    complete
+                      ? "bg-[#005AA7] hover:bg-[#084072]"
+                      : "bg-gray-300 cursor-not-allowed"
                   }
                 `}
               >
