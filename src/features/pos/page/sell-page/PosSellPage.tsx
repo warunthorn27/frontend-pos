@@ -13,7 +13,7 @@ import {
 import { getPosCustomers } from "../../../../services/pos/posCustom";
 import type { PosCustomer } from "../../../../services/pos/posCustom";
 import type { SellSessionItem, SellSearchProduct } from "../../../../types/pos/sell";
-import { useCustomSession } from "../../context/CustomSessionContext";
+import { useCustomSession } from "../../context/useCustomSession";
 import CustomerDropdown from "../../components/CustomerDropdown";
 import CustomerCreateModal from "../../components/CustomerCreateModal";
 

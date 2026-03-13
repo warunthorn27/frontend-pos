@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import HomeIcon from "../../../assets/svg/home.svg?react";
 import LogoutIcon from "../../../assets/svg/logout.svg?react";
-import { useCustomSession } from "../context/CustomSessionContext";
+import { useCustomSession } from "../context/useCustomSession";
 
 interface PosTopNavProps {
   onLogout: () => void;

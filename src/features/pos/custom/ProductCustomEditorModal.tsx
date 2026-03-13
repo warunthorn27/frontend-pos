@@ -13,15 +13,80 @@ interface ProductCustomEditorModalProps {
   onSaveSuccess: () => void;
 }
 
+interface InputFieldProps<T extends string | number> {
+  label: string;
+  value: T | null | undefined;
+  onChange: (value: T) => void;
+  placeholder?: string;
+  type?: string;
+  unit?: string;
+  fullWidth?: boolean;
+}
+
+interface SelectFieldProps {
+  label: string;
+  value: string | number | null | undefined;
+  onChange: (value: string) => void;
+  options: SelectOption[];
+  placeholder?: string;
+}
+
+interface RawStoneData {
+  name_id?: string;
+  shape_id?: string;
+  cutting_id?: string;
+  quality_id?: string;
+  clarity_id?: string;
+  color?: string;
+  size?: string;
+  weight?: number;
+}
+
+interface RawAdditionalStone {
+  stone_name_id?: string;
+  stone_shape_id?: string;
+  stone_color?: string;
+  stone_size?: string;
+  s_weight?: number;
+  cutting?: string;
+  quality?: string;
+  clarity?: string;
+}
+
+interface RawData {
+  stone?: RawStoneData;
+  item_type_id?: string;
+  metal_id?: string;
+  metal_color?: string;
+  description?: string;
+  nwt?: number;
+  gwt?: number;
+  size?: string;
+  additional_stones?: RawAdditionalStone[];
+}
+
+interface CustomDetailResponse {
+  cover_image?: string;
+  image?: string;
+  product_name?: string;
+  size?: string;
+  metal_color?: string;
+  custom_spec?: CustomSpec;
+  raw_data?: RawData;
+}
+
 /* ── Components outside to prevent re-creation ───────────────── */
-const InputField = ({ label, value, onChange, placeholder, type = "text", unit, fullWidth = false }: any) => (
+const InputField = <T extends string | number>({ label, value, onChange, placeholder, type = "text", unit, fullWidth = false }: InputFieldProps<T>) => (
   <div className={`flex items-center gap-4 ${fullWidth ? 'w-full' : 'w-full'}`}>
     <label className="text-[13px] text-[#06284B] w-[140px] flex-shrink-0">{label}</label>
     <div className="relative flex-1">
       <input
         type={type}
         value={value ?? ""}
-        onChange={(e) => onChange(type === "number" ? parseFloat(e.target.value) : e.target.value)}
+        onChange={(e) => {
+          const val = type === "number" ? parseFloat(e.target.value) || 0 : e.target.value;
+          onChange(val as T);
+        }}
         placeholder={placeholder}
         className={`w-full border border-[#D1D5DB] rounded-md px-3 h-10 text-[13px] focus:border-[#2E5B9A] outline-none transition-all ${unit ? 'pr-8' : ''}`}
       />
@@ -32,7 +97,7 @@ const InputField = ({ label, value, onChange, placeholder, type = "text", unit, 
   </div>
 );
 
-const SelectField = ({ label, value, onChange, options, placeholder }: any) => (
+const SelectField = ({ label, value, onChange, options, placeholder }: SelectFieldProps) => (
   <div className="flex items-center gap-4 w-full">
     <label className="text-[13px] text-[#06284B] w-[140px] flex-shrink-0">{label}</label>
     <select
@@ -80,7 +145,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
         try {
           // Fetch detail data & master data concurrently
           const [freshItem, it, m, mc, sn, sh, ct, q, cl] = await Promise.all([
-            getCustomSessionDetail(item.session_id) as Promise<any>,
+            getCustomSessionDetail(item.session_id) as Promise<CustomDetailResponse>,
             masterOptions.itemTypes.length ? Promise.resolve(masterOptions.itemTypes) : fetchMasterOptions(MASTER_TYPES.itemType),
             masterOptions.metals.length ? Promise.resolve(masterOptions.metals) : fetchMasterOptions(MASTER_TYPES.metal),
             masterOptions.metalColors.length ? Promise.resolve(masterOptions.metalColors) : fetchMasterOptions(MASTER_TYPES.metalColor),
@@ -95,7 +160,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
 
           // Update spec
           const hasCustomSpec = freshItem.custom_spec && Object.keys(freshItem.custom_spec).length > 0;
-          if (hasCustomSpec) {
+          if (hasCustomSpec && freshItem.custom_spec) {
             setSpec(freshItem.custom_spec);
           } else if (freshItem.raw_data) {
             const rd = freshItem.raw_data;
@@ -117,7 +182,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
               color: stone.color,
               size: stone.size,
               s_weight: stone.weight,
-              additional_stones: rd.additional_stones?.map((s: any) => ({
+              additional_stones: rd.additional_stones?.map((s: RawAdditionalStone) => ({
                 stone_name_id: s.stone_name_id,
                 stone_shape_id: s.stone_shape_id,
                 color: s.stone_color,
@@ -182,7 +247,7 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
     }
   };
 
-  const updateSpec = (field: keyof CustomSpec, value: any) => {
+  const updateSpec = <K extends keyof CustomSpec>(field: K, value: CustomSpec[K]) => {
     setSpec(prev => ({ ...prev, [field]: value }));
   };
 
@@ -253,14 +318,14 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
 
                 {/* Row 3: Product Name & Item Type */}
                 <div className="grid grid-cols-2 gap-x-12">
-                   <InputField label="Product Name" value={spec.product_name} onChange={(v: any) => updateSpec('product_name', v)} />
-                   <SelectField label="Item Type" value={spec.item_type_id} onChange={(v: any) => updateSpec('item_type_id', v)} options={masterOptions.itemTypes} placeholder="Ring" />
+                   <InputField label="Product Name" value={spec.product_name} onChange={(v) => updateSpec('product_name', v)} />
+                   <SelectField label="Item Type" value={spec.item_type_id} onChange={(v) => updateSpec('item_type_id', v)} options={masterOptions.itemTypes} placeholder="Ring" />
                 </div>
 
                 {/* Row 4: Product size & Metal */}
                 <div className="grid grid-cols-2 gap-x-12">
-                   <InputField label="Product size" value={spec.product_size} onChange={(v: any) => updateSpec('product_size', v)} />
-                   <SelectField label="Metal" value={spec.metal_id} onChange={(v: any) => updateSpec('metal_id', v)} options={masterOptions.metals} placeholder="18K RG" />
+                   <InputField label="Product size" value={spec.product_size} onChange={(v) => updateSpec('product_size', v)} />
+                   <SelectField label="Metal" value={spec.metal_id} onChange={(v) => updateSpec('metal_id', v)} options={masterOptions.metals} placeholder="18K RG" />
                 </div>
 
                 {/* Row 5: Description & Metal Color, Nwt, Gwt */}
@@ -281,9 +346,9 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
                    </div>
 
                    <div className="flex flex-col gap-4">
-                      <SelectField label="Metal Color" value={spec.metal_color} onChange={(v: any) => updateSpec('metal_color', v)} options={masterOptions.metalColors} placeholder="Rose Gold" />
-                      <InputField label="Nwt" value={spec.nwt} onChange={(v: any) => updateSpec('nwt', v)} type="number" placeholder="2.20" unit="g" />
-                      <InputField label="Gwt" value={spec.gwt} onChange={(v: any) => updateSpec('gwt', v)} type="number" placeholder="2.52" unit="g" />
+                      <SelectField label="Metal Color" value={spec.metal_color} onChange={(v) => updateSpec('metal_color', v)} options={masterOptions.metalColors} placeholder="Rose Gold" />
+                      <InputField label="Nwt" value={spec.nwt} onChange={(v) => updateSpec('nwt', v)} type="number" placeholder="2.20" unit="g" />
+                      <InputField label="Gwt" value={spec.gwt} onChange={(v) => updateSpec('gwt', v)} type="number" placeholder="2.52" unit="g" />
                    </div>
                 </div>
               </div>
@@ -298,17 +363,17 @@ const ProductCustomEditorModal: React.FC<ProductCustomEditorModalProps> = ({
             
             <div className="grid grid-cols-2 gap-x-12 gap-y-6">
               <div className="flex flex-col gap-4">
-                <SelectField label="Stone Name" value={spec.stone_name_id} onChange={(v: any) => updateSpec('stone_name_id', v)} options={masterOptions.stoneNames} placeholder="Opal" />
-                <SelectField label="Shape" value={spec.stone_shape_id} onChange={(v: any) => updateSpec('stone_shape_id', v)} options={masterOptions.shapes} placeholder="Round" />
-                <InputField label="Size" value={spec.size} onChange={(v: any) => updateSpec('size', v)} placeholder="14 mm" />
-                <InputField label="S.weight" value={spec.s_weight} onChange={(v: any) => updateSpec('s_weight', v)} type="number" placeholder="0.32" unit="cts" />
+                <SelectField label="Stone Name" value={spec.stone_name_id} onChange={(v) => updateSpec('stone_name_id', v)} options={masterOptions.stoneNames} placeholder="Opal" />
+                <SelectField label="Shape" value={spec.stone_shape_id} onChange={(v) => updateSpec('stone_shape_id', v)} options={masterOptions.shapes} placeholder="Round" />
+                <InputField label="Size" value={spec.size} onChange={(v) => updateSpec('size', v)} placeholder="14 mm" />
+                <InputField label="S.weight" value={spec.s_weight} onChange={(v) => updateSpec('s_weight', v)} type="number" placeholder="0.32" unit="cts" />
               </div>
               
               <div className="flex flex-col gap-4">
-                <InputField label="Color" value={spec.color} onChange={(v: any) => updateSpec('color', v)} placeholder="F" />
-                <SelectField label="Quality" value={spec.quality} onChange={(v: any) => updateSpec('quality', v)} options={masterOptions.qualities} placeholder="AA" />
-                <SelectField label="Cutting" value={spec.cutting} onChange={(v: any) => updateSpec('cutting', v)} options={masterOptions.cuttings} placeholder="Excellent" />
-                <SelectField label="Clarity" value={spec.clarity} onChange={(v: any) => updateSpec('clarity', v)} options={masterOptions.clarities} placeholder="VS1" />
+                <InputField label="Color" value={spec.color} onChange={(v) => updateSpec('color', v)} placeholder="F" />
+                <SelectField label="Quality" value={spec.quality} onChange={(v) => updateSpec('quality', v)} options={masterOptions.qualities} placeholder="AA" />
+                <SelectField label="Cutting" value={spec.cutting} onChange={(v) => updateSpec('cutting', v)} options={masterOptions.cuttings} placeholder="Excellent" />
+                <SelectField label="Clarity" value={spec.clarity} onChange={(v) => updateSpec('clarity', v)} options={masterOptions.clarities} placeholder="VS1" />
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { PosProductDetail } from "../../../types/pos/catalogue";
-import { useCustomSession } from "../context/CustomSessionContext";
+import { useCustomSession } from "../context/useCustomSession";
 import PlusIcon from "../../../assets/svg/plus.svg?react";
 import MinusIcon from "../../../assets/svg/minus.svg?react";
 import CloseIcon from "../../../assets/svg/close.svg?react";

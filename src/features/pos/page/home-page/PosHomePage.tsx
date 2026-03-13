@@ -16,7 +16,7 @@ import CatalogueCategoryPage from "../../catalogue/CatalogueCategoryPage";
 import CatalogueAccessoriesPage from "../../catalogue/CatalogueAccessoriesPage";
 import CatalogueOthersPage from "../../catalogue/CatalogueOthersPage";
 import type { ProductCategory } from "../../../../types/product/form";
-import { useCustomSession } from "../../context/CustomSessionContext";
+import { useCustomSession } from "../../context/useCustomSession";
 
 const TAB_TO_PRODUCT_CATEGORY: Record<CatalogueTab, ProductCategory> = {
   "product-master": "productmaster",

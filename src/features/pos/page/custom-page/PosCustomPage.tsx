@@ -12,7 +12,7 @@ import {
 } from "../../../../services/pos/posCustom";
 import type { PosCustomer } from "../../../../services/pos/posCustom";
 import type { CustomSessionItem } from "../../../../types/pos/custom";
-import { useCustomSession } from "../../context/CustomSessionContext";
+import { useCustomSession } from "../../context/useCustomSession";
 import CustomerDropdown from "../../components/CustomerDropdown";
 import ProductCustomEditorModal from "../../custom/ProductCustomEditorModal";
 import { getProducts } from "../../../../services/pos/posCatalogue";

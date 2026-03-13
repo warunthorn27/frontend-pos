@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   addToCustomSession,
   getCustomSessionList,
@@ -9,34 +9,7 @@ import {
 } from "../../../services/pos/posSell";
 import CustomAddedToast from "../components/CustomAddedToast";
 import type { ToastItem } from "../components/CustomAddedToast";
-
-/* =================================================================
-   Context Shape
-================================================================= */
-interface CustomSessionContextValue {
-  /** Current count of items in custom session */
-  customCount: number;
-  /** Current count of items in sell session */
-  sellCount: number;
-  /** Add a product to the custom session; shows toast on success */
-  addItem: (productId: string, productInfo?: {
-    name: string;
-    code: string;
-    imageUrl?: string | null;
-    metal?: string;
-    metalColor?: string;
-  }) => Promise<void>;
-  /** Add a product to the sell session */
-  addSellItem: (productId: string, price: number, productInfo?: {
-    name: string;
-    code: string;
-    imageUrl?: string | null;
-  }) => Promise<void>;
-  /** Pull latest counts from server */
-  refreshCount: () => Promise<void>;
-}
-
-const CustomSessionContext = createContext<CustomSessionContextValue | null>(null);
+import { CustomSessionContext } from "./useCustomSession";
 
 /* =================================================================
    Provider
@@ -147,13 +120,4 @@ export const CustomSessionProvider: React.FC<{ children: React.ReactNode }> = ({
       <CustomAddedToast toasts={toasts} onClose={removeToast} />
     </CustomSessionContext.Provider>
   );
-};
-
-/* =================================================================
-   Hook
-================================================================= */
-export const useCustomSession = (): CustomSessionContextValue => {
-  const ctx = useContext(CustomSessionContext);
-  if (!ctx) throw new Error("useCustomSession must be inside CustomSessionProvider");
-  return ctx;
 };

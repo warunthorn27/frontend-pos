@@ -11,7 +11,7 @@ import { mapProduct } from "../../../component/mappers/posCatalogueMapper";
 import PosBreadcrumb from "../components/PosBreadcrumb";
 import type { ProductCategory } from "../../../types/product/form";
 import { PRODUCT_CATEGORY_LABEL } from "../../../types/product/transform";
-import { useCustomSession } from "../context/CustomSessionContext";
+import { useCustomSession } from "../context/useCustomSession";
 import ProductDetailModal from "./ProductDetailModal";
 
 interface Props {
@@ -99,19 +99,19 @@ const CatalogueCategoryPage: React.FC<Props> = ({
               items={
                 category
                   ? [
-                      {
-                        label: PRODUCT_CATEGORY_LABEL[category],
-                        onClick: onBack,
-                      },
-                      {
-                        label: title,
-                      },
-                    ]
+                    {
+                      label: PRODUCT_CATEGORY_LABEL[category],
+                      onClick: onBack,
+                    },
+                    {
+                      label: title,
+                    },
+                  ]
                   : [
-                      {
-                        label: title,
-                      },
-                    ]
+                    {
+                      label: title,
+                    },
+                  ]
               }
             />
           }
@@ -141,8 +141,7 @@ const CatalogueCategoryPage: React.FC<Props> = ({
         loading={loading}
         onSelect={handleOpenDetail}
         onCustom={handleCustom}
-        onSell={handleSell}
-      />
+        onSell={handleSell} currency={""} />
 
       {/* Detail modal */}
       {selectedDetail && (
