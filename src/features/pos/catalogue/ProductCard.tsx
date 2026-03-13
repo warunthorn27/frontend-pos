@@ -4,7 +4,7 @@ import type {
 } from "../../../types/pos/catalogue";
 
 import ImagePlaceholder from "../../../assets/svg/upload-image.svg?react";
-import { formatMoneyWithCurrency } from "../../../utils/number";
+// import { formatMoneyWithCurrency } from "../../../utils/number";
 
 interface Props {
   item: CatalogueProductItem;
@@ -18,7 +18,7 @@ interface Props {
 const ProductCard: React.FC<Props> = ({
   item,
   mode,
-  currency,
+  // currency,
   onClick,
   onCustom,
   onSell,
@@ -58,17 +58,17 @@ const ProductCard: React.FC<Props> = ({
           {item.size && <div>Size: {item.size}</div>}
         </div>
 
-        {/* {mode === "inventory" && (
+        {mode === "inventory" && (
           <div className="mt-2 text-base font-normal text-[#06284B]">
             {item.price?.toLocaleString()} {item.currency}
           </div>
-        )} */}
+        )}
 
-        {mode === "inventory" && (
+        {/* {mode === "inventory" && (
   <div className="mt-2 text-base font-normal text-[#06284B]">
     {formatMoneyWithCurrency(item.price, currency)}
   </div>
-)}
+)} */}
 
         <div className="flex gap-2 mt-auto pt-3 justify-end">
           {mode === "inventory" && (
