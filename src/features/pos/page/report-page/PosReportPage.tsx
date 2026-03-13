@@ -14,7 +14,7 @@ const PosReportPage = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const [isExpandedAll, setIsExpandedAll] = useState(false);
+  const [isExpandedAll, setIsExpandedAll] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const [orders, setOrders] = useState<OrderReportItem[]>([]);
