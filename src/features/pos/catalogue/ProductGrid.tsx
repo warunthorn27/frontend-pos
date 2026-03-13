@@ -9,6 +9,7 @@ interface Props {
   items: CatalogueProductItem[];
   mode: CatalogueMode;
   loading?: boolean;
+  currency: string;
   onSelect?: (id: string) => void;
   onCustom?: (item: CatalogueProductItem) => void;
   onSell?: (item: CatalogueProductItem) => void;
@@ -19,6 +20,7 @@ const ProductGrid: React.FC<Props> = ({
   items,
   mode,
   loading,
+  currency,
   onSelect,
   onCustom,
   onSell,
@@ -48,6 +50,7 @@ const ProductGrid: React.FC<Props> = ({
             key={item.id}
             item={item}
             mode={mode}
+            currency={currency}
             onClick={onSelect}
             onCustom={onCustom}
             onSell={onSell}
