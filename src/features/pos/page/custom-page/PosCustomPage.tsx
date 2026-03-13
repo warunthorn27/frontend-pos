@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import PosTopNav from "../../components/PosTopNav";
-import { 
-  getCustomSessionList, 
-  updateCustomSession, 
-  getNextOrderNumber, 
-  deleteCustomSessionItem, 
-  clearCustomSession, 
-  finishCustomOrder, 
+import {
+  getCustomSessionList,
+  updateCustomSession,
+  getNextOrderNumber,
+  deleteCustomSessionItem,
+  clearCustomSession,
+  finishCustomOrder,
   getPosCustomers,
-  addToCustomSession
+  addToCustomSession,
 } from "../../../../services/pos/posCustom";
 import type { PosCustomer } from "../../../../services/pos/posCustom";
 import type { CustomSessionItem } from "../../../../types/pos/custom";
@@ -19,6 +19,11 @@ import { getProducts } from "../../../../services/pos/posCatalogue";
 import type { PosProduct } from "../../../../types/pos/catalogue";
 import { getCategoryLabel } from "../../../../utils/categoryOptions";
 import CustomerCreateModal from "../../components/CustomerCreateModal";
+import SearchIcon from "../../../../assets/svg/search.svg?react";
+import BoxItemsIcon from "../../../../assets/svg/box-items.svg?react";
+import ProductImage from "../../../products/product-list/components/ProductImage";
+import DeleteIcon from "../../../../assets/svg/trash.svg?react";
+import EditIcon from "../../../../assets/svg/draw.svg?react";
 
 const PosCustomPage = () => {
   const [items, setItems] = useState<CustomSessionItem[]>([]);
@@ -32,7 +37,9 @@ const PosCustomPage = () => {
 
   // Editor Modal State
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<CustomSessionItem | null>(null);
+  const [editingItem, setEditingItem] = useState<CustomSessionItem | null>(
+    null,
+  );
 
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,8 +77,10 @@ const PosCustomPage = () => {
     refreshCount();
     getNextOrderNumber()
       .then((no) => setOrderRef(no))
-      .catch(() => setOrderRef(`CST-${Math.floor(100000 + Math.random() * 900000)}`));
-    
+      .catch(() =>
+        setOrderRef(`CST-${Math.floor(100000 + Math.random() * 900000)}`),
+      );
+
     fetchCustomers();
   }, [loadItems, refreshCount, fetchCustomers]);
 
@@ -129,13 +138,13 @@ const PosCustomPage = () => {
   /* ── Finish order ────────────────────────────────── */
   const handleFinishOrder = async () => {
     if (!selectedCustomerId) {
-        alert("Please select a customer first.");
-        return;
+      alert("Please select a customer first.");
+      return;
     }
 
     setLoading(true);
     try {
-      const formattedItems = items.map(item => ({
+      const formattedItems = items.map((item) => ({
         session_id: item.session_id,
         product_id: item.product_id,
         product_code: item.product_code,
@@ -143,7 +152,9 @@ const PosCustomPage = () => {
         image: item.image,
         qty: item.qty,
         unit_price: item.price || 0,
-        deposit: parseFloat(deposits[item.session_id] ?? "") || (item.deposit ?? item.price ?? 0),
+        deposit:
+          parseFloat(deposits[item.session_id] ?? "") ||
+          (item.deposit ?? item.price ?? 0),
       }));
 
       const payload = {
@@ -165,9 +176,13 @@ const PosCustomPage = () => {
         .then((no) => setOrderRef(no))
         .catch(() => {});
       alert("Order finished successfully!");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to finish order", err);
-      alert(err.message || "Finish Order failed");
+
+      const message =
+        err instanceof Error ? err.message : "Finish Order failed";
+
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -187,7 +202,7 @@ const PosCustomPage = () => {
   /* ── Search Items from Master ─────────────────── */
   const handleSearch = async (query: string, isFocus = false) => {
     setSearchQuery(query);
-    
+
     // If query is empty and it's from focus, we still want to show initial items
     if (!query.trim() && !isFocus) {
       setSearchResults([]);
@@ -201,7 +216,7 @@ const PosCustomPage = () => {
       const res = await getProducts({
         view_mode: "master",
         search: query.trim() || undefined, // empty string means show default/recent
-        limit: 100 // Fetch enough to cover all products (63 as seen in Postman)
+        limit: 100, // Fetch enough to cover all products (63 as seen in Postman)
       });
       setSearchResults(res.data);
     } catch (err) {
@@ -219,9 +234,13 @@ const PosCustomPage = () => {
       setShowResults(false);
       loadItems();
       refreshCount();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to add product", err);
-      alert(err.message || "Failed to add product");
+
+      const message =
+        err instanceof Error ? err.message : "Failed to add product";
+
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -230,7 +249,8 @@ const PosCustomPage = () => {
   /* ── Derived totals ───────────────────────────── */
   const totalItems = items.reduce((sum, i) => sum + i.qty, 0);
   const totalDeposit = items.reduce((sum, i) => {
-    const d = parseFloat(deposits[i.session_id] ?? "") || (i.deposit ?? i.price ?? 0);
+    const d =
+      parseFloat(deposits[i.session_id] ?? "") || (i.deposit ?? i.price ?? 0);
     return sum + d * i.qty;
   }, 0);
 
@@ -246,11 +266,11 @@ const PosCustomPage = () => {
 
       <div className="flex flex-1 overflow-hidden p-8 gap-6">
         {/* ═══ LEFT SIDE ═══ */}
-        <div className="flex-1 bg-white border border-[#E5E7EB] rounded-xl p-6 flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white border border-[#E5E7EB] rounded-lg p-16 pt-12 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-[#06284B]">Details</h2>
-            
+            <h2 className="text-xl font-normal text-[#06284B]">Details</h2>
+
             <div className="flex gap-4 items-center">
               <div className="relative flex items-center">
                 <input
@@ -258,43 +278,54 @@ const PosCustomPage = () => {
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   onFocus={() => handleSearch(searchQuery, true)}
-                  className="w-[320px] h-10 border border-[#E5E7EB] rounded-md px-4 pr-10 text-sm outline-none focus:border-[#2E5B9A]"
+                  className="flex items-center font-light text-sm border border-[#CFCFCF] bg-white rounded-md px-3 w-[350px] h-[40px] transition focus:outline-none focus-within:border-[#005AA7]"
                 />
                 <div className="absolute right-3 text-gray-400">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
+                  <SearchIcon className="w-5 h-5" />
                 </div>
 
                 {/* Search Results Dropdown */}
                 {showResults && (
-                  <div 
+                  <div
                     className="absolute top-11 left-0 w-full bg-white border border-[#E5E7EB] rounded-lg shadow-xl z-[60] max-h-[360px] overflow-auto [&::-webkit-scrollbar]:hidden"
                     style={{ scrollbarWidth: "none" }}
                   >
                     {isSearching && searchResults.length === 0 ? (
-                      <div className="p-4 text-center text-gray-400 text-sm">Searching...</div>
-                    ) : (searchQuery.trim() && searchResults.length === 0) ? (
-                      <div className="p-4 text-center text-gray-400 text-sm">No products found</div>
+                      <div className="p-4 text-center text-gray-400 text-sm">
+                        Searching...
+                      </div>
+                    ) : searchQuery.trim() && searchResults.length === 0 ? (
+                      <div className="p-4 text-center text-gray-400 text-sm">
+                        No products found
+                      </div>
                     ) : (
                       <div className="divide-y divide-gray-50">
                         {searchResults.map((product) => (
-                          <div 
-                            key={product._id} 
+                          <div
+                            key={product._id}
                             onClick={() => handleAddFromSearch(product)}
                             className="flex items-center gap-4 p-3 hover:bg-blue-50 cursor-pointer transition-colors"
                           >
                             <div className="w-12 h-12 rounded bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                              {product.image && <img src={product.image} className="w-full h-full object-cover" />}
+                              {product.image && (
+                                <img
+                                  src={product.image}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-[14px] font-semibold text-[#06284B] truncate">
                                 {product.product_name}
                               </h4>
                               <div className="flex justify-between items-center mt-0.5">
-                                <p className="text-[12px] text-gray-400">{product.product_code}</p>
+                                <p className="text-[12px] text-gray-400">
+                                  {product.product_code}
+                                </p>
                                 <span className="text-[12px] text-gray-400 font-normal">
-                                  {getCategoryLabel(product.category || product.master_name)}
+                                  {getCategoryLabel(
+                                    product.category || product.master_name,
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -304,15 +335,18 @@ const PosCustomPage = () => {
                     )}
                   </div>
                 )}
-                
+
                 {/* Overlay to close search */}
                 {showResults && (
-                  <div className="fixed inset-0 z-[50]" onClick={() => setShowResults(false)} />
+                  <div
+                    className="fixed inset-0 z-[50]"
+                    onClick={() => setShowResults(false)}
+                  />
                 )}
               </div>
-              <button 
+              <button
                 onClick={handleClearAll}
-                className="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors"
+                className="text-lg font-normal text-[#2A2A2A] hover:underline"
               >
                 Clear All
               </button>
@@ -320,86 +354,116 @@ const PosCustomPage = () => {
           </div>
 
           {/* List Content */}
-          <div className="flex-1 overflow-auto pr-2 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
+          <div
+            className="flex-1 overflow-auto pr-2 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none" }}
+          >
             {loading && items.length === 0 ? (
               <div className="py-20 text-center text-gray-400">Loading...</div>
             ) : items.length === 0 ? (
-              <div className="py-20 text-center text-gray-400 text-sm">No items added yet</div>
+              <div className="flex flex-col items-center justify-center py-36 text-center">
+                <BoxItemsIcon className="w-64 h-64" />
+                <div className="text-[#084072] font-normal text-lg mt-8">
+                  No items added yet
+                </div>
+              </div>
             ) : (
               <div className="divide-y divide-gray-100">
                 {items.map((item) => (
                   <div key={item.session_id} className="py-6 first:pt-0">
-                    <div className="flex items-start gap-4">
-                      {/* Thumbnail */}
-                      <div className="w-16 h-16 rounded bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                        {item.image ? (
-                          <img src={item.image} alt={item.product_name} className="w-full h-full object-cover" />
-                        ) : null}
+                    <div className="flex items-center gap-8">
+                      {/* Image */}
+                      <ProductImage
+                        imageUrl={item.image ?? null}
+                        alt={item.product_name}
+                        className="w-[72px] h-[72px] shrink-0"
+                      />
+
+                      {/* Product Info */}
+                      <div className="flex-1 min-w-[220px]">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-normal text-[#2A2A2A]">
+                            {item.product_name}
+                          </h3>
+
+                          {item.is_customized && (
+                            <span className="bg-[#EBF5FF] text-[#0066CC] text-[11px] px-2 py-0.5 rounded">
+                              Customized
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-sm text-gray-500 mt-1">
+                          {[
+                            item.product_code,
+                            item.metal,
+                            item.metal_color,
+                            item.size,
+                          ]
+                            .filter(Boolean)
+                            .join(" / ")}
+                        </div>
                       </div>
 
-                      {/* Main Info Area */}
-                      <div className="flex-1 min-w-0">
-                        {/* Top Line: Name + Badges + Actions */}
-                        <div className="flex justify-between items-start">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <h3 className="text-[15px] font-semibold text-gray-900 truncate">
-                              {item.product_name}
-                            </h3>
-                            {item.is_customized && (
-                              <span className="bg-[#EBF5FF] text-[#0066CC] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider flex-shrink-0">
-                                Customized
-                              </span>
-                            )}
-                          </div>
-                          
-                          {/* Top Right Actions */}
-                          <div className="flex items-center gap-3">
-                            <button 
-                              onClick={() => handleEdit(item)}
-                              className="text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                              </svg>
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(item.session_id)}
-                              className="text-gray-300 hover:text-red-500 transition-colors"
-                            >
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
+                      {/* Deposit */}
+                      <div className="w-[140px]">
+                        <input
+                          type="text"
+                          placeholder="Deposit"
+                          value={
+                            deposits[item.session_id] ??
+                            (item.deposit != null
+                              ? item.deposit.toLocaleString()
+                              : item.price != null
+                                ? item.price.toLocaleString()
+                                : "")
+                          }
+                          onChange={(e) =>
+                            setDeposits((prev) => ({
+                              ...prev,
+                              [item.session_id]: e.target.value,
+                            }))
+                          }
+                          className="w-full h-[36px] border border-[#CFCFCF] rounded-md px-3 text-sm outline-none focus:border-[#005AA7]"
+                        />
+                      </div>
 
-                        {/* Middle Line: Codes */}
-                        <div className="text-[13px] text-gray-400 mt-0.5">
-                          {[item.product_code, item.metal, item.metal_color, item.size].filter(Boolean).map(String).join(" / ")}
-                        </div>
+                      {/* Qty */}
+                      <div className="flex items-center gap-4 w-[120px] justify-center">
+                        <button
+                          onClick={() => handleQtyChange(item, -1)}
+                          className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                        >
+                          −
+                        </button>
 
-                        {/* Bottom Line: Deposit + Qty */}
-                        <div className="flex justify-between items-center mt-3">
-                          <input
-                            type="text"
-                            placeholder="Deposit"
-                            value={deposits[item.session_id] ?? (item.deposit != null ? item.deposit.toLocaleString() : item.price != null ? item.price.toLocaleString() : "")}
-                            onChange={(e) => setDeposits(prev => ({ ...prev, [item.session_id]: e.target.value }))}
-                            className="w-[140px] h-9 border border-[#E5E7EB] rounded-md px-3 text-sm text-gray-700 outline-none focus:border-[#2E5B9A] transition-colors"
-                          />
+                        <span className="w-4 text-center text-base font-normal">
+                          {item.qty}
+                        </span>
 
-                          <div className="flex items-center gap-2">
-                            <button 
-                              onClick={() => handleQtyChange(item, -1)}
-                              className="w-7 h-7 border border-[#E5E7EB] rounded-full flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all"
-                            >−</button>
-                            <span className="w-5 text-center text-[15px] font-medium text-gray-800">{item.qty}</span>
-                            <button 
-                              onClick={() => handleQtyChange(item, 1)}
-                              className="w-7 h-7 border border-[#E5E7EB] rounded-full flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all"
-                            >+</button>
-                          </div>
-                        </div>
+                        <button
+                          onClick={() => handleQtyChange(item, 1)}
+                          className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 w-[60px] justify-end">
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="text-black"
+                        >
+                          <EditIcon className="w-6 h-6" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(item.session_id)}
+                          className="text-[#E71010]"
+                        >
+                          <DeleteIcon className="w-6 h-6" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -410,17 +474,17 @@ const PosCustomPage = () => {
         </div>
 
         {/* ═══ RIGHT SIDE ═══ */}
-        <div className="w-[420px] bg-white border border-[#E5E7EB] rounded-xl p-6 flex flex-col justify-between overflow-hidden">
+        <div className="w-[450px] bg-white border border-[#E5E7EB] rounded-xl p-6 flex flex-col justify-between overflow-hidden">
           <div>
-            <div className="flex justify-between text-[13px] text-gray-400 mb-6">
-              <span className="font-medium text-gray-900">{orderRef}</span>
-              <span>{today}</span>
+            <div className="flex justify-between text-lg text-[#2A2A2A] mb-6">
+              <span>#{orderRef}</span>
+              <span className="font-light">{today}</span>
             </div>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                  Customer <span className="text-red-500">*</span>
+                <label className="text-lg font-normal text-[#2A2A2A] whitespace-nowrap">
+                  Customer <span className="text-[#E71010]">*</span>
                 </label>
                 <div className="flex-1 min-w-0">
                   <CustomerDropdown
@@ -433,28 +497,42 @@ const PosCustomPage = () => {
               </div>
             </div>
 
-            <div className="space-y-3 pt-6 border-t border-gray-100">
-              <div className="flex justify-between text-sm text-gray-500">
+            <div className="space-y-4 pt-6 border-t border-gray-100">
+              <div className="flex justify-between text-base font-normal text-[#2A2A2A]">
                 <span>Total Items</span>
-                <span className="text-gray-900 font-medium">{totalItems}</span>
+                <span className="text-base font-light text-[#2A2A2A]">
+                  {totalItems}
+                </span>
               </div>
-              <div className="flex justify-between text-sm text-gray-500">
+              <div className="flex justify-between text-base font-normal text-[#2A2A2A]">
                 <span>Total Deposit</span>
-                <span className="text-gray-900 font-medium">฿ {totalDeposit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+                <span className="text-base font-light text-[#2A2A2A]">
+                  ฿{" "}
+                  {totalDeposit.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                  })}
+                </span>
               </div>
             </div>
           </div>
 
           <div className="pt-6 border-t border-gray-100">
             <div className="flex justify-between items-baseline mb-6">
-              <span className="text-gray-900 font-bold text-lg">Grand Total</span>
-              <span className="text-gray-900 font-bold text-2xl">฿ {totalDeposit.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+              <span className="text-text-[#2A2A2A] font-normal text-xl">
+                Grand Total
+              </span>
+              <span className="text-text-[#2A2A2A] font-normal text-xl">
+                ฿{" "}
+                {totalDeposit.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
+              </span>
             </div>
 
-            <button 
+            <button
               onClick={handleFinishOrder}
               disabled={loading || items.length === 0}
-              className="w-full h-12 bg-[#005AA7] hover:bg-[#004A8A] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold flex items-center justify-center transition-colors shadow-sm"
+              className="w-full h-12 bg-[#005AA7] hover:bg-[#004A8A] disabled:opacity-70 disabled:cursor-not-allowed text-white rounded-md font-normal flex items-center justify-center transition-colors"
             >
               {loading ? "Processing..." : "Finish Order"}
             </button>

@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { PosCustomer } from "../../../services/pos/posCustom";
+import DropdownArrow from "../../../assets/svg/dropdown-arrow2.svg?react";
+import PlusIcon from "../../../assets/svg/plus.svg?react";
 
 interface Props {
   customers: PosCustomer[];
   value: string;
   onChange: (customerId: string) => void;
   onAddCustomer?: () => void;
+  error?: boolean;
 }
 
 const CustomerDropdown: React.FC<Props> = ({
@@ -13,21 +16,27 @@ const CustomerDropdown: React.FC<Props> = ({
   value,
   onChange,
   onAddCustomer,
+  error,
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selected = customers.find((c) => c._id === value);
 
-  /* Close on outside click */
+  /* close when click outside */
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
         setSearch("");
       }
     };
+
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
@@ -35,6 +44,7 @@ const CustomerDropdown: React.FC<Props> = ({
   const filtered = customers
     .filter((c) => {
       const q = search.toLowerCase();
+
       return (
         c.customer_name.toLowerCase().includes(q) ||
         (c.customer_id ?? "").toLowerCase().includes(q) ||
@@ -45,83 +55,57 @@ const CustomerDropdown: React.FC<Props> = ({
 
   const handleSelect = (c: PosCustomer) => {
     onChange(c._id);
+    setSearch(c.customer_name);
     setOpen(false);
-    setSearch("");
   };
 
   return (
-    <div ref={containerRef} style={{ position: "relative" }}>
-      {/* Trigger */}
-      <div
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          border: "1px solid #d1d5db",
-          borderRadius: "4px",
-          padding: "0 12px",
-          height: "40px",
-          fontSize: "13px",
-          cursor: "pointer",
-          background: "#fff",
-          color: selected ? "#111827" : "#9ca3af",
-          userSelect: "none",
-        }}
-      >
-        <span>{selected ? selected.customer_name : "Choose a customer"}</span>
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#6b7280"
-          strokeWidth="2"
-          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+    <div ref={containerRef} className="relative">
+      {/* Input Trigger */}
+      <div>
+        <div className="relative">
+          <input
+            value={open ? search : (selected?.customer_name ?? "")}
+            placeholder="Choose a customer"
+            onFocus={() => {
+              setOpen(true);
+              setSearch(selected?.customer_name ?? "");
+            }}
+            onChange={(e) => {
+              const val = e.target.value;
+
+              setSearch(val);
+              setOpen(true);
+
+              if (val === "") {
+                onChange("");
+              }
+            }}
+            className={`w-full border text-[#2A2A2A] rounded-md font-light px-3 pr-8 h-[40px] focus:outline-none
+      ${
+        error
+          ? "border-[#E71010] focus:border-[#E71010]"
+          : "border-[#CFCFCF] focus:border-[#005AA7]"
+      }`}
+          />
+
+          <DropdownArrow className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" />
+        </div>
+
+        {error && (
+          <div className="text-[#E71010] text-sm font-light mt-1">
+            Customer is required.
+          </div>
+        )}
       </div>
 
-      {/* Dropdown panel */}
+      {/* Dropdown */}
       {open && (
-        <div
-          style={{
-            position: "absolute",
-            top: "calc(100% + 4px)",
-            left: 0,
-            right: 0,
-            background: "#fff",
-            border: "1px solid #e5e7eb",
-            borderRadius: "6px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
-            zIndex: 200,
-            overflow: "hidden",
-          }}
-        >
-          {/* Search input */}
-          <div style={{ padding: "8px 10px", borderBottom: "1px solid #f3f4f6" }}>
-            <input
-              autoFocus
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, ID or phone..."
-              style={{
-                width: "100%",
-                border: "1px solid #e5e7eb",
-                borderRadius: "4px",
-                padding: "5px 10px",
-                fontSize: "12px",
-                outline: "none",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-
+        <div className="absolute top-[calc(100%+4px)] left-0 right-0 bg-white border border-[#CFCFCF] rounded-md shadow-xl z-[200] overflow-hidden">
           {/* List */}
-          <div style={{ maxHeight: "220px", overflowY: "auto" }}>
+          <div className="max-h-[220px] overflow-y-auto hide-scrollbar">
             {filtered.length === 0 ? (
-              <div style={{ padding: "12px", fontSize: "12px", color: "#9ca3af", textAlign: "center" }}>
+              <div className="p-3 text-center text-gray-400 text-sm font-light">
                 No customers found
               </div>
             ) : (
@@ -129,28 +113,17 @@ const CustomerDropdown: React.FC<Props> = ({
                 <div
                   key={c._id}
                   onClick={() => handleSelect(c)}
-                  style={{
-                    padding: "10px 14px",
-                    cursor: "pointer",
-                    background: c._id === value ? "#f0f7ff" : "transparent",
-                    borderBottom: "1px solid #f9fafb",
-                    transition: "background 0.1s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.background = "#f9fafb";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.background =
-                      c._id === value ? "#f0f7ff" : "transparent";
-                  }}
+                  className={`px-4 py-2 cursor-pointer border-b border-gray-200 last:border-b-0 transition-colors
+                  ${c._id === value ? "bg-[#F1F1F1]" : "hover:bg-gray-50"}`}
                 >
-                  <div style={{ fontSize: "13px", fontWeight: 500, color: "#111827" }}>
+                  <div className="text-sm font-normal text-[#2A2A2A]">
                     {c.customer_name}
                   </div>
-                  <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>
+
+                  <div className="text-xs text-gray-500 mt-1">
                     {c.customer_id}
                     {c.customer_phone && (
-                      <span style={{ marginLeft: "8px" }}>{c.customer_phone}</span>
+                      <span className="ml-4">{c.customer_phone}</span>
                     )}
                   </div>
                 </div>
@@ -158,25 +131,17 @@ const CustomerDropdown: React.FC<Props> = ({
             )}
           </div>
 
-          {/* Add Customer footer */}
+          {/* Footer */}
           <div
             onClick={() => {
               setOpen(false);
               onAddCustomer?.();
             }}
-            style={{
-              padding: "10px 14px",
-              borderTop: "1px solid #f3f4f6",
-              fontSize: "13px",
-              color: "#2563eb",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              fontWeight: 500,
-            }}
+            className="px-3 py-3 border-t border-gray-200 text-[13px] text-[#0690F1] cursor-pointer flex items-center gap-1 font-noemal hover:bg-gray-50"
           >
-            <span style={{ fontSize: "16px", lineHeight: 1 }}>+</span>
+            <span className="flex items-center mr-1 text-[#0690F1]">
+              <PlusIcon className="w-5 h-5" />
+            </span>
             Add Customer
           </div>
         </div>
