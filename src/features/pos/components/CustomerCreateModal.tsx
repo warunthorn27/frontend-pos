@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Modal, Box } from "@mui/material";
-import AddCustomer from "../../customers/create/AddCustomer";
 import type { CountryCode } from "../../../component/phoneInput/CountryPhoneInput";
 import { customerService } from "../../../services/customer";
 import type { CustomerForm } from "../../../types/customer";
+import AddCustomerFrontOffice from "./AddCustomerFrontOffice";
 
 interface CustomerCreateModalProps {
   open: boolean;
@@ -22,7 +21,9 @@ const CustomerCreateModal: React.FC<CustomerCreateModalProps> = ({
   const handleConfirm = async (values: CustomerForm) => {
     try {
       setLoading(true);
+
       const res = await customerService.createCustomer(values, country);
+
       if (res.success && res.data) {
         onSuccess(res.data._id);
       }
@@ -34,50 +35,35 @@ const CustomerCreateModal: React.FC<CustomerCreateModalProps> = ({
     }
   };
 
+  if (!open) return null;
+
   return (
-    <Modal open={open} onClose={loading ? undefined : onClose}>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "90%",
-          maxWidth: "1200px",
-          height: "90vh",
-          bgcolor: "background.paper",
-          borderRadius: "4px",
-          boxShadow: 24,
-          p: 0,
-          outline: "none",
-          overflow: "hidden",
-        }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Background overlay */}
+      <div
+        className="absolute inset-0 bg-black/40"
+        onClick={loading ? undefined : onClose}
+      />
+
+      {/* Modal content */}
+      <div className="relative w-[95%] max-w-[1100px] max-h-[90vh] rounded-md overflow-hidden">
+        {/* Loading overlay */}
         {loading && (
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              bgcolor: "rgba(255, 255, 255, 0.7)",
-              zIndex: 10,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div className="animate-pulse text-lg text-gray-600">Creating customer...</div>
-          </Box>
+          <div className="absolute inset-0 bg-white/70 z-20 flex items-center justify-center">
+            <div className="animate-pulse text-lg text-gray-600">
+              Creating customer...
+            </div>
+          </div>
         )}
-        <div className="h-full p-6">
-          <AddCustomer
-            country={country}
-            onCountryChange={setCountry}
-            onCancel={onClose}
-            onConfirm={handleConfirm}
-          />
-        </div>
-      </Box>
-    </Modal>
+
+        <AddCustomerFrontOffice
+          country={country}
+          onCountryChange={setCountry}
+          onCancel={onClose}
+          onConfirm={handleConfirm}
+        />
+      </div>
+    </div>
   );
 };
 
