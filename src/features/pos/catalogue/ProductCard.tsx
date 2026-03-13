@@ -4,16 +4,25 @@ import type {
 } from "../../../types/pos/catalogue";
 
 import ImagePlaceholder from "../../../assets/svg/upload-image.svg?react";
+import { formatMoneyWithCurrency } from "../../../utils/number";
 
 interface Props {
   item: CatalogueProductItem;
   mode: CatalogueMode;
+  currency: string;
   onClick?: (id: string) => void;
   onCustom?: (item: CatalogueProductItem) => void;
   onSell?: (item: CatalogueProductItem) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom, onSell }) => {
+const ProductCard: React.FC<Props> = ({
+  item,
+  mode,
+  currency,
+  onClick,
+  onCustom,
+  onSell,
+}) => {
   return (
     <div
       onClick={() => onClick?.(item.id)}
@@ -34,31 +43,37 @@ const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom, onSell })
       </div>
 
       <div className="p-3 flex flex-col flex-1">
-        <div className="text-xs text-gray-400">{item.code}</div>
-        <div className="text-sm text-[#06284B]">{item.name}</div>
+        <div className="text-sm text-[#2A2A2A] font-normal">{item.code}</div>
+        <div className="text-base text-[#06284B] font-normal">{item.name}</div>
 
         {item.description && (
-          <div className="text-xs text-gray-500 line-clamp-2">
+          <div className="text-xs font-normal text-[#545454] line-clamp-2">
             {item.description}
           </div>
         )}
 
-        <div className="text-xs mt-2 text-gray-500">
-          {item.metal && <div>Metal : {item.metal}</div>}
-          {item.metalColor && <div>Metal Color : {item.metalColor}</div>}
-          {item.size && <div>Size : {item.size}</div>}
+        <div className="text-xs mt-2 text-[#545454] font-normal">
+          {item.metal && <div>Metal: {item.metal}</div>}
+          {item.metalColor && <div>Metal Color: {item.metalColor}</div>}
+          {item.size && <div>Size: {item.size}</div>}
         </div>
 
-        {mode === "inventory" && (
-          <div className="mt-2 text-sm font-medium text-[#06284B]">
+        {/* {mode === "inventory" && (
+          <div className="mt-2 text-base font-normal text-[#06284B]">
             {item.price?.toLocaleString()} {item.currency}
           </div>
-        )}
+        )} */}
+
+        {mode === "inventory" && (
+  <div className="mt-2 text-base font-normal text-[#06284B]">
+    {formatMoneyWithCurrency(item.price, currency)}
+  </div>
+)}
 
         <div className="flex gap-2 mt-auto pt-3 justify-end">
           {mode === "inventory" && (
-            <button 
-              className="w-[96px] h-9 rounded text-sm bg-[#06284B] text-white"
+            <button
+              className="w-[96px] h-9 rounded-md text-base font-normal bg-[#005AA7] hover:bg-[#084072] text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 onSell?.(item);
@@ -69,7 +84,7 @@ const ProductCard: React.FC<Props> = ({ item, mode, onClick, onCustom, onSell })
           )}
 
           <button
-            className="w-[96px] h-9 rounded border border-gray-300 text-sm bg-white"
+            className="w-[96px] h-9 rounded-md bg-white border border-[#CFCFCF] text-base hover:bg-[#F1F1F1] text-black"
             onClick={(e) => {
               e.stopPropagation();
               onCustom?.(item);
