@@ -27,7 +27,7 @@ const PosTopNav: React.FC<PosTopNavProps> = ({ onLogout }) => {
       <div className="flex items-center">
         <HomeIcon
           className="w-7 h-7 text-gray-700 cursor-pointer"
-          onClick={() => navigate("/company")}
+          onClick={() => navigate("/dashboard/company-profile")}
         />
       </div>
 
