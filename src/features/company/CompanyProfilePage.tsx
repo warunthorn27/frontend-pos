@@ -13,6 +13,7 @@ import {
   mapCompanyApiToForm,
   mapCompanyFormToPayload,
 } from "../../component/mappers/companyMapper";
+import { useToast } from "../../component/ui/toast/useToast";
 
 type Mode = "create" | "view" | "edit";
 
@@ -41,6 +42,8 @@ const CompanyProfilePage: React.FC<Props> = ({
     () => getUserCompanyId(currentUser),
     [currentUser],
   );
+
+  const toast = useToast();
 
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [company, setCompany] = useState<CompanyFormValues | null>(null);
@@ -165,6 +168,8 @@ const CompanyProfilePage: React.FC<Props> = ({
 
       // ส่ง logo ให้ sidebar
       onCompanyCreated?.(updated._id, mapped.companyFile ?? undefined);
+      
+      toast.success("Company profile updated successfully.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");
     } finally {

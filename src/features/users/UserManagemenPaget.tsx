@@ -7,6 +7,7 @@ import ResetPasswordDialog from "../../features/users/ResetPasswordDialog";
 import UserListContainer from "./UserListContainer";
 import { exportUsersToExcel } from "../../services/user";
 import { useCallback } from "react";
+import { useToast } from "../../component/ui/toast/useToast";
 
 const UserManagementPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -16,6 +17,8 @@ const UserManagementPage: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [formMode, setFormMode] = useState<"view" | "edit">("view");
   const [search, setSearch] = useState("");
+
+  const toast = useToast();
 
   const {
     users,
@@ -107,6 +110,7 @@ const UserManagementPage: React.FC = () => {
           onCancel={() => setMode("list")}
           onSubmit={async (values: UserFormInput) => {
             await createUser(values);
+            toast.success("User created successfully.");
             setMode("list");
           }}
         />
@@ -136,6 +140,7 @@ const UserManagementPage: React.FC = () => {
             );
           }
 
+          toast.success("User updated successfully.");
           setEditOpen(false);
           setEditingUser(null);
           setFormMode("view");
@@ -147,7 +152,10 @@ const UserManagementPage: React.FC = () => {
         open={resetOpen}
         user={resetUser}
         onClose={() => setResetOpen(false)}
-        onResetPassword={resetPassword}
+        onResetPassword={async (userId, pwd, sendEmail) => {
+          await resetPassword(userId, pwd, sendEmail);
+          toast.success("Password reset successfully.");
+        }}
       />
     </>
   );

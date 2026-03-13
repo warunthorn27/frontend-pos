@@ -4,6 +4,7 @@ import OthersInfoCard from "./components/OthersInfoCard";
 import { useParams } from "react-router-dom";
 import { createOthers, updateOthers } from "../../../services/product";
 import type { OthersForm } from "../../../types/product/form";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 const emptyForm: OthersForm = {
   active: true,
@@ -21,6 +22,8 @@ const OthersPage: React.FC = () => {
   const isEdit = Boolean(id);
   const [form, setForm] = useState<OthersForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
+
+  const toast = useToast();
 
   const canSave = useMemo(() => {
     return (
@@ -54,8 +57,10 @@ const OthersPage: React.FC = () => {
 
       if (isEdit && id) {
         await updateOthers(id, formData);
+        toast.success("Product updated successfully.");
       } else {
         await createOthers(formData);
+        toast.success("Product created successfully.");
       }
 
       // reset form

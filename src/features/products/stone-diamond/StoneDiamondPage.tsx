@@ -9,6 +9,7 @@ import {
 } from "../../../services/product";
 import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
 import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 const emptyStoneDiamondForm: StoneDiamondForm = {
   active: true,
@@ -33,6 +34,8 @@ const StoneDiamondPage: React.FC = () => {
   const [form, setForm] = useState<StoneDiamondForm>(emptyStoneDiamondForm);
   const [images, setImages] = useState<File[]>([]);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+
+  const toast = useToast();
 
   const {
     stoneNameOptions,
@@ -86,8 +89,10 @@ const StoneDiamondPage: React.FC = () => {
 
       if (isEdit && id) {
         await updateStoneDiamond(id, formData);
+        toast.success("Stone/Diamond updated successfully.");
       } else {
         await createStoneDiamond(formData);
+        toast.success("Stone/Diamond created successfully.");
       }
 
       // reset form

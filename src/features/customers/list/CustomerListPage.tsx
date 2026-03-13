@@ -12,6 +12,7 @@ import { customerService } from "../../../services/customer";
 import CustomerDetailModal from "./CustomerDetailModal";
 import type { CountryCode } from "../../../component/phoneInput/CountryPhoneInput";
 import { useCallback } from "react";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 const CustomerListPage: React.FC = () => {
   const [mode, setMode] = useState<"list" | "create">("list");
@@ -26,6 +27,8 @@ const CustomerListPage: React.FC = () => {
   const [country, setCountry] = useState<CountryCode>("TH");
   const [modalMode, setModalMode] = useState<"view" | "edit">("view");
   const [search, setSearch] = useState("");
+
+  const toast = useToast();
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -101,6 +104,7 @@ const CustomerListPage: React.FC = () => {
 
             console.log("API RESPONSE →", res);
             console.log("===========================");
+            toast.success("Customer created successfully.");
             setMode("list");
           } catch (err) {
             console.error(err);
@@ -149,6 +153,8 @@ const CustomerListPage: React.FC = () => {
       );
 
       console.log("API RESPONSE →", res);
+      
+      toast.success("Customer updated successfully.");
 
       setCustomerDetail(res.data); // อัปเดต UI ทันที
       setModalMode("view");

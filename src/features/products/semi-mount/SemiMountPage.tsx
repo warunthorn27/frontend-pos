@@ -15,6 +15,7 @@ import type {
 } from "../../../types/product/form";
 import ProductFormPageTemplate from "../../../component/template/ProductFormPageTemplate";
 import type { SelectOption } from "../../../types/shared/select";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 const emptyAccessories = (): AccessoriesForm => ({
   active: true,
@@ -79,6 +80,8 @@ const SemiMountPage: React.FC = () => {
   const isEdit = Boolean(id);
   const [form, setForm] = useState<BaseProductForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
+
+  const toast = useToast();
 
   const {
     stoneNameOptions,
@@ -326,8 +329,10 @@ const SemiMountPage: React.FC = () => {
 
       if (isEdit && id) {
         await updateProduct(id, formData);
+        toast.success("Semi-Mount updated successfully.");
       } else {
         await createSemiMount(formData);
+        toast.success("Semi-Mount created successfully.");
       }
 
       // reset form

@@ -15,6 +15,7 @@ import type {
 } from "../../../types/product/form";
 import ProductFormPageTemplate from "../../../component/template/ProductFormPageTemplate";
 import type { SelectOption } from "../../../types/shared/select";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 /* ---------- empty factories ---------- */
 
@@ -80,6 +81,8 @@ const ProductMasterPage: React.FC = () => {
   const [form, setForm] = useState<BaseProductForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
 
+  const toast = useToast();
+
   const {
     stoneNameOptions,
     shapeOptions,
@@ -139,7 +142,7 @@ const ProductMasterPage: React.FC = () => {
             size: p.primary_stone?.size ?? "",
             weight:
               p.primary_stone?.weight !== undefined &&
-              p.primary_stone?.weight !== null
+                p.primary_stone?.weight !== null
                 ? String(p.primary_stone.weight)
                 : "",
             unit: p.primary_stone?.unit ?? "g",
@@ -347,8 +350,10 @@ const ProductMasterPage: React.FC = () => {
 
       if (isEdit && id) {
         await updateProduct(id, formData);
+        toast.success("Product updated successfully.");
       } else {
         await createMasterProduct(formData);
+        toast.success("Product created successfully.");
       }
 
       // reset form

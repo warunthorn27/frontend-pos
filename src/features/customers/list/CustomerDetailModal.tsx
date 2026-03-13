@@ -22,6 +22,7 @@ import GenderDropdown from "./GenderDropdown";
 import DatePicker from "../../../component/ui/Datepicker";
 import { formatDateDisplay } from "../../../utils/date";
 import DiscardChangesDialog from "../../../component/dialog/DiscardChangesDialog";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 type Props = {
   open: boolean;
@@ -55,6 +56,8 @@ const CustomerDetailModal: React.FC<Props> = ({
   const [useSameAddress, setUseSameAddress] = useState(false);
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>("TH");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+
+  const toast = useToast();
 
   /* sync data → edit state */
   // React.useEffect(() => {
@@ -140,12 +143,12 @@ const CustomerDetailModal: React.FC<Props> = ({
     if (!showTaxSection) return true;
 
     if (!editData.customer_tax_id?.trim()) {
-      alert("Tax ID is required");
+      toast.error("Tax ID is required");
       return false;
     }
 
     if (!editData.tax_addr?.company_name?.trim()) {
-      alert("Company Name is required");
+      toast.error("Company Name is required");
       return false;
     }
 
@@ -155,7 +158,7 @@ const CustomerDetailModal: React.FC<Props> = ({
       !editData.tax_addr?.district?.trim() ||
       !editData.tax_addr?.sub_district?.trim()
     ) {
-      alert("Tax Invoice Address incomplete");
+      toast.error("Tax Invoice Address incomplete");
       return false;
     }
 

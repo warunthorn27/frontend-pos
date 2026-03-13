@@ -7,6 +7,7 @@ import type { AccessoriesForm } from "../../../types/product/form";
 import ProductImagesCard from "../../../component/template/media/ProductImagesCard";
 import { isObjectId } from "../../../utils/isObjectId";
 import { createMaster } from "../../../services/master";
+import { useToast } from "../../../component/ui/toast/useToast";
 
 const emptyForm: AccessoriesForm = {
   active: true,
@@ -26,6 +27,8 @@ const AccessoriesPage: React.FC = () => {
   const [form, setForm] = useState<AccessoriesForm>(emptyForm);
   const [images, setImages] = useState<File[]>([]);
   const { metalOptions } = useProductMasters();
+
+  const toast = useToast();
 
   const canSave = useMemo(() => {
     return (
@@ -72,8 +75,10 @@ const AccessoriesPage: React.FC = () => {
 
       if (isEdit && id) {
         await updateAccessory(id, formData);
+        toast.success("Accessory updated successfully.");
       } else {
         await createAccessory(formData);
+        toast.success("Accessory created successfully.");
       }
 
       // reset form
