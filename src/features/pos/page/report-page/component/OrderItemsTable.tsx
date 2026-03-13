@@ -1,144 +1,100 @@
+import dayjs from "dayjs";
 import { useDragScroll } from "../hooks/useDragScroll";
 import type { OrderReportItem } from "../../../../../types/pos/report";
-
-type TabMode = "Sell" | "Custom" | "Repair";
 
 interface Props {
   items: OrderReportItem["items"];
   order: OrderReportItem;
-  activeTab: TabMode;
 }
 
-const OrderItemsTable = ({ items, order, activeTab }: Props) => {
+const OrderItemsTable = ({ items, order }: Props) => {
   const { handleMouseDown } = useDragScroll();
 
   return (
     <div
       onMouseDown={handleMouseDown}
-      className="border-t border-gray-50 bg-white relative overflow-x-auto cursor-grab"
+      className="border-t border-gray-50 bg-white relative overflow-x-auto cursor-grab [ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:display-none"
     >
       <table
-        className="text-left border-separate border-spacing-0 min-w-full"
-        style={{ width: "4200px" }}
+        className="text-left border-collapse"
+        style={{ minWidth: "3600px" }}
       >
-        <thead>
-          <tr className="bg-[#F8F9FA] text-[13px] text-[#06284B]">
-            <th className="py-3 px-6 sticky left-0 bg-[#F8F9FA]">#</th>
-
-            <th className="py-3 px-4 sticky left-[60px] bg-[#F8F9FA]">
-              Sell ID
-            </th>
-
-            <th className="py-3 px-4 sticky left-[240px] bg-[#F8F9FA]">
-              Customer
-            </th>
-
-            <th className="py-3 px-4 sticky left-[460px] bg-[#F8F9FA]">Date</th>
-
-            <th className="py-3 px-4">Code</th>
-            <th className="py-3 px-4">Product Name</th>
-            <th className="py-3 px-4">Category</th>
-            <th className="py-3 px-4">Item Type</th>
-            <th className="py-3 px-4">Product Size</th>
-            <th className="py-3 px-4">Metal</th>
-            <th className="py-3 px-4">Metal Color</th>
-            <th className="py-3 px-4 text-right">Gwt</th>
-            <th className="py-3 px-4 text-right">Nwt</th>
-            <th className="py-3 px-4">Stone Name</th>
-            <th className="py-3 px-4">Shape</th>
-            <th className="py-3 px-4">Size</th>
-            <th className="py-3 px-4 text-right">S.Weight</th>
-            <th className="py-3 px-4">Color</th>
-            <th className="py-3 px-4">Cutting</th>
-            <th className="py-3 px-4">Quality</th>
-            <th className="py-3 px-4">Clearity</th>
-            <th className="py-3 px-4 text-right">Qty</th>
-
-            {activeTab === "Custom" ? (
-              <th className="py-3 px-4 text-right">Deposit</th>
-            ) : (
-              <>
-                <th className="py-3 px-4 text-center">Tax</th>
-                <th className="py-3 px-4 text-right">Price</th>
-                <th className="py-3 px-4 text-center">Discount</th>
-              </>
-            )}
-
-            <th className="py-3 px-6 text-right sticky right-0 bg-[#F8F9FA]">
-              Amount
-            </th>
+        <thead className="bg-[#F8F9FA]">
+          <tr className="text-[14px] text-[#06284B] whitespace-nowrap">
+            <th className="py-3 px-6 text-center border-b border-[#EBEBEB] font-normal">#</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Sell ID</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Customer</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Date</th>
+            <th className="py-3 px-6 text-center border-b border-[#EBEBEB] font-normal">Image</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Code</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Product Name</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Category</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Item Type</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Product Size</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Metal</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Metal Color</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Gwt</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Nwt</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Stone Name</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Shape</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] font-normal">Size</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">S.Weight</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Color</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Cutting</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Quality</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Clarity</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Qty</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Tax</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-right font-normal">Price</th>
+            <th className="py-3 px-6 border-b border-[#EBEBEB] text-center font-normal">Discount</th>
+            <th className="py-3 px-6 text-right border-b border-[#EBEBEB] font-normal">Amount</th>
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-50 text-[13px] text-[#06284B] font-light">
+        <tbody className="text-[14px] text-[#06284B]">
           {items.map((item, idx) => (
-            <tr key={item._id} className="hover:bg-gray-50/40">
-              <td className="py-4 px-6 sticky left-0 bg-white">{idx + 1}</td>
-
-              <td className="py-4 px-4 sticky left-[60px] bg-white">
-                {order.order_no}
+            <tr key={item._id} className="hover:bg-gray-50 border-b border-[#F0F0F0] whitespace-nowrap">
+              <td className="py-4 px-6 text-center">{idx + 1}</td>
+              <td className="py-4 px-6">{order.order_no}</td>
+              <td className="py-4 px-6">{order.customer_name}</td>
+              <td className="py-4 px-6">
+                {item.date ? dayjs(item.date).format("DD/MM/YYYY") : "-"}
               </td>
-
-              <td className="py-4 px-4 sticky left-[240px] bg-white">
-                {order.customer_name}
+              <td className="py-4 px-6 text-center">
+                <div className="w-[35px] h-[35px] mx-auto border border-[#EBEBEB] rounded-md overflow-hidden bg-white flex items-center justify-center p-1">
+                  {item.image ? (
+                    <img src={item.image} alt="" className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="w-3.5 h-3.5 border border-[#EBEBEB] rotate-45" />
+                  )}
+                </div>
               </td>
-
-              <td className="py-4 px-4 sticky left-[460px] bg-white">
-                {item.date}
+              <td className="py-4 px-6 uppercase">{item.code}</td>
+              <td className="py-4 px-6">{item.product_name}</td>
+              <td className="py-4 px-6">{item.category}</td>
+              <td className="py-4 px-6">{item.item_type}</td>
+              <td className="py-4 px-6">{item.product_size}</td>
+              <td className="py-4 px-6">{item.metal}</td>
+              <td className="py-4 px-6">{item.metal_color || "-"}</td>
+              <td className="py-4 px-6 text-center">{item.gwt || 0}</td>
+              <td className="py-4 px-6 text-center">{item.nwt || 0}</td>
+              <td className="py-4 px-6">{item.stone_name || "-"}</td>
+              <td className="py-4 px-6">{item.shape || "-"}</td>
+              <td className="py-4 px-6">{item.size || "-"}</td>
+              <td className="py-4 px-6 text-center">{item.s_weight || 0}</td>
+              <td className="py-4 px-6 text-center">{item.color || "-"}</td>
+              <td className="py-4 px-6 text-center uppercase">{item.cutting || "-"}</td>
+              <td className="py-4 px-6 text-center">{item.quality || "-"}</td>
+              <td className="py-4 px-6 text-center">{item.clarity || "-"}</td>
+              <td className="py-4 px-6 text-center">{item.qty}</td>
+              <td className="py-4 px-6 text-center">{item.tax}</td>
+              <td className="py-4 px-6 text-right">
+                {item.price.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
               </td>
-
-              <td className="py-4 px-4">{item.code}</td>
-              <td className="py-4 px-4">{item.product_name}</td>
-              <td className="py-4 px-4">{item.category}</td>
-              <td className="py-4 px-4">{item.item_type}</td>
-              <td className="py-4 px-4">{item.product_size}</td>
-              <td className="py-4 px-4">{item.metal}</td>
-              <td className="py-4 px-4">{item.metal_color}</td>
-
-              <td className="py-4 px-4 text-right">
-                {item.gwt > 0 ? `${item.gwt} g` : "-"}
-              </td>
-
-              <td className="py-4 px-4 text-right">
-                {item.nwt > 0 ? `${item.nwt} g` : "-"}
-              </td>
-
-              <td className="py-4 px-4">{item.stone_name}</td>
-              <td className="py-4 px-4">{item.shape}</td>
-              <td className="py-4 px-4">{item.size}</td>
-
-              <td className="py-4 px-4 text-right">
-                {item.s_weight > 0 ? `${item.s_weight} cts` : "-"}
-              </td>
-
-              <td className="py-4 px-4">{item.color}</td>
-              <td className="py-4 px-4">{item.cutting}</td>
-              <td className="py-4 px-4">{item.quality}</td>
-              <td className="py-4 px-4">{item.clarity}</td>
-
-              <td className="py-4 px-4 text-right">{item.qty}</td>
-
-              {activeTab === "Custom" ? (
-                <td className="py-4 px-4 text-right">
-                  {(item.deposit || 0).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}
-                </td>
-              ) : (
-                <>
-                  <td className="py-4 px-4 text-center">{item.tax}</td>
-
-                  <td className="py-4 px-4 text-right">
-                    {item.price.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                    })}
-                  </td>
-
-                  <td className="py-4 px-4 text-center">{item.discount}</td>
-                </>
-              )}
-
-              <td className="py-4 px-6 text-right sticky right-0 bg-white font-medium">
+              <td className="py-4 px-6 text-center">{item.discount}</td>
+              <td className="py-4 px-6 text-right">
                 {item.amount.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}
