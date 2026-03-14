@@ -17,55 +17,55 @@ function generatePassword(len = 8) {
   return out;
 }
 
-type ToastState = {
-  open: boolean;
-  title: string;
-  message: string;
-};
+// type ToastState = {
+//   open: boolean;
+//   title: string;
+//   message: string;
+// };
 
-function SuccessToast({
-  open,
-  title,
-  message,
-}: {
-  open: boolean;
-  title: string;
-  message: string;
-}) {
-  return (
-    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10050] pointer-events-none">
-      <div
-        className={[
-          "flex items-start gap-3",
-          "min-w-[320px] max-w-[92vw]",
-          "rounded-xl border border-green-300 bg-green-50",
-          "px-5 py-4 shadow-md",
-          "transition-all duration-200",
-          open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3",
-        ].join(" ")}
-      >
-        <div className="mt-0.5 w-6 h-6 rounded-full border-2 border-green-500 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M20 6L9 17l-5-5"
-              stroke="#16A34A"
-              strokeWidth="2.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+// function SuccessToast({
+//   open,
+//   title,
+//   message,
+// }: {
+//   open: boolean;
+//   title: string;
+//   message: string;
+// }) {
+//   return (
+//     <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10050] pointer-events-none">
+//       <div
+//         className={[
+//           "flex items-start gap-3",
+//           "min-w-[320px] max-w-[92vw]",
+//           "rounded-xl border border-green-300 bg-green-50",
+//           "px-5 py-4 shadow-md",
+//           "transition-all duration-200",
+//           open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3",
+//         ].join(" ")}
+//       >
+//         <div className="mt-0.5 w-6 h-6 rounded-full border-2 border-green-500 flex items-center justify-center">
+//           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+//             <path
+//               d="M20 6L9 17l-5-5"
+//               stroke="#16A34A"
+//               strokeWidth="2.8"
+//               strokeLinecap="round"
+//               strokeLinejoin="round"
+//             />
+//           </svg>
+//         </div>
 
-        <div className="flex-1">
-          <div className="text-[18px] font-semibold text-gray-900">{title}</div>
-          <div className="text-[18px] text-gray-600 leading-snug">
-            {message}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+//         <div className="flex-1">
+//           <div className="text-[18px] font-semibold text-gray-900">{title}</div>
+//           <div className="text-[18px] text-gray-600 leading-snug">
+//             {message}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 interface ResetPasswordDialogProps {
   open: boolean;
@@ -94,11 +94,12 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
   const [error, setError] = useState<string>("");
 
   // toast
-  const [toast, setToast] = useState<ToastState>({
-    open: false,
-    title: "Success",
-    message: "",
-  });
+  // const [toast, setToast] = useState<ToastState>({
+  //   open: false,
+  //   title: "Success",
+  //   message: "",
+  // });
+
   const toastTimerRef = useRef<number | null>(null);
 
   const canSendEmail = useMemo(() => {
@@ -108,20 +109,20 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
     return e.length > 0;
   }, [user]);
 
-  const showToast = (title: string, message: string, ms = 2600) => {
-    // clear old timer
-    if (toastTimerRef.current) {
-      window.clearTimeout(toastTimerRef.current);
-      toastTimerRef.current = null;
-    }
+  // const showToast = (title: string, message: string, ms = 2600) => {
+  //   // clear old timer
+  //   if (toastTimerRef.current) {
+  //     window.clearTimeout(toastTimerRef.current);
+  //     toastTimerRef.current = null;
+  //   }
 
-    setToast({ open: true, title, message });
+  //   setToast({ open: true, title, message });
 
-    toastTimerRef.current = window.setTimeout(() => {
-      setToast((t) => ({ ...t, open: false }));
-      toastTimerRef.current = null;
-    }, ms);
-  };
+  //   toastTimerRef.current = window.setTimeout(() => {
+  //     setToast((t) => ({ ...t, open: false }));
+  //     toastTimerRef.current = null;
+  //   }, ms);
+  // };
 
   // cleanup timer เมื่อ unmount
   useEffect(() => {
@@ -184,7 +185,7 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
 
       // ปิด dialog ทันที แล้วโชว์ toast แบบในรูป
       closeAll();
-      showToast("Success", "Send Password to Email successfully.");
+      // showToast("Success", "Send Password to Email successfully.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Send email failed");
     } finally {
@@ -205,11 +206,11 @@ const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
 
   return (
     <>
-      <SuccessToast
+      {/* <SuccessToast
         open={toast.open}
         title={toast.title}
         message={toast.message}
-      />
+      /> */}
 
       {/* Modal */}
       {open && user && (

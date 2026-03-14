@@ -12,7 +12,10 @@ import {
 } from "../../../../services/pos/posSell";
 import { getPosCustomers } from "../../../../services/pos/posCustom";
 import type { PosCustomer } from "../../../../services/pos/posCustom";
-import type { SellSessionItem, SellSearchProduct } from "../../../../types/pos/sell";
+import type {
+  SellSessionItem,
+  SellSearchProduct,
+} from "../../../../types/pos/sell";
 import { useCustomSession } from "../../context/useCustomSession";
 import CustomerDropdown from "../../components/CustomerDropdown";
 import CustomerCreateModal from "../../components/CustomerCreateModal";
@@ -371,20 +374,17 @@ const PosSellPage = () => {
                             onClick={() => handleAddFromSearch(product)}
                             className="flex items-center gap-4 p-3 hover:bg-gray-50 cursor-pointer transition-colors"
                           >
-                            <div className="w-12 h-12 rounded bg-[#F1F1F1] flex-shrink-0 overflow-hidden flex items-center justify-center">
-                              {product.image && (
-                                <img
-                                  src={product.image}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
+                            <ProductImage
+                              imageUrl={product.image || null}
+                              alt={product.product_name}
+                              className="w-12 h-12 shrink-0"
+                            />
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-normal text-[#06284B] truncate">
                                 {product.product_name}
                               </h4>
-                              <div className="flex justify-between items-center mt-2">
-                                <p className="text-sm text-gray-500">
+                              <div className="flex justify-between items-center mt-1">
+                                <p className="text-xs text-gray-500">
                                   {product.product_code}
                                 </p>
                                 <span className="text-xs text-gray-400 font-normal">
@@ -448,7 +448,7 @@ const PosSellPage = () => {
                     <div className="flex items-center gap-8">
                       {/* Image */}
                       <ProductImage
-                        imageUrl={item.image ?? null}
+                        imageUrl={item.image || null}
                         alt={item.product_name}
                         className="w-[72px] h-[72px] shrink-0"
                       />

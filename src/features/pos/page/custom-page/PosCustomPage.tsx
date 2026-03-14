@@ -46,6 +46,7 @@ const PosCustomPage = () => {
   const [searchResults, setSearchResults] = useState<PosProduct[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [customerError, setCustomerError] = useState(false);
 
   // Customer Modal State
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
@@ -246,6 +247,18 @@ const PosCustomPage = () => {
     }
   };
 
+  const formatMoneyInput = (value: string) => {
+    const num = value.replace(/[^\d.]/g, "");
+
+    if (!num) return "";
+
+    const parsed = parseFloat(num);
+
+    if (isNaN(parsed)) return "";
+
+    return parsed.toFixed(2);
+  };
+
   /* ── Derived totals ───────────────────────────── */
   const totalItems = items.reduce((sum, i) => sum + i.qty, 0);
   const totalDeposit = items.reduce((sum, i) => {
@@ -287,7 +300,7 @@ const PosCustomPage = () => {
                 {/* Search Results Dropdown */}
                 {showResults && (
                   <div
-                    className="absolute top-11 left-0 w-full bg-white border border-[#E5E7EB] rounded-lg shadow-xl z-[60] max-h-[360px] overflow-auto [&::-webkit-scrollbar]:hidden"
+                    className="absolute top-11 left-0 w-full bg-white border border-[#CFCFCF] rounded-md shadow-lg z-[201] max-h-[360px] overflow-auto [&::-webkit-scrollbar]:hidden"
                     style={{ scrollbarWidth: "none" }}
                   >
                     {isSearching && searchResults.length === 0 ? (
@@ -299,27 +312,24 @@ const PosCustomPage = () => {
                         No products found
                       </div>
                     ) : (
-                      <div className="divide-y divide-gray-50">
+                      <div className="divide-y divide-gray-200">
                         {searchResults.map((product) => (
                           <div
                             key={product._id}
                             onClick={() => handleAddFromSearch(product)}
-                            className="flex items-center gap-4 p-3 hover:bg-blue-50 cursor-pointer transition-colors"
+                            className="flex items-center gap-4 p-3 hover:bg-gray-50 cursor-pointer transition-colors"
                           >
-                            <div className="w-12 h-12 rounded bg-gray-50 border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                              {product.image && (
-                                <img
-                                  src={product.image}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
+                            <ProductImage
+                              imageUrl={product.image || null}
+                              alt={product.product_name}
+                              className="w-12 h-12 shrink-0"
+                            />
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-[14px] font-semibold text-[#06284B] truncate">
+                              <h4 className="text-sm font-normal text-[#06284B] truncate">
                                 {product.product_name}
                               </h4>
-                              <div className="flex justify-between items-center mt-0.5">
-                                <p className="text-[12px] text-gray-400">
+                              <div className="flex justify-between items-center mt-1">
+                                <p className="text-xs text-gray-500">
                                   {product.product_code}
                                 </p>
                                 <span className="text-[12px] text-gray-400 font-normal">
@@ -371,16 +381,16 @@ const PosCustomPage = () => {
               <div className="divide-y divide-gray-100">
                 {items.map((item) => (
                   <div key={item.session_id} className="py-6 first:pt-0">
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-8 w-full">
                       {/* Image */}
                       <ProductImage
-                        imageUrl={item.image ?? null}
+                        imageUrl={item.image || null}
                         alt={item.product_name}
                         className="w-[72px] h-[72px] shrink-0"
                       />
 
                       {/* Product Info */}
-                      <div className="flex-1 min-w-[220px]">
+                      <div className="min-w-[220px] max-w-[280px]">
                         <div className="flex items-center gap-2">
                           <h3 className="text-base font-normal text-[#2A2A2A]">
                             {item.product_name}
@@ -405,65 +415,74 @@ const PosCustomPage = () => {
                         </div>
                       </div>
 
-                      {/* Deposit */}
-                      <div className="w-[140px]">
-                        <input
-                          type="text"
-                          placeholder="Deposit"
-                          value={
-                            deposits[item.session_id] ??
-                            (item.deposit != null
-                              ? item.deposit.toLocaleString()
-                              : item.price != null
-                                ? item.price.toLocaleString()
-                                : "")
-                          }
-                          onChange={(e) =>
-                            setDeposits((prev) => ({
-                              ...prev,
-                              [item.session_id]: e.target.value,
-                            }))
-                          }
-                          className="w-full h-[36px] border border-[#CFCFCF] rounded-md px-3 text-sm outline-none focus:border-[#005AA7]"
-                        />
-                      </div>
+                      {/* RIGHT SIDE CONTROLS */}
+                      <div className="flex items-center gap-10 ml-auto">
+                        {/* Deposit */}
+                        <div className="w-[150px]">
+                          <input
+                            type="text"
+                            placeholder="Deposit"
+                            value={deposits[item.session_id] ?? ""}
+                            onFocus={(e) => e.target.select()}
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/[^\d.]/g, "");
 
-                      {/* Qty */}
-                      <div className="flex items-center gap-4 w-[120px] justify-center">
-                        <button
-                          onClick={() => handleQtyChange(item, -1)}
-                          className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                        >
-                          −
-                        </button>
+                              setDeposits((prev) => ({
+                                ...prev,
+                                [item.session_id]: raw,
+                              }));
+                            }}
+                            onBlur={(e) => {
+                              const formatted = formatMoneyInput(
+                                e.target.value,
+                              );
 
-                        <span className="w-4 text-center text-base font-normal">
-                          {item.qty}
-                        </span>
+                              setDeposits((prev) => ({
+                                ...prev,
+                                [item.session_id]: formatted,
+                              }));
+                            }}
+                            className="w-full h-[36px] border border-[#CFCFCF] rounded-md px-3 text-sm outline-none focus:border-[#005AA7]"
+                          />
+                        </div>
 
-                        <button
-                          onClick={() => handleQtyChange(item, 1)}
-                          className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                        >
-                          +
-                        </button>
-                      </div>
+                        {/* Qty */}
+                        <div className="flex items-center gap-4 w-[350px] justify-center">
+                          <button
+                            onClick={() => handleQtyChange(item, -1)}
+                            className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                          >
+                            −
+                          </button>
 
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 w-[60px] justify-end">
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="text-black"
-                        >
-                          <EditIcon className="w-6 h-6" />
-                        </button>
+                          <span className="w-4 text-center text-base font-normal">
+                            {item.qty}
+                          </span>
 
-                        <button
-                          onClick={() => handleDelete(item.session_id)}
-                          className="text-[#E71010]"
-                        >
-                          <DeleteIcon className="w-6 h-6" />
-                        </button>
+                          <button
+                            onClick={() => handleQtyChange(item, 1)}
+                            className="w-7 h-7 border border-[#CFCFCF] rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 w-[80px] justify-end">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="text-black"
+                          >
+                            <EditIcon className="w-6 h-6" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(item.session_id)}
+                            className="text-[#E71010]"
+                          >
+                            <DeleteIcon className="w-6 h-6" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -490,8 +509,12 @@ const PosCustomPage = () => {
                   <CustomerDropdown
                     customers={customers}
                     value={selectedCustomerId}
-                    onChange={setSelectedCustomerId}
+                    onChange={(id) => {
+                      setSelectedCustomerId(id);
+                      setCustomerError(false);
+                    }}
                     onAddCustomer={() => setIsCustomerModalOpen(true)}
+                    error={customerError}
                   />
                 </div>
               </div>

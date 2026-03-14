@@ -12,16 +12,16 @@ const ProductImage: FC<Props> = ({
   alt = "product image",
   className = "h-[40px] w-[40px]",
 }) => {
+  const hasImage = imageUrl && imageUrl.trim().length > 0;
+
   return (
     <div
       className={`${className} aspect-square rounded-lg bg-[#F1F3F7] border border-[#E6E6E6] overflow-hidden flex items-center justify-center`}
     >
-      {imageUrl ? (
+      {hasImage ? (
         <img src={imageUrl} alt={alt} className="h-full w-full object-cover" />
       ) : (
-        <div className="flex items-center justify-center text-[#9AA3B2]">
-          <BlankImageIcon className="w-6 h-6" />
-        </div>
+        <BlankImageIcon className="w-6 h-6 text-[#9AA3B2]" />
       )}
     </div>
   );
