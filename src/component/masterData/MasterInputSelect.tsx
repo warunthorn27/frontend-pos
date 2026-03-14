@@ -120,6 +120,7 @@ const MasterInputSelect: React.FC<Props> = ({
         className="
           w-full h-[38px]
           rounded-md border border-[#CFCFCF]
+          focus:outline-none focus:border-[#005AA7]
           bg-white px-3 pr-10
           text-sm text-black
           outline-none
@@ -143,6 +144,7 @@ const MasterInputSelect: React.FC<Props> = ({
           className={`absolute left-0 z-50 w-full
             max-h-52 overflow-auto
             rounded-md border border-[#CFCFCF]
+            focus:outline-none focus:border-[#005AA7]
             bg-white text-sm shadow-md
             ${openUpward ? "bottom-full mb-1" : "top-full mt-1"}
           `}

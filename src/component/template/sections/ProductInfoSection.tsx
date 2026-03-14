@@ -38,7 +38,7 @@ function Input({
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
+      className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none focus:outline-none focus:border-[#005AA7]"
     />
   );
 }
@@ -61,7 +61,7 @@ function UnitInput({
         onChange={(e) => onChange(e.target.value)}
         inputMode="decimal"
         disabled={readonly}
-        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-10 text-sm outline-none"
+        className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white pl-3 pr-10 text-sm outline-none focus:outline-none focus:border-[#005AA7]"
       />
       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#7A7A7A]">
         {unit}
@@ -131,7 +131,7 @@ const ProductInfoSection: React.FC<Props> = ({
                   value={value.description}
                   onChange={(e) => onChange({ description: e.target.value })}
                   maxLength={300}
-                  className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none"
+                  className="w-full h-[120px] rounded-md border border-[#CFCFCF] bg-white px-3 py-2 text-[13px] outline-none focus:outline-none focus:border-[#005AA7]"
                 />
                 <p className="text-xs text-[#7A7A7A]">
                   *Description should not exceed 300 letters

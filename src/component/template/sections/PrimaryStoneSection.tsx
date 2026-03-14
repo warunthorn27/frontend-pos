@@ -49,7 +49,7 @@ function Input({
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none"
+      className="w-full h-[38px] rounded-md border border-[#CFCFCF] bg-white px-3 text-sm outline-none focus:outline-none focus:border-[#005AA7]"
     />
   );
 }

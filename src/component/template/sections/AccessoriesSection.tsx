@@ -44,6 +44,7 @@ function Input({
         rounded-md border border-[#CFCFCF]
         bg-white px-3 text-sm outline-none
         disabled:bg-[#F1F1F1] disabled:text-[#9AA3B2]
+        focus:outline-none focus:border-[#005AA7]
       "
     />
   );
